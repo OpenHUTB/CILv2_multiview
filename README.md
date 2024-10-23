@@ -81,12 +81,14 @@ Required packages: [requirements.txt](https://github.com/yixiao1/CILv2_multiview
         export DATASET_PATH=<Path to the directory where the datasets are stored>
         export SENSOR_SAVE_PATH=<Path to the directory where the driving test frames are stored>
 
-* Install the required packages:
+* 安装所需要的包：
 
-        conda install --file requirements.txt
+        pip install -r requirements.txt
+        pip install opencv-python
+        pip install tensorflow-gpu==2.11.0
 
 -------------------------------------------------------------
-### Benchmark our trained CIL++
+### 对训练好的 CIL++ 进行基准测试
 
 * Download our trained CIL++ models [_results.tar.gz](https://drive.google.com/file/d/1GLo5mVrmyNsb5pLqksYnjR8fN1-ZptHE/view?usp=sharing)
 to your `TRAINING_RESULTS_ROOT/_results`. The saving pattern should be $TRAINING_RESULTS_ROOT/_results/Ours/TownXX/...:
@@ -94,7 +96,7 @@ to your `TRAINING_RESULTS_ROOT/_results`. The saving pattern should be $TRAINING
         mkdir -p $TRAINING_RESULTS_ROOT/_results
         tar -zxvf _results.tar.gz -C $TRAINING_RESULTS_ROOT/_results/
 
-* Benchmark our trained CIL++:
+* 对训练好的 CIL++ 进行基准测试: 
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
@@ -189,9 +191,8 @@ For training models, you can either
 
 -------------------------------------------------------------
 
-### Issues
-执行`docker pull`报找不到服务器的错：
-Error response from daemon: Get "https://registry-1.docker.io/v2/": net/http:
+### 问题
+- 执行`docker pull`报找不到服务器的错：Error response from daemon: Get "https://registry-1.docker.io/v2/": net/http:
 
 解决办法：
 ```shell
@@ -225,8 +226,19 @@ sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker.service
 ```
 
+- 测试 pytorch 的 GPU 是否可用：
+```shell
+import torch
+print(torch.__version__)
+print(torch.cuda.is_available())
+```
 
-ImportError: libtiff.so.5: cannot open shared object file: No such file or directory
+- 根据进程名杀死所有 Carla 服务进程：
+```shell
+killall CarlaUE4-Linux-Shipping
+```
+
+- ImportError: libtiff.so.5: cannot open shared object file: No such file or directory
 ```shell
 ll /usr/lib/x86_64-linux-gnu/libtiff.so
 # /usr/lib/x86_64-linux-gnu/libtiff.so -> libtiff.so.6.0.1

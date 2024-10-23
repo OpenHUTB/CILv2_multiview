@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# To run Town02 nocrash benchmark for trained CIL++ agent
+# 对训练好的 CIL++ 代理运行 Town02 nocrash benchmark
 
+# 运行carla 0.9.13 docker来作为服务端
 nocrash_newweathertown_empty_cilv2 () {
     python ${DRIVING_TEST_ROOT}/driving/evaluator.py \
     --debug=0 \
@@ -60,17 +61,20 @@ nocrash_newweathertown_busy_cilv2 () {
     --save-driving-vision
 }
 
+# 包含3个CILv2场景：空的场景、常规场景、繁忙场景
 function_array=(
 "nocrash_newweathertown_empty_cilv2"
 "nocrash_newweathertown_regular_cilv2"
 "nocrash_newweathertown_busy_cilv2")
 
 
-# resume benchmark in case carla is crashed, until the benchmark is finished
+# 当 Carla 崩溃的时候恢复基准测试，直到完成基准测试。
 RED=$'\e[0;31m'
 NC=$'\e[0m'
+# 遍历执行数组中的所有基准测试用例
 for run in "${function_array[@]}"; do
     PYTHON_RETURN=1
+    # python 执行返回1表示不成功，一直需要执行到成功（即返回0）
     until [ $PYTHON_RETURN == 0 ]; do
       ${run}
       PYTHON_RETURN=$?

@@ -6,9 +6,9 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """
-CARLA Challenge Evaluator Routes
+CARLA Challenge 评估器的路线
 
-Provisional code to evaluate Autonomous Agents for the CARLA Autonomous Driving challenge
+评估 CARLA Autonomous Driving challenge 自动驾驶代理的临时代码
 """
 from __future__ import print_function
 
@@ -58,6 +58,7 @@ def seed_everything(seed=0):
     random.seed(seed)
     np.random.seed(seed)
 
+
 class Evaluator(object):
 
     """
@@ -66,8 +67,8 @@ class Evaluator(object):
 
     ego_vehicles = []
 
-    # Tunable parameters
-    client_timeout = 10.0  # in seconds
+    # 可调制的参数
+    client_timeout = 10.0  # 客户端超时时间（以秒为单位）
     wait_for_world = 20.0  # in seconds
 
     def __init__(self, args, statistics_manager, ServerDocker=None):
