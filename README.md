@@ -58,9 +58,13 @@ Required packages: [requirements.txt](https://github.com/yixiao1/CILv2_multiview
 
         docker pull carlasim/carla:0.9.13
 
-    To build up, run:
+    To build up, run（可选）:
 
-        docker image build -f $ROOTDIR/CARLA_0.9.13/Dockerfile -t CARLA0913 $ROOTDIR/CARLA_0.9.13/
+        docker image build -f $ROOTDIR/CARLA_0.9.13/Dockerfile -t carla_0.9.13 $ROOTDIR/CARLA_0.9.13/
+    
+    启动docker：
+
+        sudo docker run --privileged --gpus all --net=host -e DISPLAY=$DISPLAY carlasim/carla:0.9.13 /bin/bash ./CarlaUE4.sh
 
 * Download the CIL++ repository in your root directory:
 
@@ -182,6 +186,52 @@ For training models, you can either
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
+
+-------------------------------------------------------------
+
+### Issues
+执行`docker pull`报找不到服务器的错：
+Error response from daemon: Get "https://registry-1.docker.io/v2/": net/http:
+
+解决办法：
+```shell
+touch /etc/docker/daemon.json
+chmod 777 -R /etc/docker/daemon.json
+vi /etc/docker/daemon.json
+```
+添加内容：
+```text
+{
+  "registry-mirrors": ["https://docker-proxy.741001.xyz","https://registry.docker-cn.com"]
+}
+```
+```shell
+systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
+systemctl daemon-reload
+```
+
+- 安装nvidia docker
+```shell
+curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo apt-get install -y nvidia-docker2
+sudo systemctl restart docker.service
+```
+
+
+ImportError: libtiff.so.5: cannot open shared object file: No such file or directory
+```shell
+ll /usr/lib/x86_64-linux-gnu/libtiff.so
+# /usr/lib/x86_64-linux-gnu/libtiff.so -> libtiff.so.6.0.1
+sudo apt install libtiff5-dev
+```
 
 -------------------------------------------------------------
 ### License
