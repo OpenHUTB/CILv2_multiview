@@ -62,8 +62,10 @@ nocrash_newweathertown_busy_cilv2 () {
 }
 
 # 包含3个CILv2场景：空的场景、常规场景、繁忙场景
+# 在运行到 _results/sensor/nocrash_newweathertown_regular_Town02_lbc/Ours_Town1_2_45_Seed0_20FPS/WetSunset_route00006
+# 连接不到服务器了
 function_array=(
-"nocrash_newweathertown_empty_cilv2"
+# "nocrash_newweathertown_empty_cilv2"
 "nocrash_newweathertown_regular_cilv2"
 "nocrash_newweathertown_busy_cilv2")
 

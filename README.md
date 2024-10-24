@@ -25,40 +25,40 @@ Please watch our online [video](https://youtu.be/fY56Gliz_Rw?si=VfXa-_b6TgdVgLZD
 -------------------------------------------------------------
 ### Summary
 
-In this repository, you could find materials in order to:
+在此存储库中，您可以找到以下材料：
 
- * Benchmark the trained CIL++ model proposed in our paper
- * Collect datasets using Roach RL expert driver from [this paper](https://arxiv.org/abs/2108.08265)
- * Train/evaluate (offline) your own trained CIL++ models
+ * 对我们论文中提出的经过训练的 CIL++ 模型进行基准测试
+ * 使用 Roach RL 专家驱动程序从 [该论文](https://arxiv.org/abs/2108.08265) 收集数据集
+ * 训练/评估（离线）您自己训练过的 CIL++ 模型
  * Test your models on CARLA 0.9.13
 
 -------------------------------------------------------------
-### Environment Setup
+### 环境设置
 
-Python version: 3.8
+Python 版本: 3.8
 
-Cuda version: 11.6
+Cuda 版本： 11.6
 
-Required packages: [requirements.txt](https://github.com/yixiao1/CILv2_multiview/blob/main/requirements.txt)
+所需要的包: [requirements.txt](https://github.com/yixiao1/CILv2_multiview/blob/main/requirements.txt)
 
-* Set up the conda environment for the experiments:
+* 为实验设置 conda 环境：
 
         conda create --name CILv2Env python=3.8
         conda activate CILv2Env
 
-* Download [CARLA 0.9.13](https://github.com/carla-simulator/carla/releases/tag/0.9.13/) to your root directory and build up CARLA docker:
+* 下载 [CARLA 0.9.13](https://github.com/carla-simulator/carla/releases/tag/0.9.13/) 到你的根目录并构建 CARLA docker：
 
         export ROOTDIR=<Path to your root directory>
         cd $ROOTDIR
         export CARLAPATH=$ROOTDIR/CARLA_0.9.13/PythonAPI/carla/:$ROOTDIR/CARLA_0.9.13/PythonAPI/carla/dist/carla-0.9.13-py3.7-linux-x86_64.egg
 
-* For using CARLA docker, you can either 1) pull or 2) build up the container:
+* 为了使用 CARLA 容器，可使用 1) 拉取或者 2) 构建容器：
 
-    To pull, run:
+    1）拉取官方镜像，运行：
 
         docker pull carlasim/carla:0.9.13
 
-    To build up, run（可选）:
+    2）构建镜像，运行（可选）:
 
         docker image build -f $ROOTDIR/CARLA_0.9.13/Dockerfile -t carla_0.9.13 $ROOTDIR/CARLA_0.9.13/
     
@@ -66,12 +66,12 @@ Required packages: [requirements.txt](https://github.com/yixiao1/CILv2_multiview
 
         sudo docker run --privileged --gpus all --net=host -e DISPLAY=$DISPLAY carlasim/carla:0.9.13 /bin/bash ./CarlaUE4.sh
 
-* Download the CIL++ repository in your root directory:
+* 将 CIL++ 存储库下载到您的根目录中：
 
         cd $ROOTDIR
         git clone https://github.com/yixiao1/CILv2_multiview.git
 
-* Define environment variables:
+* 定义环境变量：
 
         export TRAINING_ROOT=$ROOTDIR/CILv2_multiview
         export DRIVING_TEST_ROOT=$TRAINING_ROOT/run_CARLA_driving/
@@ -90,8 +90,8 @@ Required packages: [requirements.txt](https://github.com/yixiao1/CILv2_multiview
 -------------------------------------------------------------
 ### 对训练好的 CIL++ 进行基准测试
 
-* Download our trained CIL++ models [_results.tar.gz](https://drive.google.com/file/d/1GLo5mVrmyNsb5pLqksYnjR8fN1-ZptHE/view?usp=sharing)
-to your `TRAINING_RESULTS_ROOT/_results`. The saving pattern should be $TRAINING_RESULTS_ROOT/_results/Ours/TownXX/...:
+* 下载训练好的 CIL++ 模型 [_results.tar.gz](https://drive.google.com/file/d/1GLo5mVrmyNsb5pLqksYnjR8fN1-ZptHE/view?usp=sharing)
+到目录 `TRAINING_RESULTS_ROOT/_results` 下。保存的目录模式应该为 $TRAINING_RESULTS_ROOT/_results/Ours/TownXX/...：
 
         mkdir -p $TRAINING_RESULTS_ROOT/_results
         tar -zxvf _results.tar.gz -C $TRAINING_RESULTS_ROOT/_results/
@@ -102,34 +102,32 @@ to your `TRAINING_RESULTS_ROOT/_results`. The saving pattern should be $TRAINING
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
 
 -------------------------------------------------------------
-### Dataset Collection with Roach RL expert
+### 使用 Roach RL expert 进行数据收集
 
-For training models, you can either
+为了训练模型，你可以
 
-* Download our collected datasets:
+* 下载我们收集好的数据集：
 
-    For easy downloading, the folders are divided into several parts and all compressed in zip files.
-    For model training, please unzip them into your `DATASET_PATH`. The dataloader will access to the full paths of
-    $DATASET_PATH/<dataset_folder_name>, where the `<dataset_folder_name>` will be defined by `TRAIN_DATASET_NAME`/`VALID_DATASET_NAME`
-    in the [exp yaml file](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml)
+    为了方便下载，文件夹被分成几个部分，并全部压缩在 zip 文件中。
+    对于模型训练，请将它们解压到您的 `DATASET_PATH` 中。数据加载器 dataloader 将访问 $DATASET_PATH/<dataset_folder_name> 的完整路径，其中 `<dataset_folder_name>` 将由 [exp yaml 文件](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 中的 `TRAIN_DATASET_NAME`/`VALID_DATASET_NAME` 定义
 
-    * Small test datasets:
+    * 小测试数据集：
 
-        Training: [part 1](http://datasets.cvc.uab.es/CILv2/smalltrain1.tar.gz), [part 2](http://datasets.cvc.uab.es/CILv2/smalltrain2.tar.gz)
+        训练： [part 1](http://datasets.cvc.uab.es/CILv2/smalltrain1.tar.gz), [part 2](http://datasets.cvc.uab.es/CILv2/smalltrain2.tar.gz)
 
-        Offline Evaluation: [part 3](http://datasets.cvc.uab.es/CILv2/smallval1.tar.gz)
+        离线评估： [part 3](http://datasets.cvc.uab.es/CILv2/smallval1.tar.gz)
 
 
-    * Single-lane towns:
+    * 单车道城镇：
 
-        Training: [part 4](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_LBC_3cam.tar.gz),
+        训练： [part 4](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_LBC_3cam.tar.gz),
         [part 5](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_NoCrash_3cam.tar.gz)
 
-        Offline Evaluation: [part 6](http://datasets.cvc.uab.es/CILv2/Roach_LBCRoutes_3cam_valid.tar.gz)
+        离线评估： [part 6](http://datasets.cvc.uab.es/CILv2/Roach_LBCRoutes_3cam_valid.tar.gz)
 
-    * Multi-lane towns:
+    * 多车道城镇：
 
-        Training:
+        训练：
         [part 7](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T1_3cam.tar.gz),
         [part 8](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T1_dense_3cam.tar.gz),
         [part 9](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T2_3cam.tar.gz),
@@ -139,52 +137,51 @@ For training models, you can either
         [part 13](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T6_3cam.tar.gz),
         [part 14](http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T6_dense_3cam.tar.gz)
 
-        Offline Evaluation: same as part 6
+        离线评估： 和 part 6 一样
 
-* Collect new datasets. The RL expert driver we used for data collection is from [this work](https://github.com/zhejz/carla-roach)
+* 收集新的数据集。我们用于数据收集的 RL 专家驱动程序来自[这项工作](https://github.com/zhejz/carla-roach)
 
 -------------------------------------------------------------
-### Training & performing offline evaluation on new trained CIL++ models
+### 在新训练的 CIL++ 模型上 训练并执行离线评估
 
-* You need to define a configuration file for training. Please refer to [this file](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) in `configs` folder as an example
+* 你需要定义一个用于训练的配置文件。请参考 `configs` 文件夹中的 [此文件](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 作为示例
 
-* Run the main.py file:
+* 运行 main.py 文件：
 
         python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
 
-    where `--process-type` defines the process type (could be either train_val or val_only), `--gpus` defines the gpus to be used,
-    `--folder` is the [configuration folder name](https://github.com/yixiao1/CILv2_multiview/tree/main/configs/CILv2),
-    and `--exp` is the [configuration yaml file name](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml).
-    Your results will be stored in $TRAINING_RESULTS_ROOT/_results/<folder_name>/<exp_name>/
+    这里 `--process-type` 定义处理类型（可以是 train_val 或者 val_only）, `--gpus` 定义使用的 gpus，
+    `--folder` 是 [配置文件夹名](https://github.com/yixiao1/CILv2_multiview/tree/main/configs/CILv2),
+    并且 `--exp` 是 [配置 yaml 文件名](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 。
+    你的结果将保存在 $TRAINING_RESULTS_ROOT/_results/<folder_name>/<exp_name>/
 
 -------------------------------------------------------------
-### Test your own trained models on CARLA simulator
+### 在 CARLA 模拟器上测试你自己训练的模型
 
-* Please make sure that your models are saved in the proper pattern as the downloaded CIL++ model:
+* 请确保您的模型以与下载的 CIL++ 模型相同的正确模式保存： 
 
         cd $TRAINING_RESULTS_ROOT/_results/<folder_name>/<exp_name>/
 
-    where `folder_name` the the experiment folder name, and `exp_name` is the configuration file name.
-    Your models are all saved in ./checkpoints/
+    其中 `folder_name` 是实验文件夹名称，`exp_name` 是配置文件名。
+    您的模型都保存在 ./checkpoints/
 
-* Define a config file for the benchmarking:
+* 定义基准测试的配置文件：
 
         cd $TRAINING_RESULTS_ROOT/_results/<folder_name>/<exp_name>
         > config45.json
 
-    In the json file, you need to define the model/checkpoint to be tested:
+    在json文件中，需要定义要测试的模型/检查点： 
 
             {
                 "agent_name": "CILv2",
                 "checkpoint": 45,
                 "yaml": "CILv2.yaml"
             }
-    where `checkpoint` indicates the checkpoint to be tested, `yaml` is the training configuration file which was
-    automatically generated during training. Please refer to the json file in the downloaded [_results.tar.gz](https://drive.google.com/file/d/1GLo5mVrmyNsb5pLqksYnjR8fN1-ZptHE/view?usp=sharing)
+    其中 `checkpoint` 表示需要测试的检查点，`yaml` 是训练配置文件，在训练过程中自动生成，请参考下载的 [_results.tar.gz](https://drive.google.com/file/d/1GLo5mVrmyNsb5pLqksYnjR8fN1-ZptHE/view?usp=sharing) 中的 json 文件
 
-* Benchmark your model:
+* 对你的模型进行基准测试：
 
-    Notice that to benchmark your own trained models, you need to modify the [script](https://github.com/yixiao1/CILv2_multiview/blob/main/run_CARLA_driving/scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02_lbc.sh) by changing the `--agent-config`
+    请注意，为了对您自己训练的模型进行基准测试，您需要通过更改 `--agent-config` 来修改 [脚本](https://github.com/yixiao1/CILv2_multiview/blob/main/run_CARLA_driving/scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02_lbc.sh) 
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh

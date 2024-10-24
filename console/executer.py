@@ -3,6 +3,7 @@ import os
 from configs._global import create_exp_path
 from . import train_val, val
 
+
 def execute_train_val(gpus_list, exp_batch, exp_alias):
     """
 

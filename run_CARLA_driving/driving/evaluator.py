@@ -54,6 +54,8 @@ sensors_to_icons = {
     'sensor.can_bus':           'carla_canbus'
 }
 
+
+# 将系统中所有地方都设置为相同的随机数种子
 def seed_everything(seed=0):
     random.seed(seed)
     np.random.seed(seed)
@@ -69,12 +71,12 @@ class Evaluator(object):
 
     # 可调制的参数
     client_timeout = 10.0  # 客户端超时时间（以秒为单位）
-    wait_for_world = 20.0  # in seconds
+    wait_for_world = 20.0  # 等待时间的时间（以秒为单位）
 
     def __init__(self, args, statistics_manager, ServerDocker=None):
         """
-        Setup CARLA client and world
-        Setup ScenarioManager
+        设置 CARLA 客户端和世界
+        设置场景管理器 ScenarioManager
         """
         self.ServerDocker = ServerDocker
         self.statistics_manager = statistics_manager
@@ -84,10 +86,9 @@ class Evaluator(object):
 
         self.frame_rate = float(args.fps)  # in Hz
 
-        # First of all, we need to create the client that will send the requests
-        # to the simulator. Here we'll assume the simulator is accepting
-        # requests in the localhost at port 2000.
-        # If using docker, the free port will be allocated automatically
+        # 首先，我们需要创建向模拟器发送请求的客户端。
+        # 这里我们假设模拟器接受本地机器 localhost 的 2000 端口的请求。
+        # 如果使用 docker，会随机分配未使用的端口
         if self.ServerDocker is not None:
             args.port = find_free_port()
             self.ServerDocker.reset(args.host, args.port)
@@ -105,25 +106,25 @@ class Evaluator(object):
             if LooseVersion(dist.version) < LooseVersion('0.9.10'):
                 raise ImportError("CARLA version 0.9.10.1 or newer required. CARLA version found: {}".format(dist))
 
-        # Load agent
+        # 加载代理
         module_name = os.path.basename(args.agent).split('.')[0]
         sys.path.insert(0, os.path.dirname(args.agent))
         self.module_agent = importlib.import_module(module_name)
 
-        # Create the ScenarioManager
+        # 创建场景管理器 ScenarioManager
         self.manager = ScenarioManager(args.timeout, args.debug > 1)
 
-        # Time control for summary purposes
+        # 为了总结的目的进行时间控制
         self._start_time = GameTime.get_time()
         self._end_time = None
 
-        # Create the agent timer
+        # 创建代理计时器
         self._agent_watchdog = Watchdog(int(float(args.timeout)))
         signal.signal(signal.SIGINT, self._signal_handler)
 
     def _signal_handler(self, signum, frame):
         """
-        Terminate scenario ticking when receiving a signal interrupt
+        当接收到中断信号时，就终止场景的节拍
         """
         if self._agent_watchdog and not self._agent_watchdog.get_status():
             raise RuntimeError("Timeout: Agent took too long to setup")
@@ -132,7 +133,7 @@ class Evaluator(object):
 
     def __del__(self):
         """
-        Cleanup and delete actors, ScenarioManager and CARLA world
+        清除并删除参与者、场景管理器 ScenarioManager 和 CARLA 世界
         """
 
         self._cleanup()
@@ -147,13 +148,13 @@ class Evaluator(object):
 
     def _cleanup(self):
         """
-        Remove and destroy all actors
+        移除并销毁所有参与者
         """
 
-        # Simulation still running and in synchronous mode?
+        # 模拟仍然运行并处于同步模式？
         if self.manager and self.manager.get_running_status() \
                 and hasattr(self, 'world') and self.world:
-            # Reset to asynchronous mode
+            # 重置为异步模式
             settings = self.world.get_settings()
             settings.synchronous_mode = False
             settings.fixed_delta_seconds = None
@@ -183,7 +184,7 @@ class Evaluator(object):
 
     def _load_and_wait_for_world(self, args, config):
         """
-        Load a new CARLA world and provide data to CarlaDataProvider
+        加载一个新的 CARLA 世界并为CarlaDataProvider提供数据
         """
 
         town = config.town
@@ -219,7 +220,7 @@ class Evaluator(object):
         CarlaDataProvider.set_random_state_seed(int(args.trafficManagerSeed))
         print('Set seed for random state:', str(int(args.trafficManagerSeed)))
 
-        # Wait for the world to be ready
+        # 等待世界准备好
         if CarlaDataProvider.is_sync_mode():
             self.world.tick()
         else:
@@ -231,9 +232,10 @@ class Evaluator(object):
 
     def _register_statistics(self, config, checkpoint, entry_status, crash_message=""):
         """
-        Computes and saved the simulation statistics
+        计算并保存模拟统计数据
         """
-        # register statistics
+        # 注册统计
+        # 系统运行时间 vs 游戏运行时间 区别？
         current_stats_record = self.statistics_manager.compute_route_statistics(
             config,
             self.manager.scenario_duration_system,
@@ -247,10 +249,9 @@ class Evaluator(object):
 
     def _load_and_run_scenario(self, args, config):
         """
-        Load and run the scenario given by config.
+        加载并运行配置给出的场景。
 
-        Depending on what code fails, the simulation will either stop the route and
-        continue from the next one, or report a crash and stop.
+        根据失败的代码，模拟将停止路线运行并从下一个路线继续，或报告崩溃并停止。
         """
         crash_message = ""
         entry_status = "Started"
@@ -258,21 +259,21 @@ class Evaluator(object):
         print("\n\033[1m========= Preparing {} (repetition {}) =========".format(config.name, config.repetition_index))
         print("> Setting up the agent\033[0m")
 
-        # Prepare the statistics of the route
+        # 准备路线统计数据
         self.statistics_manager.set_route(config.name, config.index)
 
-        # Set up the user's agent, and the timer to avoid freezing the simulation
+        # 设置用户代理和计时器以避免冻结模拟
         try:
             self._agent_watchdog.start()
             agent_class_name = getattr(self.module_agent, 'get_entry_point')()
 
-            # for data collection
+            # 用于数据收集
             if args.data_collection:
                 vision_save_path = os.path.join(os.environ['DATASET_PATH'], config.package_name, config.name)
                 self.agent_instance = getattr(self.module_agent, agent_class_name) \
                     (args.agent_config, save_driving_vision=vision_save_path)
 
-            # for saving benchmark driving episodes
+            # 用于保存基准驾驶事件
             else:
                 vision_save_path = os.path.join(os.environ['SENSOR_SAVE_PATH'], config.package_name,
                                                 args.checkpoint.split('/')[-1].split('.')[-2], config.name,
@@ -283,7 +284,7 @@ class Evaluator(object):
 
             config.agent = self.agent_instance
 
-            # Check and store the sensors
+            # 检查并保存传感器
             if not self.sensors:
                 self.sensors = self.agent_instance.sensors()
                 track = self.agent_instance.track
@@ -296,7 +297,7 @@ class Evaluator(object):
             self._agent_watchdog.stop()
 
         except SensorConfigurationInvalid as e:
-            # The sensors are invalid -> set the execution to rejected and stop
+            # 传感器无效 -> 将执行设置为拒绝并停止
             print("\n\033[91mThe sensor's configuration used is invalid:")
             print("> {}\033[0m\n".format(e))
             traceback.print_exc()
@@ -308,7 +309,7 @@ class Evaluator(object):
             sys.exit(-1)
 
         except Exception as e:
-            # The agent setup has failed -> set the execution to rejected and stop
+            # 代理设置失败 -> 将执行设置为拒绝并停止
             print("\n\033[91mCould not set up the required agent:")
             print("> {}\033[0m\n".format(e))
             traceback.print_exc()
@@ -321,7 +322,7 @@ class Evaluator(object):
 
         print("\033[1m> Loading the world\033[0m")
 
-        # Load the world and the scenario
+        # 加载世界和场景
         try:
             self._load_and_wait_for_world(args, config)
             self.agent_instance.set_world(self.world)
@@ -330,18 +331,18 @@ class Evaluator(object):
 
             self.agent_instance.set_ego_vehicle(scenario._ego_vehicle)
 
-            # Night mode
+            # 夜间模式
             if config.weather.sun_altitude_angle < 0.0:
                 for vehicle in scenario.ego_vehicles:
                     vehicle.set_light_state(carla.VehicleLightState(self._vehicle_lights))
 
-            # Load scenario and run it
+            # 加载场景并运行它
             if args.record:
                 self.client.start_recorder("{}/{}_rep{}.log".format(args.record, config.name, config.repetition_index))
             self.manager.load_scenario(scenario, self.agent_instance, config.repetition_index)
 
         except Exception as e:
-            # The scenario is wrong -> set the execution to crashed and stop
+            # 场景错误 -> 将执行设置为崩溃并停止
             print("\n\033[91mThe scenario could not be loaded:")
             print("> {}\033[0m\n".format(e))
             traceback.print_exc()
@@ -358,12 +359,12 @@ class Evaluator(object):
 
         print("\033[1m> Running the route\033[0m")
 
-        # Run the scenario
+        # 运行场景
         try:
             self.manager.run_scenario()
 
         except AgentError as e:
-            # The agent has failed -> set the execution to crashed and stop
+            # 代理失败 -> 将执行设置为崩溃并停止
             print("\n\033[91mStopping the route, the agent has crashed:")
             print("> {}\033[0m\n".format(e))
             traceback.print_exc()
@@ -385,7 +386,7 @@ class Evaluator(object):
             self._cleanup()
             sys.exit(-1)
 
-        # Stop the scenario
+        # 停止场景
         try:
             print("\033[1m> Stopping the route\033[0m")
             self.manager.stop_scenario()
@@ -394,7 +395,7 @@ class Evaluator(object):
             if args.record:
                 self.client.stop_recorder()
 
-            # Remove all actors
+            # 移除所有参与者
             scenario.remove_all_actors()
 
             self._cleanup()
@@ -412,7 +413,7 @@ class Evaluator(object):
 
     def run(self, args):
         """
-        Run the challenge mode
+        运行挑战模式
         """
         route_indexer = RouteIndexer(args.routes, args.scenarios, args.repetitions)
 
@@ -424,19 +425,20 @@ class Evaluator(object):
             route_indexer.save_state(args.checkpoint)
 
         while route_indexer.peek():
-            # setup
+            # 设置
             config = route_indexer.next()
-            # run
+            # 运行
             self._load_and_run_scenario(args, config)
 
             route_indexer.save_state(args.checkpoint)
 
-        # save global statistics
+        # 保存全局统计数据
         print("\033[1m> Registering the global statistics\033[0m")
         global_stats_record = self.statistics_manager.compute_global_statistics(route_indexer.total)
         StatisticsManager.save_global_record(global_stats_record, self.sensor_icons, route_indexer.total, args.checkpoint)
         if self.ServerDocker is not None:
             self.ServerDocker.stop()
+
 
 def main():
     description = "CARLA Evaluation: evaluate your Agent in CARLA simulator\n"
