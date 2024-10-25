@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from torch.nn import DataParallel
 
 ########################################################
-### Color plate
+# Color plate
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_SCARLET_RED_0 = (255, 0, 0)
@@ -179,6 +179,7 @@ def write_model_results(experiment_path, model_name, results_dict, acc_as_action
         print (" The results have been saved in: ", results_file_csv)
 
 
+# 判断是否完成对训练模型的验证
 def eval_done(experiment_path, dataset_paths, epoch):
     results_files = glob.glob(os.path.join(experiment_path, '*.csv'))
     for dataset_path in dataset_paths:

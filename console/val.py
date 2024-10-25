@@ -56,11 +56,11 @@ def execute(gpus_list, exp_batch, exp_name):
                                                              g_conf.EXPERIMENT_NAME, 'checkpoints'))
     if all_checkpoints is not None:
         for eval_checkpoint in all_checkpoints:
-            if int(eval_checkpoint.split('_')[-2]) in g_conf.EVAL_SAVE_EPOCHES:
+            if int(eval_checkpoint.split('_')[-1].split('.')[0]) in g_conf.EVAL_SAVE_EPOCHES:
                 if not eval_done(os.path.join(
-                        os.environ["TRAINING_RESULTS_ROOT"], '_results', g_conf.EXPERIMENT_BATCH_NAME,g_conf.EXPERIMENT_NAME),
+                        os.environ["TRAINING_RESULTS_ROOT"], '_results', g_conf.EXPERIMENT_BATCH_NAME, g_conf.EXPERIMENT_NAME),
                                  g_conf.VALID_DATASET_NAME,
-                        eval_checkpoint.split('_')[-2]):
+                        eval_checkpoint.split('_')[-1].split('.')[0]):
                     checkpoint = torch.load(eval_checkpoint)
                     if isinstance(model, torch.nn.DataParallel):
                         model.module.load_state_dict(checkpoint['model'])
