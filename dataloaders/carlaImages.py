@@ -25,7 +25,7 @@ class carlaImages(data.Dataset):
 
         for dataset_name in dataset_list:
             self.images_base = os.path.join(self.root, dataset_name)
-            #### For different models, we set different strategy for loading data, and we save the npy file for next time better loading
+            # 针对不同的模型，我们设置了不同的数据加载策略，并且保存了npy文件，以便下次更好的加载
             canbus_paths = self.recursive_glob(rootdir=self.images_base, prefix='cmd_fix', suffix='.json')
             all_cam_paths_dict = {}
             for camera_type in g_conf.DATA_USED:
@@ -33,7 +33,7 @@ class carlaImages(data.Dataset):
                 all_cam_paths_dict.update({camera_type: img_paths})
             self.data = self._add_canbus_data_point(self.data, all_cam_paths_dict, canbus_paths)
 
-            # with multiple frames input we also need to ensure the frames are from the same episode
+            # 对于多帧输入，我们还需要确保这些帧来自同一剧集episode
             self.data_in_chunk = self.get_episode_chunk(self.data_in_chunk, rootdir=self.images_base,
                                                         prefix='cmd_fix', suffix='.json')
 
@@ -73,8 +73,8 @@ class carlaImages(data.Dataset):
         return index
 
     def __getitem__(self, index):
-        # We try to avoid "list out of range problem". Since we may use more than one frame for inputs or outputs, the index should not be in the last few points
-        # Besides, we also make these frames to come from the same episode, which means that they need to be sequential
+        # 我们尽量避免“列表超出范围问题”。由于我们可能使用多个框架作为输入或输出，因此索引不应位于最后几个点。
+        # 此外，我们还让这些帧来自同一集，这意味着它们需要是连续的
         index = self.analyze_index(index)
 
         data_vec = {'current': [], 'future': []}
@@ -93,7 +93,7 @@ class carlaImages(data.Dataset):
                 one_frame_data = self.transform_val(sample)
                 data_vec['current'].append(one_frame_data)
 
-        # the output has time delay
+        # 输出有时间延迟
         if g_conf.ENCODER_OUTPUT_STEP_DELAY > 0 or g_conf.DECODER_OUTPUT_FRAMES_NUM != g_conf.ENCODER_INPUT_FRAMES_NUM:
             for o in range(g_conf.DECODER_OUTPUT_FRAMES_NUM):
                 datapoint_future = self.data[index - (
@@ -125,11 +125,11 @@ class carlaImages(data.Dataset):
 
     def _add_canbus_data_point(self, full_dataset, img_paths_dict, canbus_paths):
         """
-            Add a data point to the vector of full dataset
+            向完整数据集的向量中添加一个数据点
             :param full_dataset:
             :param img_paths:
             :param canbus_paths:
-            :param camera_type: the augmentation camera type to be applyed to the steering.
+            :param camera_type: 应用于转向的增强相机类型。
             :return:
             """
         for camera_type, img_paths in img_paths_dict.items():
@@ -152,10 +152,10 @@ class carlaImages(data.Dataset):
         return full_dataset
 
     def recursive_glob(self, rootdir='.', prefix='', suffix=''):
-        """Performs recursive glob with given suffix and rootdir
-            :param rootdir is the root directory
-            :param prefix is the start prefix to be searched
-            :param suffix is the suffix to be searched
+        """使用给定的后缀和 rootdir 执行递归 glob
+            :param rootdir 是根目录
+            :param prefix 是要搜索的起始前缀
+            :param suffix 是要搜索的后缀
         """
         return [os.path.join(looproot, filename)
                 for looproot, _, filenames in sorted(os.walk(rootdir))

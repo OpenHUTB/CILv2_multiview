@@ -47,19 +47,22 @@ def checkpoint_parse_configuration_file(filename):
     return configuration_dict['yaml'], configuration_dict['checkpoint'], \
            configuration_dict['agent_name']
 
+
 def load_entry_point(name):
     mod_name, attr_name = name.split(":")
     mod = import_module(mod_name)
     fn = getattr(mod, attr_name)
     return fn
 
+
+# 该函数返回新类的名称，这将用于自动实例化您的代理
 def get_entry_point():
     return 'CILv2_agent'
 
 
 class Track(Enum):
     """
-    This enum represents the different tracks of the CARLA AD leaderboard.
+    该枚举代表 CARLA AD 排行榜的不同赛道。
     """
     SENSORS = 'SENSORS'
     MAP = 'MAP'
@@ -67,24 +70,24 @@ class Track(Enum):
 
 class CILv2_agent(object):
     """
-    Autonomous agent base class. All user agents have to be derived from this class
+    自主代理基类。所有用户代理都必须从此类派生
     """
 
     def __init__(self, path_to_conf_file, save_driving_vision, save_driving_measurement, plug_in_expert=False):
         self.track = Track.SENSORS
-        #  current global plans to reach a destination
+        # 当前全局规划将要到达的目的地
         self._global_plan = None
         self._global_plan_world_coord = None
 
-        # this data structure will contain all sensor data
+        # 该数据结构将包含所有传感器数据
         self.sensor_interface = SensorInterface()
         self.waypointer = None
         self.attn_weights = None
         self.vision_save_path = save_driving_vision
         self.save_measurement = save_driving_measurement
-        self.plug_in_expert=plug_in_expert
+        self.plug_in_expert = plug_in_expert
 
-        # agent's initialization
+        # 代理初始化
         self.setup_model(path_to_conf_file)
 
         self.cmap_2 = plt.get_cmap('jet')
@@ -94,9 +97,9 @@ class CILv2_agent(object):
 
     def setup_model(self, path_to_conf_file):
         """
-        Initialize everything needed by your agent and set the track attribute to the right type:
-            Track.SENSORS : CAMERAS, LIDAR, RADAR, GPS and IMU sensors are allowed
-            Track.MAP : OpenDRIVE map is also allowed
+        初始化代理所需的一切，并将赛道属性设置为正确的类型：
+            Track.SENSORS : 允许使用相机 CAMERAS, 激光雷达 LIDAR, 雷达 RADAR, GPS 和 IMU 传感器
+            Track.MAP : 允许使用 OpenDRIVE 地图
         """
 
         exp_dir = os.path.join('/', os.path.join(*path_to_conf_file.split('/')[:-1]))
@@ -137,7 +140,7 @@ class CILv2_agent(object):
 
     def set_global_plan(self, global_plan_gps, global_plan_world_coord):
         """
-        Set the plan (route) for the agent
+        为代理设置规划（路线）
         """
 
         if self.plug_in_expert:

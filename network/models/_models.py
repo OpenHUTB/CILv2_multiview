@@ -39,7 +39,7 @@ class CILv2_multiview_attention(nn.Module):
             self._dataloader_iter = iter(self._get_dataloader())
 
         elif g_conf.PROCESS_NAME == 'val_only':
-            self._train_loader, self._val_loaders= \
+            self._train_loader, self._val_loaders = \
                 make_data_loader(self.name, os.environ["DATASET_PATH"], g_conf.TRAIN_DATASET_NAME, g_conf.BATCH_SIZE,
                                  g_conf.VALID_DATASET_NAME, g_conf.EVAL_BATCH_SIZE)
 

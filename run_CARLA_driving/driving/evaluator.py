@@ -92,7 +92,7 @@ class Evaluator(object):
         if self.ServerDocker is not None:
             args.port = find_free_port()
             self.ServerDocker.reset(args.host, args.port)
-            args.trafficManagerPort=find_free_port()
+            args.trafficManagerPort = find_free_port()
 
         self.client = carla.Client(args.host, int(args.port))
         if args.timeout:

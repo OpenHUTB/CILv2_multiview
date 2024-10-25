@@ -1,4 +1,4 @@
-# The main file to show how to use the vision algorithms here.
+# 该主文件用于显示如何使用这里的视觉算法。
 import os
 import argparse
 
@@ -40,16 +40,15 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     if args.gpus:
-        # Check if the vector of GPUs passed are valid.
+        # 检查传递的 GPU 向量是否有效。
         for gpu in args.gpus:
             try:
                 int(gpu)
-            except ValueError:  # Reraise a meaningful error.
+            except ValueError:  # 重新抛出有意义的错误。
                 raise ValueError("GPU is not a valid int number")
-        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(args.gpus)  # This must to be ahead of the whole excution
+        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(args.gpus)  # 这必须先于整个执行
     else:
         raise ValueError('You need to define the ids of GPU you want to use by adding: --gpus')
-
 
     from console import execute_train_val, execute_val
     if args.process_type is not None:

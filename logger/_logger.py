@@ -12,6 +12,7 @@ TRAIN_IMAGE_LOG_FREQUENCY = 1
 TRAIN_LOG_FREQUENCY = 1
 tl = ''
 
+
 def create_log(save_full_path, train_log_frequency=1, train_image_log_frequency=15):
                #eval_log_frequency=1, image_log_frequency=15):
 

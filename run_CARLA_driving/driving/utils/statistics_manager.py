@@ -6,7 +6,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """
-This module contains a statistics manager for the CARLA AD leaderboard
+该模块包含 CARLA AD 排行榜的统计管理器
 """
 
 from __future__ import print_function
@@ -80,8 +80,8 @@ def compute_route_length(config):
 class StatisticsManager(object):
 
     """
-    This is the statistics manager for the CARLA leaderboard.
-    It gathers data at runtime via the scenario evaluation criteria.
+    这是 CARLA 排行榜的统计管理器。
+    它通过场景评估标准在运行时收集数据。
     """
 
     def __init__(self):
@@ -105,31 +105,29 @@ class StatisticsManager(object):
         route_record.index = index
 
         if index < len(self._registry_route_records):
-            # the element already exists and therefore we update it
+            # 该元素已经存在，因此我们更新它
             self._registry_route_records[index] = route_record
         else:
             self._registry_route_records.append(route_record)
 
     def set_scenario(self, scenario):
         """
-        Sets the scenario from which the statistics will be taken.
+        设置进行统计的场景。
         
-        This works in conjunction with set_route so that the variable
-        is only active when the simulation is active, to avoid statistic
-        errors in case something breaks between simulations 
+        这与 set_route 配合使用，以便变量仅在模拟处于活动状态时才处于活动状态，以避免在模拟之间发生故障时出现统计错误
         """
         self._master_scenario = scenario
 
     def compute_route_statistics(self, config, duration_time_system=-1, duration_time_game=-1, failure=""):
         """
-        Compute the current statistics by evaluating all relevant scenario criteria
+        通过评估所有相关场景标准来计算当前统计数据
         """
         index = config.index
 
         if not self._registry_route_records or index >= len(self._registry_route_records):
             raise Exception('Critical error with the route registry.')
 
-        # fetch latest record to fill in
+        # 获取最新记录以填写
         route_record = self._registry_route_records[index]
 
         target_reached = False
@@ -147,7 +145,7 @@ class StatisticsManager(object):
 
             for node in self._master_scenario.get_criteria():
                 if node.list_traffic_events:
-                    # analyze all traffic events
+                    # 分析所有交通事件
                     for event in node.list_traffic_events:
                         if event.get_type() == TrafficEventType.COLLISION_STATIC:
                             score_penalty *= PENALTY_COLLISION_STATIC
@@ -192,12 +190,12 @@ class StatisticsManager(object):
                                 else:
                                     score_route = 0
 
-        # update route scores
+        # 更新路线得分
         route_record.scores['score_route'] = score_route
         route_record.scores['score_penalty'] = score_penalty
         route_record.scores['score_composed'] = max(score_route*score_penalty, 0.0)
 
-        # update status
+        # 更新状态
         if target_reached:
             route_record.status = 'Completed'
         else:

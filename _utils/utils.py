@@ -38,11 +38,13 @@ color_plate = {
 
 ########################################################
 
+
 def tryint(s):
     try:
         return int(s)
     except:
         return s
+
 
 def alphanum_key(s):
     """ Turn a string into a list of string and number chunks.
@@ -50,14 +52,17 @@ def alphanum_key(s):
     """
     return [tryint(c) for c in re.split('([0-9]+)', s) ]
 
+
 def sort_nicely(l):
     l.sort(key=alphanum_key)
+
 
 def experiment_log_path(experiment_path, dataset_name):
     # WARNING if the path exist without checkpoints it breaks
     if not os.path.exists(experiment_path):
         os.makedirs(experiment_path)
     return os.path.join(experiment_path, dataset_name + '_result.csv')
+
 
 class DataParallelWrapper(DataParallel):
     def __getattr__(self, name):
@@ -68,6 +73,8 @@ class DataParallelWrapper(DataParallel):
 
     def __len__(self):
         return len(self.module)
+
+
 #@timeit
 def print_train_info(log_frequency, batch_size, model,
                      time_start, acc_time, loss_data, steer_loss_data, acc_loss_data, brake_loss_data=None):
@@ -109,6 +116,7 @@ def generate_specific_rows(filePath, row_indices=[]):
             if i in row_indices:
                 yield line
 
+
 def read_results(result_file, metric=''):
     head = np.genfromtxt(generate_specific_rows(result_file, row_indices=[0]), delimiter=',', dtype='str')
     col = [h.strip() for h in list(head)].index(metric)
@@ -119,13 +127,14 @@ def read_results(result_file, metric=''):
     return res[:, col]
 
 
+# 绘制离线的评估结果
 def draw_offline_evaluation_results(experiment_path, metrics_list, x_range=[0, 10]):
     for metric in metrics_list:
         print('drawing results graph for ', experiment_path, 'of', metric)
         results_files = glob.glob(os.path.join(experiment_path, '*.csv'))
         for results_file in results_files:
             plt.figure()
-            output_path = os.path.join(experiment_path, results_file.split('/')[-1].split('.')[-2]+ '_' + metric+'.jpg')
+            output_path = os.path.join(experiment_path, results_file.split('/')[-1].split('.')[-2] + '_' + metric+'.jpg')
             results_list = read_results(results_file, metric=metric)
             epochs_list = read_results(results_file, metric='epoch')
             plt.ylabel(metric, fontsize=15)
@@ -168,6 +177,7 @@ def write_model_results(experiment_path, model_name, results_dict, acc_as_action
             new_row += "\n"
             f.write(new_row)
         print (" The results have been saved in: ", results_file_csv)
+
 
 def eval_done(experiment_path, dataset_paths, epoch):
     results_files = glob.glob(os.path.join(experiment_path, '*.csv'))

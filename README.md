@@ -30,7 +30,7 @@ Please watch our online [video](https://youtu.be/fY56Gliz_Rw?si=VfXa-_b6TgdVgLZD
  * 对我们论文中提出的经过训练的 CIL++ 模型进行基准测试
  * 使用 Roach RL 专家驱动程序从 [该论文](https://arxiv.org/abs/2108.08265) 收集数据集
  * 训练/评估（离线）您自己训练过的 CIL++ 模型
- * Test your models on CARLA 0.9.13
+ * 在 CARLA 0.9.13 上测试你的模型
 
 -------------------------------------------------------------
 ### 环境设置
@@ -96,7 +96,7 @@ Cuda 版本： 11.6
         mkdir -p $TRAINING_RESULTS_ROOT/_results
         tar -zxvf _results.tar.gz -C $TRAINING_RESULTS_ROOT/_results/
 
-* 对训练好的 CIL++ 进行基准测试: 
+* 对训练好的 CIL++ 进行基准测试（连接不上服务器导致失败后，再次运行可继续）: 
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
@@ -149,6 +149,8 @@ Cuda 版本： 11.6
 * 运行 main.py 文件：
 
         python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
+
+        python main.py --process-type val_only --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
 
     这里 `--process-type` 定义处理类型（可以是 train_val 或者 val_only）, `--gpus` 定义使用的 gpus，
     `--folder` 是 [配置文件夹名](https://github.com/yixiao1/CILv2_multiview/tree/main/configs/CILv2),

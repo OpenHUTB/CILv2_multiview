@@ -8,6 +8,7 @@ import numpy as np
 from .utils import sort_nicely
 from configs import g_conf
 
+
 class DataParallelWrapper(DataParallel):
     def __getattr__(self, name):
         try:
@@ -17,6 +18,7 @@ class DataParallelWrapper(DataParallel):
 
     def __len__(self):
         return len(self.module)
+
 
 def seed_everything(seed=0):
     random.seed(seed)
@@ -38,6 +40,7 @@ def check_saved_checkpoints(checkpoints_path):
         else:
             return None
 
+
 def check_saved_checkpoints_in_total(checkpoints_path):
     if not os.path.exists(checkpoints_path):
         return None
@@ -52,7 +55,7 @@ def check_saved_checkpoints_in_total(checkpoints_path):
 
 def update_learning_rate(optimizer, minimumlr = 0.00001):
     """
-        Adjusts the learning rate based on the schedule
+        根据时间表调整学习率
         """
 
     minlr = minimumlr

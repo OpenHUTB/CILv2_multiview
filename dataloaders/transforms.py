@@ -7,19 +7,18 @@ import numpy as np
 from configs import g_conf
 
 
-
 def canbus_normalization(can_bus_dict, data_ranges):
     for type in data_ranges.keys():
-        # we normalize the steering in range of [-1.0, 1.0]
+        # 我们将转向标准化在 [-1.0, 1.0] 范围内
         if type in ['steer', 'acceleration']:
             if not data_ranges[type] == [-1.0, 1.0]:
                 print('')
                 print('normalizing data for ', type)
                 print('')
-                # we normalize steering data if they are not from [-1.0, 1.0]
+                # 如果转向数据不在 [-1.0, 1.0] 范围内，我们会对其进行正则化
                 can_bus_dict[type] = 2 *((can_bus_dict[type] - data_ranges[type][0]) / (data_ranges[type][1] - data_ranges[type][0])) - 1   # [-1.0, 1.0]
         elif type in ['throttle', 'brake', 'speed']:
-            # we normalize the other can bus data in range of [0.0, 1.0]
+            # 我们将其他 CAN 总线数据标准化在 [0.0, 1.0] 范围内
             if not data_ranges[type] == [0.0, 1.0]:
                 can_bus_dict[type] = abs(can_bus_dict[type]-data_ranges[type][0])/(data_ranges[type][1]-data_ranges[type][0])     # [0.0, 1.0]
 
@@ -27,21 +26,21 @@ def canbus_normalization(can_bus_dict, data_ranges):
             raise KeyError('The transformation of this data type has not yet defined:'+type)
 
     if 'direction' in can_bus_dict.keys():
-        # we encode directions to one-hot vector
+        # 我们将方向编码为独热向量
         if g_conf.DATA_COMMAND_ONE_HOT:
             if g_conf.DATA_COMMAND_CLASS_NUM == 4:
                 can_bus_dict['direction'] = encode_directions_4(can_bus_dict['direction'])
             elif g_conf.DATA_COMMAND_CLASS_NUM == 6:
                 can_bus_dict['direction'] = encode_directions_6(can_bus_dict['direction'])
         else:
-            # we remark directions from 1-4 to 0-3 for torch.embedding layer
+            # 我们将 torch.embedding 层的方向从 1-4 标记为 0-3
             can_bus_dict['direction'] = [can_bus_dict['direction']-1]
     return can_bus_dict
 
+
 def train_transform(data, image_shape, augmentation=False):
     """
-        Apply transformations and augmentations. The
-        output is from 0-1 float.
+        应用变换和增强。输出为 0-1 之间的浮点数。
     """
     if augmentation:
         pass
@@ -49,7 +48,7 @@ def train_transform(data, image_shape, augmentation=False):
     else:
         for camera_type in g_conf.DATA_USED:
             image = data[camera_type]
-            ## WE ALREADY PRE-PROCESSED IMAGES TO DESIRED SIZE
+            ## 我们已经将图像预处理为所需尺寸
             # height = image_shape[1]
             # width = image_shape[2]
             # image = image.resize((width, height))
@@ -58,6 +57,7 @@ def train_transform(data, image_shape, augmentation=False):
             data[camera_type] = image
 
     return data
+
 
 def val_transform(data, image_shape):
     for camera_type in g_conf.DATA_USED:
@@ -94,6 +94,7 @@ def encode_directions_6(directions):
     else:
         raise ValueError("Unexpcted direction identified %s" % str(directions))
 
+
 def encode_directions_4(directions):
     # TURN_LEFT
     if float(directions) == 1.0:
@@ -109,6 +110,7 @@ def encode_directions_4(directions):
         return [0, 0, 0, 1]
     else:
         raise ValueError("Unexpcted direction identified %s" % str(directions))
+
 
 def decode_directions_6(one_hot_direction):
     one_hot_direction = list(one_hot_direction)
@@ -134,6 +136,7 @@ def decode_directions_6(one_hot_direction):
     else:
         raise ValueError("Unexpcted direction identified %s" % one_hot_direction)
 
+
 def decode_directions_4(one_hot_direction):
     one_hot_direction = list(one_hot_direction)
     index = one_hot_direction.index(max(one_hot_direction))
@@ -151,6 +154,7 @@ def decode_directions_4(one_hot_direction):
         return 4.0
     else:
         raise ValueError("Unexpcted direction identified %s" % one_hot_direction)
+
 
 def inverse_normalize_(tensor, mean, std):
     tensors=[]

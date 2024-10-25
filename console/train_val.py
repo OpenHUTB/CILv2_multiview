@@ -9,9 +9,10 @@ from _utils.utils import extract_targets, extract_other_inputs, extract_commands
 from _utils.evaluation import evaluation_saving
 from logger import _logger
 
+
 def train_upstream_task(model, optimizer):
     """
-    Upstream task is for training your model
+    用于模型训练的上游任务
 
     """
     early_stopping_flags = []
@@ -19,7 +20,7 @@ def train_upstream_task(model, optimizer):
     time_start = time.time()
 
     while True:
-        # we get dataloader of the model
+        # 我们得到了模型的数据加载器 dataloader
         dataloader = model._train_loader
         for data in dataloader:
             early_stopping_flags = evaluation_saving(model, optimizer, early_stopping_flags, save_all_checkpoints=True)
@@ -65,12 +66,12 @@ def train_upstream_task(model, optimizer):
             time_start = time.time()
             """
             ################################################
-                Adding tensorboard logs
+                添加 tensorboard 日志
             #################################################
             """
             _logger.add_scalar('Loss', loss.item(), model._current_iteration)
 
-            ## Adding loss to tensorboard
+            ## 向 tensorboard 添加损失
             _logger.add_scalar('Loss_steer', steer_loss.item(), model._current_iteration)
             if g_conf.ACCELERATION_AS_ACTION:
                 _logger.add_scalar('Loss_acceleration', acceleration_loss.item(), model._current_iteration)
@@ -96,14 +97,14 @@ def train_upstream_task(model, optimizer):
         break
 
 
-# The main function maybe we could call it with a default name
+# 也许我们可以用默认名称来调用主函数
 def execute(gpus_list, exp_batch, exp_name):
     """
-        The main training function for decoder.
+        解码器的主要训练功能。
     Args:
-        gpus_list: The list of all GPU can be used
-        exp_batch: The folder with the experiments
-        exp_name: the alias, experiment name
+        gpus_list: 所有可使用的 GPU 列表
+        exp_batch: 包含实验的文件夹
+        exp_name: 别名，实验名称
 
     Returns:
         None
@@ -117,7 +118,7 @@ def execute(gpus_list, exp_batch, exp_name):
     shutil.copyfile(os.path.join('configs', exp_batch, exp_name + '.yaml'),
                     os.path.join(os.environ["TRAINING_RESULTS_ROOT"], '_results',
                                  g_conf.EXPERIMENT_BATCH_NAME, g_conf.EXPERIMENT_NAME, exp_name + '.yaml'))
-    set_type_of_process('train_val', root= os.environ["TRAINING_RESULTS_ROOT"])
+    set_type_of_process('train_val', root=os.environ["TRAINING_RESULTS_ROOT"])
     seed_everything(seed=g_conf.MAGICAL_SEED)
 
     model = Models(g_conf.MODEL_TYPE, g_conf.MODEL_CONFIGURATION)
@@ -125,7 +126,7 @@ def execute(gpus_list, exp_batch, exp_name):
     # print("")
     # print(model)
 
-    num_params=0
+    num_params = 0
     for param in model.parameters():
         num_params += param.numel()
     print('model params: ', num_params)
@@ -135,12 +136,12 @@ def execute(gpus_list, exp_batch, exp_name):
         print("Using multiple GPUs parallel! ")
         model = DataParallelWrapper(model)
 
-    # To load a specific checkpoint
+    # 加载特定检查点
     if g_conf.LOAD_CHECKPOINT:
         latest_checkpoint = os.path.join(os.environ["TRAINING_RESULTS_ROOT"], '_results', g_conf.EXPERIMENT_BATCH_NAME,
                                                                 g_conf.EXPERIMENT_NAME, 'checkpoints', g_conf.LOAD_CHECKPOINT)
 
-    # To train model from scratch, or to resume training on a previous one
+    # 从头开始训练模型，或恢复之前的训练
     elif g_conf.TRAINING_RESUME:
         latest_checkpoint = check_saved_checkpoints(os.path.join(os.environ["TRAINING_RESULTS_ROOT"], '_results', g_conf.EXPERIMENT_BATCH_NAME,
                                                                 g_conf.EXPERIMENT_NAME, 'checkpoints'))
@@ -156,7 +157,7 @@ def execute(gpus_list, exp_batch, exp_name):
         else:
             model.load_state_dict(pretrained_dict)
         optimizer.load_state_dict(checkpoint['optimizer'])
-        # we manually move optimizer state to GPU memory after loading it from the checkpoint
+        # 从检查点加载优化器状态后，我们手动将其移动到 GPU 内存
         for state in optimizer.state.values():
             for k,v in state.items():
                 if torch.is_tensor(v):

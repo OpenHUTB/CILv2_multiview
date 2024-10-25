@@ -11,6 +11,7 @@ from configs import g_conf
 from logger import _logger
 from dataloaders.transforms import inverse_normalize
 
+
 @contextmanager
 def inference_context(model):
     """
@@ -109,6 +110,7 @@ def evaluation_on_model(model, data_loaders, model_name, evaluator, eval_iterati
         results_dict[dataset_name]=results
     return results_dict
 
+
 #@timeit
 def save_model_if_better(results_dict, model, optimizer, save_all=False):
     #we are saving the model if it is better than the previous one
@@ -170,6 +172,7 @@ def save_model_if_better(results_dict, model, optimizer, save_all=False):
         raise NotImplementedError('Not found process name !')
 
     return is_better_flag, best_pred
+
 
 #@timeit
 def evaluation_saving(model, optimizers, early_stopping_flags, save_all_checkpoints = False):

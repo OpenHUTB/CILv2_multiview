@@ -16,20 +16,22 @@ _g_conf = AttributeDict()
 
 _g_conf.immutable(False)
 
-"""#### GENERAL CONFIGURATION PARAMETERS ####"""
-"""#### Training Related Parameters"""
+"""#### 常规配置参数 ####"""
+"""#### 训练相关参数"""
 _g_conf.MAGICAL_SEED = 0
 _g_conf.NUM_WORKER = 14
 _g_conf.DATA_PARALLEL = False
 _g_conf.TRAINING_RESUME = True
 _g_conf.BATCH_SIZE = 120
-_g_conf.NUMBER_EPOCH = 100     # Total number of training iteration
+_g_conf.NUMBER_EPOCH = 100     # 训练迭代总次数
 _g_conf.TRAIN_DATASET_NAME = []
-_g_conf.VALID_DATASET_NAME = []      # More than one datasets could be evaluated, thus a list
+_g_conf.VALID_DATASET_NAME = []      # 可以评估多个数据集，因此需要列出一个列表
 _g_conf.DATA_USED = ['rgb_left', 'rgb_central', 'rgb_right']
 _g_conf.IMAGE_SHAPE = [3, 88, 200]
+# 您要使用的帧步长。
+# 例如，如果您希望有 5 个连续输入图像，每个图像以 20 帧为步长，则应设置 INPUT_FRAMES_NUM =5 和 INPUT_FRAME_INTERVAL=20
 _g_conf.ENCODER_INPUT_FRAMES_NUM = 1
-_g_conf.ENCODER_STEP_INTERVAL = 1     # the pace step of frame you want to use. For example, if you want to have 5 sequential input images taking pre 20-frames as a step, you should set INPUT_FRAMES_NUM =5 and INPUT_FRAME_INTERVAL=20
+_g_conf.ENCODER_STEP_INTERVAL = 1
 _g_conf.ENCODER_OUTPUT_STEP_DELAY = 0  # whether we want to predict the future data points or just the current point
 _g_conf.DECODER_OUTPUT_FRAMES_NUM= 1
 _g_conf.AUGMENTATION = False
@@ -37,7 +39,7 @@ _g_conf.DATA_FPS = 10
 _g_conf.DATA_COMMAND_CLASS_NUM = 4
 _g_conf.DATA_COMMAND_ONE_HOT = True
 _g_conf.DATA_NORMALIZATION = {}
-_g_conf.IMG_NORMALIZATION = {'mean':[0.485, 0.456, 0.406], 'std':[0.229, 0.224, 0.225]}   # ImageNet by default
+_g_conf.IMG_NORMALIZATION = {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}   # ImageNet by default
 _g_conf.EXP_SAVE_PATH = '_results'
 _g_conf.TARGETS = ['steer', 'throttle', 'brake']  # From the float data, the ones that the network should estimate
 _g_conf.ACCELERATION_AS_ACTION = False
@@ -73,8 +75,9 @@ _g_conf.TRAIN_IMAGE_WRITING_NUMBER = 2
 _g_conf.TRAIN_IMAGE_LOG_FREQUENCY = 1000
 _g_conf.TRAIN_PRINT_LOG_FREQUENCY = 100
 
+
 def merge_with_yaml(yaml_filename, process_type='train_val'):
-    """Load a yaml config file and merge it into the global config object"""
+    """加载 yaml 配置文件并将其合并到全局配置对象中"""
     global _g_conf
     with open(yaml_filename, 'r') as f:
 
@@ -109,8 +112,9 @@ def get_names(folder):
     return experiments_in_folder
 
 
+# 创建实验路径
 def create_exp_path(root, experiment_batch, experiment_name):
-    # This is hardcoded the logs always stay on the _logs folder
+    # 这是硬编码的，日志始终保留在 _logs 文件夹中
     root_path = os.path.join(root, '_results')
     if not os.path.exists(os.path.join(root_path, experiment_batch, experiment_name)):
         os.makedirs(os.path.join(root_path, experiment_batch, experiment_name))
@@ -118,11 +122,9 @@ def create_exp_path(root, experiment_batch, experiment_name):
 
 def set_type_of_process(process_type, root):
     """
-    This function is used to set which is the type of the current process, test, train or val
-    and also the details of each since there could be many vals and tests for a single
-    experiment.
+    此函数用于设置当前过程的类型，测试、训练或验证，以及每个过程的详细信息，因为单个实验可能有许多验证和测试。
 
-    NOTE: AFTER CALLING THIS FUNCTION, THE CONFIGURATION CLOSES
+    注意：调用此功能后，配置将关闭
 
     Args:
         type:
@@ -150,13 +152,11 @@ def set_type_of_process(process_type, root):
                 _g_conf.TRAIN_LOG_SCALAR_WRITING_FREQUENCY,
                 _g_conf.TRAIN_IMAGE_LOG_FREQUENCY)
 
-
     _g_conf.immutable(True)
 
 
 def _merge_a_into_b(a, b, stack=None):
-    """Merge config dictionary a into config dictionary b, clobbering the
-    options in b whenever they are also specified in a.
+    """将配置字典 a 合并到配置字典 b 中，当 b 中的选项也在 a 中指定时，会破坏这些选项。
     """
 
     assert isinstance(a, AttributeDict) or isinstance(a, dict), 'Argument `a` must be an AttrDict'
@@ -188,7 +188,6 @@ def _decode_cfg_value(v):
     """
     # Configs parsed from raw yaml will contain dictionary keys that need to be
     # converted to AttrDict objects
-
 
     # All remaining processing is only applied to strings
     if not isinstance(v, str):

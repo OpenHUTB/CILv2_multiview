@@ -8,10 +8,10 @@ def execute_train_val(gpus_list, exp_batch, exp_alias):
     """
 
     Args:
-        gpu: The gpu being used for this execution.
-        module_name: The module name, if it is train, drive or evaluate
-        exp_alias: The experiment alias, file name, to be executed.
-        path: The path were the datasets are
+        gpu: 用于此次执行的 gpu。
+        module_name: 模块名称，如果是训练、驾驶驱动或评估
+        exp_alias: 要执行的实验别名、文件名。
+        path: 数据集的路径
 
     Returns:
 
@@ -24,15 +24,15 @@ def execute_val(gpus_list, exp_batch, exp_alias):
     """
 
     Args:
-        gpu: The gpu being used for this execution.
-        module_name: The module name, if it is train, drive or evaluate
-        exp_alias: The experiment alias, file name, to be executed.
-        path: The path were the datasets are
+        gpu: 用于此次执行的 gpu。
+        module_name: 模块名称，如果是训练、驾驶驱动或评估
+        exp_alias: 要执行的实验别名、文件名。
+        path: 数据集的路径
 
     Returns:
 
     """
-    create_exp_path(os.environ['TRAINING_RESULTS_ROOT'],exp_batch, exp_alias)
+    create_exp_path(os.environ['TRAINING_RESULTS_ROOT'], exp_batch, exp_alias)
     val.execute(gpus_list, exp_batch, exp_alias)
 
 

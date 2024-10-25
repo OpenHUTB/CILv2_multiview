@@ -5,7 +5,7 @@ import carla
 from agents.navigation.local_planner import RoadOption
 
 class Waypointer:
-    EARTH_RADIUS_EQUA = 6378137.0  # 6371km
+    EARTH_RADIUS_EQUA = 6378137.0  # 地球半径：6371km
 
     def __init__(self, world, global_plan_gps, global_route):
 
@@ -224,7 +224,6 @@ class Waypointer:
                }
 
         return obs
-
 
     def wrap_angle(self, angle):
         angle = (angle % 360 + 360) % 360
