@@ -57,7 +57,7 @@ class CIL_multiview(nn.Module):
         d = s_d[-1]  # [B, 4]
         s = s_s[-1]  # [B, 1]
 
-        # image embedding
+        # 图像嵌入
         e_p, _ = self.encoder_embedding_perception(x)    # [B*S*cam, dim, h, w]
         encoded_obs = e_p.view(B, S*len(g_conf.DATA_USED), self.res_out_dim, self.res_out_h*self.res_out_w)  # [B, S*cam, dim, h*w]
         encoded_obs = encoded_obs.transpose(2, 3).reshape(B, -1, self.res_out_dim)  # [B, S*cam*h*w, 512]
@@ -67,12 +67,12 @@ class CIL_multiview(nn.Module):
         encoded_obs = encoded_obs + e_d + e_s
 
         if self.params['TxEncoder']['learnable_pe']:
-            # positional encoding
+            # 位置编码 positional encoding
             pe = encoded_obs + self.positional_encoding    # [B, S*cam*h*w, 512]
         else:
             pe = self.positional_encoding(encoded_obs)
 
-        # Transformer encoder multi-head self-attention layers
+        # Transformer 编码器多头自注意力层
         in_memory, _ = self.tx_encoder(pe)  # [B, S*cam*h*w, 512]
 
         in_memory = torch.mean(in_memory, dim=1)  # [B, 512]

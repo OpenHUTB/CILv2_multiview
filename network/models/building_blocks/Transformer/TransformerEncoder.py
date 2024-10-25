@@ -3,6 +3,7 @@ import copy
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class TransformerEncoder(nn.Module):
     r"""TransformerEncoder is a stack of N encoder layers
 
@@ -18,6 +19,7 @@ class TransformerEncoder(nn.Module):
         self.layers = self._get_clones(encoder_layer, num_layers)
         self.num_layers = num_layers
         self.norm = norm
+
     def forward(self, src, mask= None, src_key_padding_mask= None):
         r"""Pass the input through the encoder layers in turn.
 
@@ -43,7 +45,6 @@ class TransformerEncoder(nn.Module):
 
     def _get_clones(self, module, N):
         return nn.ModuleList([copy.deepcopy(module) for i in range(N)])
-
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -119,8 +120,7 @@ class TransformerEncoderLayer(nn.Module):
 
         return x, attn_output_weights
 
-
-    # self-attention block
+    # 自注意力模块 self-attention block
     def _sa_block(self, x, attn_mask, key_padding_mask):
         x, attn_output_weights = self.self_attn(x, x, x,
                            attn_mask=attn_mask,
@@ -128,7 +128,7 @@ class TransformerEncoderLayer(nn.Module):
                            need_weights=True)
         return self.dropout1(x), attn_output_weights
 
-    # feed forward block
+    # 前馈模块 feed forward block
     def _ff_block(self, x):
         x = self.linear2(self.dropout(self.activation(self.linear1(x))))
         return self.dropout2(x)

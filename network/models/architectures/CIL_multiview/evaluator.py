@@ -6,9 +6,10 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import os
 
+
 class CIL_multiview_Evaluator(object):
     """
-    Evaluate
+    评估
     """
     def __init__(self, name):
         self.reset()
@@ -25,7 +26,7 @@ class CIL_multiview_Evaluator(object):
 
     def process(self, action_outputs, targets_action):
         """
-        Compute the errors sum for the outputs and targets of the neural network in val dataset
+        计算验证数据集中神经网络的输出和目标的误差总和
         """
         B = action_outputs.shape[0]
         self._total_num += B
@@ -34,9 +35,9 @@ class CIL_multiview_Evaluator(object):
         self.accelerations += list(action_outputs[:, 1].detach().cpu().numpy())
         self.gt_steers += list(targets_action[-1][:, 0].detach().cpu().numpy())
         self.gt_accelerations += list(targets_action[-1][:, 1].detach().cpu().numpy())
-        actions_loss_mat_normalized = torch.clip(action_outputs, -1, 1) - targets_action[-1] # (B, len(g_conf.TARGETS))
+        actions_loss_mat_normalized = torch.clip(action_outputs, -1, 1) - targets_action[-1]  # (B, len(g_conf.TARGETS))
 
-        # unnormalize the outputs and targets to compute actual error
+        # 对输出和目标进行非标准化处理以计算实际误差
         if g_conf.ACCELERATION_AS_ACTION:
             self._action_batch_errors_mat += torch.abs(actions_loss_mat_normalized)  # [-1, 1]
 
@@ -61,8 +62,8 @@ class CIL_multiview_Evaluator(object):
         plt.figure()
         W, H = plt.gcf().get_size_inches()
         plt.gcf().set_size_inches([4.0*W, H])
-        plt.plot(range(len(self.gt_steers)), self.gt_steers, color = 'green')
-        plt.plot(range(len(self.steers)), self.steers, color = 'blue')
+        plt.plot(range(len(self.gt_steers)), self.gt_steers, color='green')
+        plt.plot(range(len(self.steers)), self.steers, color='blue')
         plt.ylim([-1.2, 1.2])
         plt.xlabel('frame id')
         plt.ylabel('')
@@ -70,8 +71,9 @@ class CIL_multiview_Evaluator(object):
         plt.close()
         return results
 
+    # 性能衡量的计算
     def metrics_compute(self, action_errors_mat):
-
+        # 方向盘的平均绝对误差(MAE, Mean Absolute Error)
         self._metrics.update({'MAE_steer': torch.sum(action_errors_mat, 0)[0] / self._total_num})
         if g_conf.ACCELERATION_AS_ACTION:
             self._metrics.update({'MAE_acceleration': torch.sum(action_errors_mat, 0)[1] / self._total_num})

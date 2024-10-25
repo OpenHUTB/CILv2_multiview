@@ -9,6 +9,7 @@ from _utils.evaluation import evaluation_on_model
 from .architectures.CIL_multiview.CIL_multiview import CIL_multiview
 from .architectures.CIL_multiview.evaluator import CIL_multiview_Evaluator
 
+
 class CILv2_multiview_attention(nn.Module):
     def __init__(self, params):
         super(CILv2_multiview_attention, self).__init__()

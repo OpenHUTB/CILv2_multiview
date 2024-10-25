@@ -194,9 +194,9 @@ def eval_done(experiment_path, dataset_paths, epoch):
 
 
 def is_result_better(experiment_path, model_name, dataset_name):
-    results_list= read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='MAE')
-    iter_list= read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='iteration')
-    epoch_list= read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='epoch')
+    results_list = read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='MAE')
+    iter_list = read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='iteration')
+    epoch_list = read_results(os.path.join(experiment_path, dataset_name + '_result.csv'), metric='epoch')
     if len(results_list) == 1:  # There is just one result so we save the check sure.
         return True
     if results_list[-1] < min(results_list[:-1]):
