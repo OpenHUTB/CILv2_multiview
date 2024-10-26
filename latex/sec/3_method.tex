@@ -1,5 +1,7 @@
 \section{Method}
 
+\subsection{Problem Setup}
+
 BID is trained by imitation learning, which we formalized as follows.
 Expert demonstrator (drivers) produce an action $a_i$ (ego-vehicle maneuver) when encountering an observation $O_i$, (sensor data, signals) given the expert policy $\pi^{ \star } (O_i)$ (driving skills, attitude, etc.).
 The basic idea behind imitation is to train an agent (here BID) that mimics an expert by using these observation.
@@ -12,10 +14,12 @@ The general imitation learning objective is the
 	argmin E_{(o_i, a_i) ~ P} [P(\pi_\theta (o_i), a_i )].
 \end{equation}
 
+During testing time, we assume that only the trained policy $ \pi_\theta (o_i) $ will be used and no expert will be available.
+
 \begin{figure*}[t]
 	\centering
 	%\fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
-	\includegraphics[width=\linewidth]{fig/net}
+	\includegraphics[width=\linewidth]{fig/net.pdf}
 	\caption{Network architecture of the BID agent:
 	our model is mainly comprised of two parts: perception and decision network.
 	Perception network include dorsal and ventral pathway to understand their surroundings.
@@ -27,12 +31,78 @@ The general imitation learning objective is the
 	}
 	\label{fig:fig2}
 \end{figure*}
-\subsection{Neural Aligned Roach}
-\hspace{1pc}Drawing inspiration from the brain's exceptional mechanisms in perception and decision-making, we have seamlessly integrated the intricate methods of information processing by brain neurons into an autonomous driving system, aiming to significantly enhance the system's interpretability and robustness. As depicted in Fig. \ref{fig:fig2}, our brain-inspired perception network initially captures precise input data from the surrounding environment, encompassing crucial traffic elements such as roads, vehicles, pedestrians, and traffic signals. Subsequently, this data undergoes meticulous processing through a series of deep convolutional neural networks and recurrent networks, along with the utilization of deep neural network activation functions. This processing mimics the handling of external information by various pathways in the brain's visual cortex. Initially, the primary visual cortex (V1) performs initial processing of visual information, extracting salient features. These features are then relayed to the dorsal visual pathway, where the MT/MST (Middle Temporal and Middle Superior Temporal Areas) encode motion features, specializing in the processing of information related to spatial location and movement. Concurrently, the ventral pathway receives these features, and the IT (Inferior Temporal Cortex) encodes target category information, facilitating object recognition. After this series of processing, our network is able to effectively extract and output multi-dimensional features of the current environment, including the appearance features of objects, motion trajectory features, and the fusion of multi-modal information.
 
-These features are then efficiently transmitted to a brain-inspired decision-making network, undergoing further processing through convolutional and recurrent networks, as well as optimization via deep neural network activation functions. This simulates the processing of sensory outcomes by various regions of the prefrontal cortex in the brain. Among them, the OFC (Orbitofrontal Cortex) plays a vital role in setting future action goals, assisting us in clarifying and locking onto the desired objectives. The MPC ( Medial Prefrontal Cortex) plays a crucial role in making choices based on prior behavioral outcomes, ensuring that our behavior is optimized based on experience. The DPC (Dorsal Prefrontal Cortex) excels at generating goals based on sequences, temporal and spatial environments, providing clear directions and guidance for our actions. The VPC (Ventral Prefrontal Cortex) generates goals based on visual and auditory cues, enabling us to respond quickly and adapt to changes in the external environment.  Meanwhile, the CPC (Caudal Prefrontal Cortex) plays an indispensable role in searching, identifying, or locating specific targets, ensuring that we can accurately locate and focus on the targets.  These regions collaborate and participate in decision-making, generating a highly integrated latent feature vector that precisely encapsulates the critical information required for decision-making. Finally, this latent feature vector is mapped through a carefully designed hidden layer, outputting precise and reliable decision-making information such as driving actions, value function estimates, and speed control.
+\subsection{Neural Aligned BID}
+\hspace{1pc}Drawing inspiration from the brain's exceptional mechanisms in perception and decision-making, we have seamlessly integrated the intricate methods of information processing by brain neurons into an autonomous driving system, aiming to significantly enhance the system's interpretability and robustness.
 
-\textbf{\textsf{Reward Function.}} The BID network aims to mimic the superior information processing capabilities of the human brain by meticulously comparing brain activation patterns with network activation patterns. 
+\subsubsection{Perception Network}
+As depicted in Fig.~\ref{fig:fig2}, our brain-inspired perception network initially captures precise input data from the surrounding environment, encompassing crucial traffic elements such as roads, vehicles, pedestrians, and traffic signals. 
+Subsequently, this data undergoes meticulous processing through a series of deep convolutional neural networks and recurrent networks, along with the utilization of deep neural network activation functions. 
+This processing mimics the handling of external information by various pathways in the brain's visual cortex. 
+Initially, the primary visual cortex (V1) performs initial processing of visual information, extracting salient features.
+These features are then relayed to the dorsal visual pathway, where the MT/MST (Middle Temporal and Middle Superior Temporal Areas) encode motion features, specializing in the processing of information related to spatial location and movement.
+Concurrently, the ventral pathway receives these features, and the IT (Inferior Temporal Cortex) encodes target category information, facilitating object recognition. 
+After this series of processing, our network is able to effectively extract and output multi-dimensional features of the current environment, including the appearance features of objects, motion trajectory features, and the fusion of multi-modal information.
+
+At time $t$, the current state $\mathbf{X}_t$ consists of a set of images from the left, central, and right cameras $\mathbf{X}_{t}=\{\mathbf{x}_{l,t}, \mathbf{x}_{c,t}, \mathbf{x}_{r,t} \}$, the ego vehicle's forward speed $s_t\in\mathbb{R}$, and a high-level navigation command $\mathbf{c}_t\in\mathbb{R}^{k}$ which is encoded as a one-hot vector. 
+
+
+As discussed in \cite{Alexey:2021}, the lack of inductive biases makes transformer models require more data to achieve good performance. 
+In order to possess the inherent properties of CNNs (\ie, exploiting locality and translation equivariance), as well as leveraging the attention mechanism of transformers, we propose to adapt the hybrid model suggested in \cite{Alexey:2021} to our case. 
+At time $t$, each image $\mathbf{x}_{v,t}\in \mathbb{R}^{W\times H\times 3}$ from the multi-view camera setting is processed by a share-weight ResNet34 \cite{He:2016}, pre-trained on ImageNet \cite{Deng:2009}. 
+Then, for each view $v$, we take the resulting feature map $\mathbf{f}_{v,t}\in\mathbb{R}^{w\times h\times c}$ from the last convolutional layer of ResNet34, where $w\times h$ is the spatial size and $c$ indicates the feature dimension. 
+Each feature map is then flattened along the spatial dimensions, resulting in $P\times c$ tokens, where $P=w*h$ is the number of spatial features per image. 
+Since we will set our cameras to a resolution of $W\times H=300\times300$ pixels, for each one we obtain  $P=100$ patches with $c=512$ from the ResNet34 backbone. 
+
+
+Since we use $|\mathbf{X}_{t}|=3$ views (left, central, and right cameras), we take the flattened patches for each view, and tokenize them as the whole sequence with length $S=|\mathbf{X}_t|*w*h$ for further feeding into the transformer model. 
+To provide the positional information for each token, we apply the standard learnable 1D positional embedding $\mathbf{p}\in \mathbb{R}^{S\times c}$ as done in \cite{Alexey:2021}, which is added directly to the token. 
+
+
+\subsubsection{Decision Network}
+% 决策模块
+These features are then efficiently transmitted to a brain-inspired decision-making network, undergoing further processing through convolutional and recurrent networks, as well as optimization via deep neural network activation functions. 
+This simulates the processing of sensory outcomes by various regions of the prefrontal cortex in the brain. 
+Among them, the OFC (Orbitofrontal Cortex) plays a vital role in setting future action goals, assisting us in clarifying and locking onto the desired objectives. 
+The MPC ( Medial Prefrontal Cortex) plays a crucial role in making choices based on prior behavioral outcomes, ensuring that our behavior is optimized based on experience.
+The DPC (Dorsal Prefrontal Cortex) excels at generating goals based on sequences, temporal and spatial environments, providing clear directions and guidance for our actions.
+The VPC (Ventral Prefrontal Cortex) generates goals based on visual and auditory cues, enabling us to respond quickly and adapt to changes in the external environment.  
+Meanwhile, the CPC (Caudal Prefrontal Cortex) plays an indispensable role in searching, identifying, or locating specific targets, ensuring that we can accurately locate and focus on the targets. 
+These regions collaborate and participate in decision-making, generating a highly integrated latent feature vector that precisely encapsulates the critical information required for decision-making. 
+Finally, this latent feature vector is mapped through a carefully designed hidden layer, outputting precise and reliable decision-making information such as driving actions, value function estimates, and speed control.
+
+
+% 速度、导航命令
+The forward speed $s_t$ and command $\mathbf{c}_t$ are linearly projected to $\mathbb{R}^{c}$ using a fully connected layer.
+The resulting state embedding $\mathbf{z}_t$ is obtained by the addition of these input embeddings. 
+Formally, we define the state encoder of the current state $\mathcal{X}_t=(\mathbf{X}_t, s_t, \mathbf{c}_t)$, parameterized by $\theta$, as
+\begin{equation}\label{eq:encoder}
+	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
+\end{equation}
+
+
+In CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}, $\mathbf{c}_{t}$ is treated as a switcher (condition) to trigger different MLP branches for predicting $\mathbf{a}_{t}$. Here we treat $\mathbf{c}_{t}$ as an input signal to be later processed by a transformer. This is because we have not observed obvious differences between these two approaches while treating $\mathbf{c}_{t}$ as input signal simplifies the training. 
+
+
+% 注意力学习
+% 连接3个图像
+To naturally associate intra-view and inter-view information, we adopt the attention mechanism of transformers \cite{Vaswani:2017}. 
+We expect it to be effective to learn the mutual relevance between distant image patches (tokens), helping our model to associate feature map patches across views ({\ie}, coming from visual information to the left, center, and right of the ego-vehicle). 
+
+
+Over the embedded space $\mathbf{Z}_{t}$, we learn a scenario embedding using a transformer encoder that consists of $L$ multi-head attention layers. 
+Each one includes Multi-headed Self-Attention (MHSA) \cite{Vaswani:2017}, layer normalization (LN) \cite{Ba:2016}, and feed-forward MLP blocks.  
+The final output is a linear projection of the concatenated output of each attention head, which is then fed into the action prediction module. We use $L=4$ layers, with $4$ heads each. The hidden dimension $D$ of the transformer layer is set to be equal to the ResNet output dimension, {\ie}, $D=512$. 
+
+
+% 动作预测
+The output of the transformer encoder with a size of $S\times c$ is average-pooled and fed into an MLP. 
+The MLP consists of three fully connected layers (FC) with ReLu non-linearity applied between each FC. 
+The final output action $\mathbf{a}_t\in\mathbb{R}^2$ comprises of the steering angle and acceleration (brake/throttle), {\ie}, $\mathbf{a}_{t} = (a_{\text{s},t}, a_{\text{acc}, t})$. 
+
+
+\subsubsection{Reward Function}
+The BID network aims to mimic the superior information processing capabilities of the human brain by meticulously comparing brain activation patterns with network activation patterns. 
 It iteratively updates its network parameters to align network decisions more closely with the actual decision-making mechanisms of the human brain, thereby enhancing the performance and accuracy of the network. 
 The specific methodology for updating the network is outlined as follows:
 \begin{align}
@@ -54,13 +124,25 @@ Regularizing the whole trajectory to better utilize previous experience and impr
     \mathcal{L}_{\text {exp }}=\sum_{k=1}^{T} f(k) \cdot \mathrm{KL}\left(\pi_{\theta}\left(\cdot \mid \mathbf{i}_{\mathrm{NR}, k}, \mathbf{m}_{\mathrm{NR}, k}\right) \| p_{z}\right)
 \end{align}
 
-\textbf{\textsf{Training.}} The vehicle solely utilizes a single camera sensor to capture raw data of its surrounding environment. At the input stage, it receives a Bird's Eye View (BEV) semantic segmentation image, denoted as $\mathbf{i}_{\mathrm{NR}}$, along with a measurement vector, $\mathbf{m}_{\mathrm{NR}}$, from its own roach system. After acquiring these input data, the BID network is activated to simulate the brain's visual processing. When predicting or receiving rewards, simulated dopamine neurons are activated, releasing dopamine to strengthen memories and behaviors associated with the rewards, increasing the likelihood of repeating these behaviors. During the learning process, there is often a mismatch between expected and actual rewards. When actual rewards exceed expectations, a positive prediction error occurs, further promoting the release of dopamine and thus enhancing the associated behaviors. Through ongoing interaction with the environment, the brain-inspired network adapts behavioral policies by modifying parameters through backpropagation, striving to maximize future rewards.
 
-Multiple driving actions are generated and evaluated separately to assign them respective scores. The driving action with the highest score is then selected to control the movement of the target vehicle.
-%\begin{align}
-%	S & = r_{1} \mu+r_{2} \lambda
-%\end{align}
+% 损失函数
+At time $t$, given a predicted action $\mathbf{a}_{t}$ and a ground truth action $\hat{\mathbf{a}}_{t}$, we define the training loss as:
+\begin{equation}\label{eq:loss}
+	\mathcal{L}(\mathbf{a}_t, \hat{\mathbf{a}}_t) = \lambda_{\text{acc}}\lVert a_{\text{acc},t}-\hat{a}_{\text{acc,t}}\rVert_{1} + \lambda_{\text{s}} \lVert a_{\text{s},t}-\hat{a}_{\text{s},t} \rVert_{1} \enspace ,
+\end{equation}
+where $\lVert\cdot\rVert_{1}$ is the $L_1$ distance, $\lambda_{acc}$ and $\lambda_s$ indicate the weights given to the acceleration and steering angle loss, respectively. 
+In our case, we consider steering angle and acceleration to be both in the range of $[-1, 1]$. 
+Negative values of the acceleration correspond to braking, while positive ones to throttle.
+The weights are set to $\lambda_{acc} = \lambda_{s} = 0.5$. 
+
+
+In CILRS \cite{Codevilla:2019}, speed prediction regularization is applied in the training loss to avoid the inertia problem caused by the overwhelming probability of ego staying static in the training data. 
+We do not observe this problem in our case, thus the speed prediction branch is not applied in our setting. 
+Our result suggests that a simple $L_1$ loss is able to provide compelling performance, even in a new town.
+
+
 \subsection{Brain-Expert Mimetic Entity}
+
 \hspace{1pc}\textbf{\textsf{Agent.}} The BID agent utilizes imitation learning to predict driving behavior based on the current state, supervised by extensive data generated by the reinforcement learning expert. The structure of the agent is illustrated in Fig. \ref{fig:fig2}.
 
 \textbf{\textsf{Loss Function.}} In the decision-making stage, for each command, a branch is constructed. All branches share the same architecture, with each branch containing an action head for predicting the continuous action $\mathbf{a}$ and a velocity head for predicting the current vehicle speed $\mathbf{s}$. And $\mathbf{\hat{a}}$ represents the expert's action,$\mathbf{\hat{s}}$ is the measured speed, and $\mathbf{a}$ and $\mathbf{s}$ are the actions and speeds predicted by the agent, respectively. 
