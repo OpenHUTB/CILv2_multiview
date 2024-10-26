@@ -95,17 +95,18 @@ def encode_directions_6(directions):
         raise ValueError("Unexpcted direction identified %s" % str(directions))
 
 
+# 使用独热编码对4个方向进行编码
 def encode_directions_4(directions):
-    # TURN_LEFT
+    # 左转：TURN_LEFT
     if float(directions) == 1.0:
         return [1, 0, 0, 0]
-    # TURN_RIGHT
+    # 右转：TURN_RIGHT
     elif float(directions) == 2.0:
         return [0, 1, 0, 0]
-    # GO_STRAIGHT
+    # 直行：GO_STRAIGHT
     elif float(directions) == 3.0:
         return [0, 0, 1, 0]
-    # FOLLOW_LANE
+    # 沿车道线行使：FOLLOW_LANE
     elif float(directions) == 4.0:
         return [0, 0, 0, 1]
     else:
@@ -127,10 +128,10 @@ def decode_directions_6(one_hot_direction):
     # FOLLOW_LANE
     elif index == 3:
         return 4.0
-    # CHANGELANE_LEFT
+    # 左变道：CHANGELANE_LEFT
     elif index == 4:
         return 5.0
-    # CHANGELANE_RIGHT
+    # 右变道：CHANGELANE_RIGHT
     elif index == 5:
         return 6.0
     else:

@@ -150,6 +150,8 @@ Cuda 版本： 11.6
 
         python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
 
+        python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_single_lane
+
     这里 `--process-type` 定义处理类型（可以是 train_val 或者 val_only）, `--gpus` 定义使用的 gpus，
     `--folder` 是 [配置文件夹名](https://github.com/yixiao1/CILv2_multiview/tree/main/configs/CILv2),
     并且 `--exp` 是 [配置 yaml 文件名](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 。
