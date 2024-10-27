@@ -5,8 +5,10 @@ from torch.utils.data import DataLoader
 
 
 def make_data_loader(model_name, base_dir, train_dataset_names, batch_size, valid_dataset_names, batch_size_eval):
+    # 获取训练集
     train_set = carlaImages.carlaImages(model_name, base_dir, train_dataset_names, split='train')
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=g_conf.NUM_WORKER, drop_last=True)  # we drop the last non-full batch to avoid error
+    # 获取验证集
     val_loaders_list = []
     for valid_dataset_name in valid_dataset_names:
         val_set = carlaImages.carlaImages(model_name, base_dir, [valid_dataset_name], split='val')

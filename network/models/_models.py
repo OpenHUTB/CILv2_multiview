@@ -25,7 +25,7 @@ class CILv2_multiview_attention(nn.Module):
                                  g_conf.VALID_DATASET_NAME, g_conf.EVAL_BATCH_SIZE)
 
             print('')
-            print('================================= Dataset Info ========================================')
+            print('================================= 数据集信息 ========================================')
             print('')
             print("Using {} Training Dataset:".format(str(len(g_conf.TRAIN_DATASET_NAME))))
             print('   - ', g_conf.TRAIN_DATASET_NAME, ": Total amount={}".format(str(len(self._train_loader.dataset))))

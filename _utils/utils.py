@@ -47,7 +47,7 @@ def tryint(s):
 
 
 def alphanum_key(s):
-    """ Turn a string into a list of string and number chunks.
+    """ 将字符串转换为字符串和数字块的列表。
         "z23a" -> ["z", 23, "a"]
     """
     return [tryint(c) for c in re.split('([0-9]+)', s) ]
@@ -58,7 +58,7 @@ def sort_nicely(l):
 
 
 def experiment_log_path(experiment_path, dataset_name):
-    # WARNING if the path exist without checkpoints it breaks
+    # 警告：如果路径没有检查点，则会中断
     if not os.path.exists(experiment_path):
         os.makedirs(experiment_path)
     return os.path.join(experiment_path, dataset_name + '_result.csv')
@@ -99,7 +99,6 @@ def print_train_info(log_frequency, batch_size, model,
 
 #@timeit
 def test_stop(number_of_data, iterated_data):
-
     if number_of_data != 0 and \
             iterated_data >= number_of_data:
         return True
@@ -108,11 +107,9 @@ def test_stop(number_of_data, iterated_data):
 
 def generate_specific_rows(filePath, row_indices=[]):
     with open(filePath) as f:
-
-        # using enumerate to track line no.
+        # 使用枚举来跟踪线号。
         for i, line in enumerate(f):
-
-            # if line no. is in the row index list, then return that line
+            # 如果行号在行索引列表中，则返回该行
             if i in row_indices:
                 yield line
 
@@ -155,7 +152,7 @@ def write_model_results(experiment_path, model_name, results_dict, acc_as_action
     for dataset_name, results in results_dict.items():
         results_file_csv = experiment_log_path(experiment_path, dataset_name)
         new_row = ""
-        # first row if file doest exist
+        # 如果文件不存在则显示第一行
         if not os.path.exists(results_file_csv):
             new_row += "iteration, epoch, "
             if acc_as_action:
@@ -208,15 +205,14 @@ def is_result_better(experiment_path, model_name, dataset_name):
 def extract_targets(data, targets=[], ignore=[]):
 
     """
-    Method used to get to know which positions from the dataset are the targets
-    for this experiments
+    用于了解数据集中哪些位置是本次实验的目标的方法
     Args:
 
     Returns:
-        the float data that is actually targets
+        实际为目标的浮点数据
 
     Raises
-        value error when the configuration set targets that didn't exist in metadata
+        当配置集目标在元数据中不存在时，值错误
     """
 
     targets_vec = []
@@ -230,15 +226,14 @@ def extract_targets(data, targets=[], ignore=[]):
 
 def extract_other_inputs(data, other_inputs=[], ignore=[]):
     """
-    Method used to get to know which positions from the dataset are the inputs
-    for this experiments
+    用于了解数据集中哪些位置是本次实验的输入的方法
     Args:
 
     Returns:
-        the float data that is actually targets
+        实际为目标的浮点数据
 
     Raises
-        value error when the configuration set targets that didn't exist in metadata
+        当配置集目标在元数据中不存在时，值错误
     """
 
     inputs_vec = []

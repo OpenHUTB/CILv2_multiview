@@ -32,44 +32,44 @@ _g_conf.IMAGE_SHAPE = [3, 88, 200]
 # 例如，如果您希望有 5 个连续输入图像，每个图像以 20 帧为步长，则应设置 INPUT_FRAMES_NUM =5 和 INPUT_FRAME_INTERVAL=20
 _g_conf.ENCODER_INPUT_FRAMES_NUM = 1
 _g_conf.ENCODER_STEP_INTERVAL = 1
-_g_conf.ENCODER_OUTPUT_STEP_DELAY = 0  # whether we want to predict the future data points or just the current point
+_g_conf.ENCODER_OUTPUT_STEP_DELAY = 0  # 我们是想预测未来的数据点，还是只预测当前的数据点
 _g_conf.DECODER_OUTPUT_FRAMES_NUM= 1
 _g_conf.AUGMENTATION = False
 _g_conf.DATA_FPS = 10
 _g_conf.DATA_COMMAND_CLASS_NUM = 4
 _g_conf.DATA_COMMAND_ONE_HOT = True
 _g_conf.DATA_NORMALIZATION = {}
-_g_conf.IMG_NORMALIZATION = {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}   # ImageNet by default
+_g_conf.IMG_NORMALIZATION = {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}   # 默认使用 ImageNet
 _g_conf.EXP_SAVE_PATH = '_results'
-_g_conf.TARGETS = ['steer', 'throttle', 'brake']  # From the float data, the ones that the network should estimate
+_g_conf.TARGETS = ['steer', 'throttle', 'brake']  # 从浮点数据中，网络应该估计
 _g_conf.ACCELERATION_AS_ACTION = False
-_g_conf.OTHER_INPUTS= ['speed'] # From the float data, the ones that are input to the neural network
+_g_conf.OTHER_INPUTS= ['speed'] # 从浮点数据中，输入到神经网络的
 
-"""#### Optimizer Related Parameters ####"""
-_g_conf.LOSS = ''    # It can be the name of loss, such as L1, CrossEntropy, or an architecure name such as "fasterRcnn, deeplabv3", which means we use the same loss as this architectures
+"""#### 优化器相关参数 ####"""
+_g_conf.LOSS = ''    # 它可以是损失的名称，例如 L1、CrossEntropy，也可以是架构名称，例如“faster R cnn，deeplabv3”，这意味着我们使用与该架构相同的损失
 _g_conf.LOSS_WEIGHT = {}
-_g_conf.LEARNING_RATE = 0.0002       # the original learning rate setting
+_g_conf.LEARNING_RATE = 0.0002       # 原始学习率设置
 _g_conf.LEARNING_RATE_DECAY = True
 _g_conf.LEARNING_RATE_MINIMUM = 0.00001
-_g_conf.LEARNING_RATE_DECAY_EPOCHES = []    # we adjust learning rate for each 1000 iterations
-_g_conf.LEARNING_RATE_POLICY = {'name': 'normal', 'level': 0.5, 'momentum': 0, 'weight_decay': 0}   # lr multiply by 0.5 for each LEARNING_RATE_STEP
+_g_conf.LEARNING_RATE_DECAY_EPOCHES = []    # 我们每 1000 次迭代调整一次学习率
+_g_conf.LEARNING_RATE_POLICY = {'name': 'normal', 'level': 0.5, 'momentum': 0, 'weight_decay': 0}   # 对于每个 LEARNING_RATE_STEP，lr 乘以 0.5
 
-"""#### Network Related Parameters ####"""
+"""#### 网络相关参数 ####"""
 _g_conf.MODEL_TYPE = ''
 _g_conf.MODEL_CONFIGURATION = {}
 _g_conf.IMAGENET_PRE_TRAINED = False
 _g_conf.LOAD_CHECKPOINT = ''
 
-"""#### Validation Related Parameters"""
-_g_conf.EVAL_SAVE_LAST_Conv_ACTIVATIONS = True     # the last Conv. layer of backbone that to be saved attention maps
-_g_conf.EVAL_BATCH_SIZE = 1          # batch size for evaluation
-_g_conf.EVAL_SAVE_EPOCHES = [1]      # we specifize the epoch we want to do offline evaluation
+"""#### 验证相关参数"""
+_g_conf.EVAL_SAVE_LAST_Conv_ACTIVATIONS = True     # 要保存的注意力图的骨干的最后一层卷积层
+_g_conf.EVAL_BATCH_SIZE = 1          # 评估的批次大小
+_g_conf.EVAL_SAVE_EPOCHES = [1]      # 我们指定要进行离线评估的时期
 _g_conf.EVAL_IMAGE_WRITING_NUMBER = 10
-_g_conf.EARLY_STOPPING = False          # By default, we do not apply early stopping
+_g_conf.EARLY_STOPPING = False          # 默认情况下，我们不应用提前停止
 _g_conf.EARLY_STOPPING_PATIENCE = 3
 _g_conf.EVAL_DRAW_OFFLINE_RESULTS_GRAPHS = ['MAE']
 
-"""#### Logger Related Parameters"""
+"""#### 日志相关参数"""
 _g_conf.TRAIN_LOG_SCALAR_WRITING_FREQUENCY = 2
 _g_conf.TRAIN_IMAGE_WRITING_NUMBER = 2
 _g_conf.TRAIN_IMAGE_LOG_FREQUENCY = 1000
@@ -164,9 +164,9 @@ def _merge_a_into_b(a, b, stack=None):
 
     for k, v_ in a.items():
         full_key = '.'.join(stack) + '.' + k if stack is not None else k
-        # a must specify keys that are in b
+        # a 必须指定 b 中的键
         if k not in b:
-            # if is it more than second stack
+            # 是否超过第二个堆栈stack
             if stack is not None:
                 b[k] = v_
             else:
@@ -177,27 +177,24 @@ def _merge_a_into_b(a, b, stack=None):
 
         v = _check_and_coerce_cfg_value_type(v, b[k], k, full_key)
 
-        # Recursively merge dicts
+        # 递归合并字典
 
         b[k] = v
 
 
 def _decode_cfg_value(v):
-    """Decodes a raw config value (e.g., from a yaml config files or command
-    line argument) into a Python object.
+    """将原始配置值（例如，来自 yaml 配置文件或命令行参数）解码为 Python 对象。
     """
-    # Configs parsed from raw yaml will contain dictionary keys that need to be
-    # converted to AttrDict objects
+    # 从原始 yaml 解析的配置将包含需要转换为 AttrDict 对象的字典键
 
-    # All remaining processing is only applied to strings
+    # 所有剩余的处理仅适用于字符串
     if not isinstance(v, str):
         return v
     # Try to interpret `v` as a:
     #   string, number, tuple, list, dict, boolean, or None
     try:
         v = literal_eval(v)
-    # The following two excepts allow v to pass through when it represents a
-    # string.
+    # 以下两个例外情况当 v 表示字符串时允许其通过。
     #
 
     except ValueError:
@@ -208,11 +205,9 @@ def _decode_cfg_value(v):
 
 
 def _check_and_coerce_cfg_value_type(value_a, value_b, key, full_key):
-    """Checks that `value_a`, which is intended to replace `value_b` is of the
-    right type. The type is correct if it matches exactly or is one of a few
-    cases in which the type can be easily coerced.
+    """检查用于替换“value_b”的“value_a”是否具有正确的类型。如果类型完全匹配，或者属于可以轻松强制转换类型的少数情况之一，则类型正确。
     """
-    # The types must match (with some exceptions)
+    # 类型必须匹配（有一些例外）
     type_b = type(value_b)
     type_a = type(value_a)
     if type_a is type_b:

@@ -1,4 +1,4 @@
-"""A simple attribute dictionary used for representing configuration options."""
+"""用于表示配置选项的简单属性字典。"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -35,11 +35,10 @@ class AttributeDict(dict):
             )
 
     def immutable(self, is_immutable):
-        """Set immutability to is_immutable and recursively apply the setting
-        to all nested AttributeDict.
+        """将不变性设置为 is_immutable 并递归地将该设置应用于所有嵌套的 AttributeDict。
         """
         self.__dict__[AttributeDict.IMMUTABLE] = is_immutable
-        # Recursively set immutable state
+        # 递归设置不可变状态
         for v in self.__dict__.values():
             if isinstance(v, AttributeDict):
                 v.immutable(is_immutable)

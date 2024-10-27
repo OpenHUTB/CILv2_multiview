@@ -108,7 +108,7 @@ Cuda 版本： 11.6
 
 * 下载我们收集好的数据集：
 
-    为了方便下载，文件夹被分成几个部分，并全部压缩在 zip 文件中。
+    为了方便下载，文件夹被分成几个部分，并全部压缩在 zip 文件中。可以直接从 [百度网盘链接](https://pan.baidu.com/s/1j2mnbCZIxdOrzNDtAr4NBg?pwd=hutb) 下载下面说明的数据。
     对于模型训练，请将它们解压到您的 `DATASET_PATH` 中。数据加载器 dataloader 将访问 $DATASET_PATH/<dataset_folder_name> 的完整路径，其中 `<dataset_folder_name>` 将由 [exp yaml 文件](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 中的 `TRAIN_DATASET_NAME`/`VALID_DATASET_NAME` 定义
 
     * 小测试数据集：

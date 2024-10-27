@@ -62,7 +62,7 @@ def train_transform(data, image_shape, augmentation=False):
 def val_transform(data, image_shape):
     for camera_type in g_conf.DATA_USED:
         image = data[camera_type]
-        ## WE ALREADY PRE-PROCESSED IMAGES TO DESIRED SIZE
+        ## 我们已经将图像预处理为所需尺寸
         # height = image_shape[1]
         # width = image_shape[2]
         # image = image.resize((width, height))
@@ -73,22 +73,22 @@ def val_transform(data, image_shape):
 
 
 def encode_directions_6(directions):
-    # TURN_LEFT
+    # 左转 TURN_LEFT
     if float(directions) == 1.0:
         return [1, 0, 0, 0, 0, 0]
-    # TURN_RIGHT
+    # 右转 TURN_RIGHT
     elif float(directions) == 2.0:
         return [0, 1, 0, 0, 0, 0]
-    # GO_STRAIGHT
+    # 直行 GO_STRAIGHT
     elif float(directions) == 3.0:
         return [0, 0, 1, 0, 0, 0]
-    # FOLLOW_LANE
+    # 跟随车道 FOLLOW_LANE
     elif float(directions) == 4.0:
         return [0, 0, 0, 1, 0, 0]
-    # CHANGELANE_LEFT
+    # 左变换车道 CHANGELANE_LEFT
     elif float(directions) == 5.0:
         return [0, 0, 0, 0, 1, 0]
-    # CHANGELANE_RIGHT
+    # 右变换车道 CHANGELANE_RIGHT
     elif float(directions) == 6.0:
         return [0, 0, 0, 0, 0, 1]
     else:
@@ -141,16 +141,16 @@ def decode_directions_6(one_hot_direction):
 def decode_directions_4(one_hot_direction):
     one_hot_direction = list(one_hot_direction)
     index = one_hot_direction.index(max(one_hot_direction))
-    # TURN_LEFT
+    # 左转 TURN_LEFT
     if index == 0:
         return 1.0
-    # TURN_RIGHT
+    # 右转 TURN_RIGHT
     elif index == 1:
         return 2.0
-    # GO_STRAIGHT
+    # 直行 GO_STRAIGHT
     elif index == 2:
         return 3.0
-    # FOLLOW_LANE
+    # 跟随车道 FOLLOW_LANE
     elif index == 3:
         return 4.0
     else:

@@ -5,7 +5,7 @@ from configs import g_conf
 def Action_nospeed_L1(params):
     B = params['action_output'].shape[0]  # batch_size
 
-    # SingleFrame model - we only take into account the last frame's action
+    # 单帧模型SingleFrame——我们只考虑最后一帧的动作
     actions_loss_mat = torch.abs(params['action_output'][:,-1,:] - params['targets_action'][-1])  # (B, 2)
 
     steer_loss = actions_loss_mat[:, 0] * params['variable_weights']['actions']['steer']
@@ -28,6 +28,7 @@ def Action_nospeed_L1(params):
         loss = steer_loss + throttle_loss + brake_loss
 
         return loss, steer_loss, throttle_loss, brake_loss
+
 
 def Loss(loss):
 

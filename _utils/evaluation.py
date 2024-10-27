@@ -15,11 +15,10 @@ from dataloaders.transforms import inverse_normalize
 @contextmanager
 def inference_context(model):
     """
-    A context where the model is temporarily changed to eval mode,
-    and restored to previous mode afterwards.
+    模型暂时更改为评估模式，然后恢复到以前模式的环境。
 
     Args:
-        model: a torch Module
+        model: 一个 torch 模块
     """
     training_mode = model.training
     model.eval()
@@ -30,7 +29,7 @@ def inference_context(model):
 def evaluation_on_model(model, data_loaders, model_name, evaluator, eval_iteration, eval_epoch):
     results_dict = {}
     for data_loader in data_loaders:
-        total = len(data_loader.dataset)  # inference data loader must have a fixed length
+        total = len(data_loader.dataset)  # 推理数据加载器必须具有固定长度
         dataset_name = data_loader.dataset.dataset_name
         info = "Start evaluation for model {} on {} with {} images at iteration {} / epoch {} ".format(model_name, dataset_name,
                                                                                                        total, eval_iteration,
@@ -48,25 +47,31 @@ def evaluation_on_model(model, data_loaders, model_name, evaluator, eval_iterati
                 src_speeds = [extract_other_inputs(x['current'][i]['can_bus'], g_conf.OTHER_INPUTS,
                                               ignore=['direction']).cuda() for i in range(len(x['current']))]
 
+                # 数据集中的 CAN总线文件 can_bus000000.json 中包含了：
+                # 加速度：acceleration
+                # 刹车：brake
+                # 方向：direction
+                # 自我车辆位置：ego_position (x,y,z)
+                # 速度：speed
+                # 方向盘：steer
+                # 油门：throttle
                 if g_conf.ENCODER_OUTPUT_STEP_DELAY > 0 or g_conf.DECODER_OUTPUT_FRAMES_NUM != g_conf.ENCODER_INPUT_FRAMES_NUM:
                     tgt_a = [extract_targets(x['future'][i]['can_bus_future'], g_conf.TARGETS).cuda() for i in range(len(x['future']))]
                 else:
                     tgt_a = [extract_targets(x['current'][i]['can_bus'], g_conf.TARGETS).cuda() for i in range(len(x['current']))]
 
-                
-
                 action_outputs, src_layers, tx_en_attn_weights = model.forward_eval(src_images, src_directions, src_speeds)
                 torch.cuda.synchronize()
-                evaluator.process(action_outputs, tgt_a)
+                evaluator.process(action_outputs, tgt_a)  # 模型的动作输出 action_output - 真实的动作 tgt_a
 
                 """
                 ################################################
-                    Adding visualization to tensorboard
+                    向 TensorBoard 添加可视化
                 #################################################
                 """
 
                 if idx in list(range(0, min(g_conf.EVAL_IMAGE_WRITING_NUMBER, len(data_loader)))):
-                    # saving only one per batch to save time
+                    # 每批仅保存一个以节省时间
                     eval_images = [[x['current'][i][camera_type][:1].cuda() for camera_type in g_conf.DATA_USED] for i
                                    in range(len(x['current']))]
                     eval_directions = [extract_commands(x['current'][i]['can_bus']['direction'])[:1].cuda() for i in
@@ -81,7 +86,7 @@ def evaluation_on_model(model, data_loaders, model_name, evaluator, eval_iterati
                             cams.append(inverse_normalize(frame[i], g_conf.IMG_NORMALIZATION['mean'], g_conf.IMG_NORMALIZATION['std']).detach().cpu().numpy().squeeze())
                         input_frames.append(cams)
 
-                    # we save only the first of the batch
+                    # 我们只保存第一批
                     if g_conf.EVAL_SAVE_LAST_Conv_ACTIVATIONS:
                         _logger.add_gradCAM_attentions_to_disk('Valid', model, [eval_images, eval_directions, eval_speeds],
                                                                input_rgb_frames= input_frames,
@@ -113,12 +118,12 @@ def evaluation_on_model(model, data_loaders, model_name, evaluator, eval_iterati
 
 #@timeit
 def save_model_if_better(results_dict, model, optimizer, save_all=False):
-    #we are saving the model if it is better than the previous one
+    # 如果该模型比前一个更好，我们会保存该模型
     if g_conf.PROCESS_NAME == 'train_val':
         dataset_name = list(results_dict.keys())[0]
         results = results_dict[dataset_name]
         is_better_flag = is_result_better(g_conf.EXP_SAVE_PATH, model.name, dataset_name)
-        # compulsively saving all checkpoints
+        # 强制保存所有检查点
         if save_all:
             print('Checkpoint at iteration {} / epoch {} is saved'.format(str(model._current_iteration-1), str(model._done_epoch)))
             if is_better_flag:
@@ -177,20 +182,20 @@ def save_model_if_better(results_dict, model, optimizer, save_all=False):
 #@timeit
 def evaluation_saving(model, optimizers, early_stopping_flags, save_all_checkpoints = False):
     """
-    Evaluates but also saves if the model is better
+    如果模型更好，则进行评估并保存
     """
     if g_conf.PROCESS_NAME == 'train_val':
         if (model._done_epoch != 0) and (model._done_epoch in g_conf.EVAL_SAVE_EPOCHES) \
                 and ((model._current_iteration-1)*g_conf.BATCH_SIZE <= len(model) * model._done_epoch):
 
-            # check if the checkpoint has been evaluated
+            # 检查 检查点是否已被评估
             if not eval_done(os.path.join(os.environ["TRAINING_RESULTS_ROOT"], '_results', g_conf.EXPERIMENT_BATCH_NAME,g_conf.EXPERIMENT_NAME),
                                  g_conf.VALID_DATASET_NAME, model._done_epoch):
                 print('')
                 print('---------------------------------------------------------------------------------------')
                 print('')
                 print('Evaluating epoch:', str(model._done_epoch))
-                # switch to evaluation mode
+                # 切换到评估模式
                 model.eval()
                 results_dict = model._eval(model._current_iteration, model._done_epoch)
                 if results_dict is not None:
@@ -205,7 +210,7 @@ def evaluation_saving(model, optimizers, early_stopping_flags, save_all_checkpoi
                         early_stopping_flags.append(False)
                 else:
                     raise ValueError('No evaluation results !')
-                # switch back to train mode and countine training
+                # 切换回训练模式并继续训练
                 model.train()
                 print('')
                 print('---------------------------------------------------------------------------------------')

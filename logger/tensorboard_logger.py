@@ -13,7 +13,7 @@ except ImportError:
 class Logger(object):
 
     def __init__(self, log_dir):
-        """Create a summary writer logging to log_dir."""
+        """创建一个记录到log_dir的摘要写入器。"""
         #from datetime import datetime
         #now = datetime.now()
         #log_dir = log_dir + now.strftime("%Y%m%d-%H%M%S")
@@ -21,7 +21,7 @@ class Logger(object):
         self.writer = tf.summary.create_file_writer(log_dir)
 
     def scalar_summary(self, tag, value, step):
-        """Log a scalar variable."""
+        """记录标量变量。"""
         #summary = tf.compat.v1.Summary(value=[tf.compat.v1.Summary.Value(tag=tag, simple_value=value)])
         #self.writer.add_summary(summary, step)
 
@@ -31,24 +31,24 @@ class Logger(object):
 
 
     def image_summary(self, tag, images, step):
-        """Log a list of images."""
+        """记录图像列表。"""
 
         img_summaries = []
         for i, img in enumerate(images):
-            # Write the image to a string
+            # 将图像写入字符串
             try:
                 s = StringIO()
             except:
                 s = BytesIO()
             scipy.misc.toimage(img).save(s, format="png")
 
-            # Create an Image object
+            # 创建图像对象
             img_sum = tf.compat.v1.Summary.Image(encoded_image_string=s.getvalue(),
                                        height=img.shape[0],
                                        width=img.shape[1])
 
             img_summaries.append(tf.compat.v1.Summary.Value(tag='%s/%d' % (tag, i), image=img_sum))
 
-        # Create and write Summary
+        # 创建并撰写摘要
         summary = tf.compat.v1.Summary(value=img_summaries)
         self.writer.add_summary(summary, step)
