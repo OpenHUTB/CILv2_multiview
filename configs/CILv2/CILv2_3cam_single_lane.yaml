@@ -78,7 +78,7 @@ MODEL_CONFIGURATION:
     n_head: 4
     num_layers: 4
     norm_first: True
-    learnable_pe: True
+    learnable_pe: True  # 可学习的 位置嵌入 Positional Embedding
 
   # 命令
   command:

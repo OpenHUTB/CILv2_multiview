@@ -160,7 +160,7 @@ class ResNet(nn.Module):
         return x, [x0, x1, x2, x3, x4]  # output, intermediate
 
     def get_backbone_output_shape(self, x):
-        x = torch.zeros(x)    # we create a same shape tensor in order to get the output shape of backbone
+        x = torch.zeros(x)    # 我们创建一个相同形状的张量，以获得骨干的输出形状
         x = self.conv1(x)
         x = self.bn1(x)
         x0 = self.relu(x)
@@ -175,7 +175,7 @@ class ResNet(nn.Module):
         return [x1.shape, x2.shape, x3.shape, x4.shape, x.shape]
 
     def get_layers_features(self, x):
-        # Just get the intermediate layers directly.
+        # 直接获取中间层即可。
 
         x = self.conv1(x)
         x = self.bn1(x)

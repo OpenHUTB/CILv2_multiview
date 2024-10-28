@@ -82,22 +82,32 @@ The episode will be terminated and counted as a failure once a collision occurs.
 For the other infractions, the driving score will be deduced according to the penalty rule in NoCrash. 
 
 
+% 度量标准的说明
 The main metric to compare driving models is the success rate (\emph{SR}), which is the percentage of episodes successfully completed. 
+% 严格的成功率
 For a fine-grained comparison, in addition, we provide the strict success rate (\emph{S.SR}). 
 % traffic infraction：交通违法行为
 It reflects the percentage of successful episodes under zero tolerance for any traffic infraction, such as failing to stop at a red traffic light, route deviation, {\etc}. 
+% T.L：在红灯时不停的次数
 As a complement, we also include additional infraction metrics: \emph{T.L} is the number of times not stopping at a red traffic light; 
+% 和其他车辆碰撞的次数
 \emph{C.V} is the number of collisions with other vehicles; 
+% R.Dev：当高层命令没有很好地执行，路线偏差的次数
 \emph{R.Dev} is the number of route deviations, {\ie}, when the high-level command is not well-executed; 
+% O.L：考虑了自主车辆驶出车道的情况（例如，在对面车道或人行道上）
 \emph{O.L} accounts for the ego-vehicle driving out-of-lane ({\eg}, in the opposite lane or in the sidewalk); 
+% C.L：与城镇布局发生碰撞的次数
 \emph{C.L} is the number of collisions with the town layout. 
 All infraction values are normalized per driven kilometer.
 
 
 \subsubsection{Offline Leaderboard Metrics.}\label{lb_metrics}
 To align our evaluation with \cite{Hu:2022}, we use the offline CARLA's Leaderboard metrics for multiple towns. 
+% Avg.DS 平均驾驶分数、平均路线完成
 The most important metrics are the average driving score (\emph{Avg.DS}) and the average route completion (\emph{Avg.RC}). 
-\emph{Avg.DS} is based on penalizing driving performance according to the terms defined in CARLA's Leaderboard, while \emph{Avg.RC} is the average distance towards the goal that the ego-vehicle is able to travel.
+\emph{Avg.DS} is based on penalizing driving performance according to the terms defined in CARLA's Leaderboard, 
+% Avg.RC：自车辆能够行驶至目标的平均距离。
+while \emph{Avg.RC} is the average distance towards the goal that the ego-vehicle is able to travel.
 
 
 \subsubsection{High-level Navigation Commands} 

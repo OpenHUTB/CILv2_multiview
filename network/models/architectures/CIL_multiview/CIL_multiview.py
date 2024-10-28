@@ -81,6 +81,7 @@ class CIL_multiview(nn.Module):
 
         return action_output         # (B, 1, 1), (B, 1, len(TARGETS))
 
+
     def foward_eval(self, s, s_d, s_s):
         S = int(g_conf.ENCODER_INPUT_FRAMES_NUM)
         B = s_d[0].shape[0]
@@ -90,22 +91,22 @@ class CIL_multiview(nn.Module):
         d = s_d[-1]  # [B, 4]
         s = s_s[-1]  # [B, 1]
 
-        # image embedding
+        # 图像嵌入
         e_p, resnet_inter = self.encoder_embedding_perception(x)  # [B*S*cam, dim, h, w]
         encoded_obs = e_p.view(B, S * len(g_conf.DATA_USED), self.res_out_dim,  self.res_out_h * self.res_out_w)  # [B, S*cam, dim, h*w]
         encoded_obs = encoded_obs.transpose(2, 3).reshape(B, -1, self.res_out_dim)  # [B, S*cam*h*w, 512]
         e_d = self.command(d).unsqueeze(1)  # [B, 1, 512]
         e_s = self.speed(s).unsqueeze(1)  # [B, 1, 512]
 
-        encoded_obs = encoded_obs + e_d + e_s   # [B, S*cam*h*w, 512]
+        encoded_obs = encoded_obs + e_d + e_s   # 当前的观测=图片特侦+命令+速度 [B, S*cam*h*w, 512]
 
         if self.params['TxEncoder']['learnable_pe']:
-            # positional encoding
+            # 位置编码
             pe = encoded_obs + self.positional_encoding    # [B, S*cam*h*w, 512]
         else:
             pe = self.positional_encoding(encoded_obs)
 
-        # Transformer encoder multi-head self-attention layers
+        # Transformer 编码器多头自注意力层
         in_memory, attn_weights = self.tx_encoder(pe)  # [B, S*cam*h*w, 512]
         in_memory = torch.mean(in_memory, dim=1)  # [B, 512]
 
@@ -113,9 +114,10 @@ class CIL_multiview(nn.Module):
 
         return action_output, resnet_inter, attn_weights
 
+
     def generate_square_subsequent_mask(self, sz):
-        r"""Generate a square mask for the sequence. The masked positions are filled with float('-inf').
-            Unmasked positions are filled with float(0.0).
+        r"""为序列生成一个方形掩码。掩码位置用 float('-inf') 填充。
+            未屏蔽的位置用浮点数（0.0）填充。
         """
         mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
         mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))

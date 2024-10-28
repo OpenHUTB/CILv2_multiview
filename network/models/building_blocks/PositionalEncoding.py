@@ -4,10 +4,8 @@ import torch
 import math
 
 class PositionalEncoding(nn.Module):
-    r"""Inject some information about the relative or absolute position of the tokens
-        in the sequence. The positional encodings have the same dimension as
-        the embeddings, so that the two can be summed. Here, we use sine and cosine
-        functions of different frequencies.
+    r"""注入一些有关序列中标记的相对或绝对位置的信息。位置编码与嵌入具有相同的维度，因此可以将两者相加。
+        在这里，我们使用不同频率的正弦和余弦函数。
     .. math::
         \text{PosEncoder}(pos, 2i) = sin(pos/10000^(2i/d_model))
         \text{PosEncoder}(pos, 2i+1) = cos(pos/10000^(2i/d_model))
@@ -34,9 +32,9 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        r"""Inputs of forward function
+        r"""前向函数的输入
         Args:
-            x: the sequence fed to the positional encoder model (required).
+            x: 输入位置编码器模型的序列（必需）。
         Shape:
             x: [batch size, sequence length, embed dim]
             output: [batch size, sequence length, embed dim]
