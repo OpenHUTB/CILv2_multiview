@@ -152,6 +152,8 @@ Cuda 版本： 11.6
 
         python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_single_lane
 
+        python main.py --process-type train_val --gpus 0 --folder CILv2 --exp CILv2_3cam_multi_lane
+
     这里 `--process-type` 定义处理类型（可以是 train_val 或者 val_only）, `--gpus` 定义使用的 gpus，
     `--folder` 是 [配置文件夹名](https://github.com/yixiao1/CILv2_multiview/tree/main/configs/CILv2),
     并且 `--exp` 是 [配置 yaml 文件名](https://github.com/yixiao1/CILv2_multiview/blob/main/configs/CILv2/CILv2_3cam_smalltest.yaml) 。
@@ -244,6 +246,14 @@ ll /usr/lib/x86_64-linux-gnu/libtiff.so
 # /usr/lib/x86_64-linux-gnu/libtiff.so -> libtiff.so.6.0.1
 sudo apt install libtiff5-dev
 ```
+
+- 单车道城镇可以，多车道城镇训练报错：
+```text
+  File "/home/d/workspace/CILv2_multiview/dataloaders/transforms.py", line 113, in encode_directions_4
+    raise ValueError("Unexpcted direction identified %s" % str(directions))
+ValueError: Unexpcted direction identified 5.0
+```
+解决：将`/home/d/workspace/CILv2_multiview/configs/CILv2/CILv2_3cam_multi_lane.yaml`中的`DATA_COMMAND_CLASS_NUM`配置改为 6。
 
 -------------------------------------------------------------
 ### License
