@@ -10,14 +10,6 @@ TARGETS: ['steer', 'acceleration']  # 网络应该估计的目标：转向、加
 ACCELERATION_AS_ACTION: True
 OTHER_INPUTS: ['speed', 'direction'] # 神经网络的额外输入：速度、方向（高层的导航命令）
 # 单车道城镇和多车道城镇的训练数据要分开
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T1_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T1_dense_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T2_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T3_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T4_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T4_dense_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T6_3cam.tar.gz
-# http://datasets.cvc.uab.es/CILv2/Roach_carla0913_fps10_dense_normalcamera_T6_dense_3cam.tar.gz
 TRAIN_DATASET_NAME: [
   'Roach_carla0913_fps10/Roach_carla0913_fps10_dense_normalcamera_T1_3cam', # 所用训练数据集的文件夹。应位于 DATASET_PATH 文件夹内
   'Roach_carla0913_fps10/Roach_carla0913_fps10_dense_normalcamera_T1_dense_3cam',

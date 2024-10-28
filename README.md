@@ -253,7 +253,7 @@ sudo apt install libtiff5-dev
     raise ValueError("Unexpcted direction identified %s" % str(directions))
 ValueError: Unexpcted direction identified 5.0
 ```
-解决：将`/home/d/workspace/CILv2_multiview/configs/CILv2/CILv2_3cam_multi_lane.yaml`中的`DATA_COMMAND_CLASS_NUM`配置改为 6。
+解决：将`configs/CILv2/CILv2_3cam_multi_lane.yaml`中的`DATA_COMMAND_CLASS_NUM`配置改为 6。
 
 -------------------------------------------------------------
 ### License
