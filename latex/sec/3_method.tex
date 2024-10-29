@@ -55,38 +55,45 @@ Each feature map is then flattened along the spatial dimensions, resulting in $P
 Since we will set our cameras to a resolution of $W\times H=300\times300$ pixels, for each one we obtain  $P=100$ patches with $c=512$ from the ResNet34 backbone. 
 
 
-Since we use $|\mathbf{X}_{t}|=3$ views (left, central, and right cameras), we take the flattened patches for each view, and tokenize them as the whole sequence with length $S=|\mathbf{X}_t|*w*h$ for further feeding into the transformer model. 
-To provide the positional information for each token, we apply the standard learnable 1D positional embedding $\mathbf{p}\in \mathbb{R}^{S\times c}$ as done in \cite{Alexey:2021}, which is added directly to the token. 
-
-
 \subsubsection{Decision Network}
 % 决策模块
 These features are then efficiently transmitted to a brain-inspired decision-making network, undergoing further processing through convolutional and recurrent networks, as well as optimization via deep neural network activation functions. 
 This simulates the processing of sensory outcomes by various regions of the prefrontal cortex in the brain. 
-Among them, the OFC (Orbitofrontal Cortex) plays a vital role in setting future action goals, assisting us in clarifying and locking onto the desired objectives. 
-The MPC ( Medial Prefrontal Cortex) plays a crucial role in making choices based on prior behavioral outcomes, ensuring that our behavior is optimized based on experience.
-The DPC (Dorsal Prefrontal Cortex) excels at generating goals based on sequences, temporal and spatial environments, providing clear directions and guidance for our actions.
+%
+
+
+% 腹侧
 The VPC (Ventral Prefrontal Cortex) generates goals based on visual and auditory cues, enabling us to respond quickly and adapt to changes in the external environment.  
-Meanwhile, the CPC (Caudal Prefrontal Cortex) plays an indispensable role in searching, identifying, or locating specific targets, ensuring that we can accurately locate and focus on the targets. 
-These regions collaborate and participate in decision-making, generating a highly integrated latent feature vector that precisely encapsulates the critical information required for decision-making. 
-Finally, this latent feature vector is mapped through a carefully designed hidden layer, outputting precise and reliable decision-making information such as driving actions, value function estimates, and speed control.
+%
+Since we use $|\mathbf{X}_{t}|=3$ views (left, central, and right cameras), we take the flattened patches for each view, and tokenize them as the whole sequence with length $S=|\mathbf{X}_t|*w*h$ for further feeding into the transformer model. 
+To provide the positional information for each token, we apply the standard learnable 1D positional embedding $\mathbf{p}\in \mathbb{R}^{S\times c}$ as done in \cite{Alexey:2021}, which is added directly to the token. 
 
 
+% 眶额
+Among them, the OFC (Orbitofrontal Cortex) plays a vital role in setting future action goals, assisting us in clarifying and locking onto the desired objectives. 
+% 背侧
+The DPC (Dorsal Prefrontal Cortex) excels at generating goals based on sequences, temporal and spatial environments, providing clear directions and guidance for our actions.
 % 速度、导航命令
-The forward speed $s_t$ and command $\mathbf{c}_t$ are linearly projected to $\mathbb{R}^{c}$ using a fully connected layer.
+The command $\mathbf{c}_t$ and forward speed $s_t$ are linearly projected to $\mathbb{R}^{c}$ using a fully connected layer.
 The resulting state embedding $\mathbf{z}_t$ is obtained by the addition of these input embeddings. 
+
+
+% 内侧
+The MPC (Medial Prefrontal Cortex) plays a crucial role in making choices based on prior behavioral outcomes, ensuring that our behavior is optimized based on experience.
 Formally, we define the state encoder of the current state $\mathcal{X}_t=(\mathbf{X}_t, s_t, \mathbf{c}_t)$, parameterized by $\theta$, as
 \begin{equation}\label{eq:encoder}
 	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
 \end{equation}
 
 
-In CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}, $\mathbf{c}_{t}$ is treated as a switcher (condition) to trigger different MLP branches for predicting $\mathbf{a}_{t}$. Here we treat $\mathbf{c}_{t}$ as an input signal to be later processed by a transformer. This is because we have not observed obvious differences between these two approaches while treating $\mathbf{c}_{t}$ as input signal simplifies the training. 
+In CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}, $\mathbf{c}_{t}$ is treated as a switcher (condition) to trigger different MLP branches for predicting $\mathbf{a}_{t}$. 
+Here we treat $\mathbf{c}_{t}$ as an input signal to be later processed by a transformer. 
+This is because we have not observed obvious differences between these two approaches while treating $\mathbf{c}_{t}$ as input signal simplifies the training. 
 
 
 % 注意力学习
 % 连接3个图像
-To naturally associate intra-view and inter-view information, we adopt the attention mechanism of transformers \cite{Vaswani:2017}. 
+To naturally associate intra-view and inter-view information, we adopt the attention mechanism of transformers\cite{Vaswani:2017}. 
 We expect it to be effective to learn the mutual relevance between distant image patches (tokens), helping our model to associate feature map patches across views ({\ie}, coming from visual information to the left, center, and right of the ego-vehicle). 
 
 
@@ -95,13 +102,20 @@ Each one includes Multi-headed Self-Attention (MHSA) \cite{Vaswani:2017}, layer 
 The final output is a linear projection of the concatenated output of each attention head, which is then fed into the action prediction module. We use $L=4$ layers, with $4$ heads each. The hidden dimension $D$ of the transformer layer is set to be equal to the ResNet output dimension, {\ie}, $D=512$. 
 
 
+% 尾侧
+Meanwhile, the CPC (Caudal Prefrontal Cortex) plays an indispensable role in searching, identifying, or locating specific targets, ensuring that we can accurately locate and focus on the targets. 
 % 动作预测
 The output of the transformer encoder with a size of $S\times c$ is average-pooled and fed into an MLP. 
 The MLP consists of three fully connected layers (FC) with ReLu non-linearity applied between each FC. 
 The final output action $\mathbf{a}_t\in\mathbb{R}^2$ comprises of the steering angle and acceleration (brake/throttle), {\ie}, $\mathbf{a}_{t} = (a_{\text{s},t}, a_{\text{acc}, t})$. 
 
 
-\subsubsection{Reward Function}
+% 总结
+These regions collaborate and participate in decision-making, generating a highly integrated latent feature vector that precisely encapsulates the critical information required for decision-making. 
+Finally, this latent feature vector is mapped through a carefully designed hidden layer, outputting precise and reliable decision-making information such as driving actions, value function estimates, and speed control.
+
+
+\subsection{Loss Function}
 The BID network aims to mimic the superior information processing capabilities of the human brain by meticulously comparing brain activation patterns with network activation patterns. 
 It iteratively updates its network parameters to align network decisions more closely with the actual decision-making mechanisms of the human brain, thereby enhancing the performance and accuracy of the network. 
 The specific methodology for updating the network is outlined as follows:
@@ -141,7 +155,7 @@ We do not observe this problem in our case, thus the speed prediction branch is 
 Our result suggests that a simple $L_1$ loss is able to provide compelling performance, even in a new town.
 
 
-\subsection{Brain-Expert Mimetic Entity}
+\subsubsection{Brain-Expert Mimetic Entity}
 
 \hspace{1pc}\textbf{\textsf{Agent.}} The BID agent utilizes imitation learning to predict driving behavior based on the current state, supervised by extensive data generated by the reinforcement learning expert. The structure of the agent is illustrated in Fig. \ref{fig:fig2}.
 
@@ -152,6 +166,7 @@ Our result suggests that a simple $L_1$ loss is able to provide compelling perfo
 
 Furthermore, the outputs of the brain-inspired perception network and the brain-inspired decision network are concatenated to produce a latent feature that encapsulates essential information for driving. This latent feature is then processed through a hidden layer to map it to driving actions. Hence, it also includes a feature loss.
 
+\begin{comment}
 \subsection{Similarity Metrics}
 \hspace{1pc}\textbf{\textsf{Collecting Brain Activation Signals.}} To align the network, we collect the brain's responses to multi-channel grayscale images. Initially, EEG sensors are placed at appropriate locations and connected to data acquisition equipment. Subsequently, neuroimaging software is utilized to preprocess cortical activation data. Then, the brain data is aligned with standard data to ensure consistency, followed by noise removal and data smoothing. Ultimately, we obtain activation signals from visual brain regions that vary over time as participants view different images. These signals are further amplified through deconvolution processing to reveal the brain's activation patterns.
 
@@ -176,3 +191,5 @@ More details about the benchmarks and the complete results are found in the supp
 %	r & = \frac{1}{2}\left(\frac{\sum_{i = 1}^{n}\left(X_{p_{i}}-\bar{X_{p}}\right)\left(Y_{p_{i}}-\bar{Y_{p}}\right)}{\sqrt{\sum_{i = 1}^{n}\left(X_{p_{i}}-\bar{X_{p}}\right)^{2}} \sqrt{\sum_{i = 1}^{n}\left(Y_{p_{i}}-\bar{Y_{p}}\right)^{2}}} \right. \nonumber \\
 %	& \qquad \left. + \frac{\sum_{i = 1}^{n}\left(X_{d_{i}}-\bar{X_{d}}\right)\left(Y_{d_{i}}-\bar{Y_{d}}\right)}{\sqrt{\sum_{i = 1}^{n}\left(X_{d_{i}}-\bar{X_{d}}\right)^{2}} \sqrt{\sum_{i = 1}^{n}\left(Y_{d_{i}}-\bar{Y_{d}}\right)^{2}}} \right)
 %\end{align}
+
+\end{comment}

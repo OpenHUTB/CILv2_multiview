@@ -1,18 +1,18 @@
 \section{Experiment}
-\begin{figure}[t]
-	\centering
-	%\fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
-	\includegraphics[width=0.8\linewidth]{experiment.png}
-	
-	\caption{Assessing the Similarity Between Network Activation and Brain Activation.}
-	\label{fig:fig3}
-\end{figure}
-\label{sec:experiment}
+%\begin{figure}[t]
+%	\centering
+%	%\fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
+%	\includegraphics[width=0.8\linewidth]{experiment.png}
+%	
+%	\caption{Assessing the Similarity Between Network Activation and Brain Activation.}
+%	\label{fig:fig3}
+%\end{figure}
+%\label{sec:experiment}
 
 \subsection{Benchmarks} \label{sec:Dataset}
 
-All evaluations are completed on CARLA 0.9.10. 
-We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the latest LeaderBoard  benchmark.
+All evaluations are completed on CARLA simulator \cite{Dosovitskiy:2017} 0.9.10. 
+We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the LeaderBoard  benchmark.
 Each benchmark specified its training towns and weather, where agent is allowed to collect data, and evaluates the agent in new towns and weather.
 The NoCrash benchmark considers generalization from Town01, a European town composed of solely one-lane roads and T-junctions, to Town02, a smallker version of Town01 with different textures.
 By contrast, the LeaderBoard considers a more difficult generalization task in six maps that cover diverse traffic situations, including freeways, US-style junctions, roundabouts, stop signs, lane changing and merging.
@@ -24,7 +24,6 @@ For the offline LeaderBoard the traffic density in each map is tuned to be compa
 
 
 % CILv2
-In order to conduct our experiments, we use the CARLA simulator \cite{Dosovitskiy:2017} 0.9.13, which was the latest official version when we started this research. 
 As recent top-performing methods \cite{Hu:2022}, for on-board data collection in CARLA, we use the \emph{teacher} expert driver from \cite{Zhang:2021}, termed as Roach RL since it is based on reinforcement learning and was trained with privileged information. 
 Roach RL shows a more realistic and diverse behavior than the default (handcrafted) expert driver in CARLA. 
 Note that in real-world experiments we would use different human drivers as experts. 
@@ -50,11 +49,11 @@ We train for 80 epochs on 1 NVIDIA A100 GPUs, with a batch size of 120.
 The learning rate decays by half at epochs 30, 50, and 65. 
 
 % 其他
-During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. 
-Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA~\cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record.
-We employed a specific reward scheme and imposed additional penalties for large steering changes to prevent oscillatory maneuvers. 
-After training the network, we compared the similarity between the network activations and those observed in the human brain. 
-As depicted in Fig.~\ref{fig:fig3}, we contrasted the similarity between the test participant and the brain-inspired network in processing the same event.
+%During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. 
+%Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA~\cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record.
+%We employed a specific reward scheme and imposed additional penalties for large steering changes to prevent oscillatory maneuvers. 
+%After training the network, we compared the similarity between the network activations and those observed in the human brain. 
+%As depicted in Fig.~\ref{fig:fig3}, we contrasted the similarity between the test participant and the brain-inspired network in processing the same event.
 
 
 % 驾驶评估的3个不同数据集
@@ -325,64 +324,37 @@ We observe that this is because MILE seldom drives outside the pre-planned lane,
 On the contrary, CIL++ lacks the explicit use of this route map since it only receives high-level navigation commands. 
 
 
-\subsubsection{Visualizing CIL++'s Attention}
-\label{sec:Visualization}
-We are  interested in the image content to which CIL++ pays attention. 
-Following Grad-CAM \cite{Selvaraju:2017}, gradients flow from the action space to the final convolutional layer of the ResNet backbone. 
-This should produce a map that highlights the important image areas for action prediction. 
-However, since CIL++ solves a regression task, its output could be either negative or positive values, while Grad-CAM is originally designed for image classification tasks which always provide positive outputs. 
-To adapt Grad-CAM to our case, we cannot merely take into account the positive gradient of the feature map. 
-The computation should be divided into two cases depending on the sign of the output value. 
-Negative gradients are used to calculate the weights for the feature map when the acceleration or steering angle value is lower than zero, otherwise, the positive gradient is used.
-
-
-% _results\_results\CILv2\CILv2_3cam_single_lane\Eval\Valid_gradCAM_Roach_LBCRoutes_3cam_valid\30\-1\85.jpg
-Fig.~\ref{fig:attention_ped_greed} shows the activation map at an intersection. 
-Three image areas are highly activated: the traffic light in the right image, the crossing pedestrians in the central one, and the lane shoulder in the left one. 
-Thus, we believe that CIL++ shows a proper understanding of this scene, and a clear causality between observation and action since it decides to brake due to the pedestrians, even though the traffic light is in green and a \emph{turn-left} navigation command is given.
-
-\begin{figure*}[ht!]
-	\centering
-	\includegraphics[width=\linewidth]{fig/attention_ped_greed.jpg}
-	\caption{Activation maps of CIL++ at an intersection in Town02. 
-		Three image areas from different views are highly activated: 
-		the traffic light at the right image, the crossing pedestrians at the central one, and the lane shoulder at the left one. 
-		Causality between observation and action is shown as a strong braking (0.794) due to the pedestrians, even though the traffic light in green and the \emph{turn-left} command.}
-	\label{fig:attention_ped_greed}
-\end{figure*}
-
-
 % 速度、目标？
-\subsubsection{Ablation Study}
-\label{sec:Ablation Study}
-To inspect the impact of some components of CIL++, we provide an ablation study. 
-Specifically, we are interested in the fusions of input data and multi-view. 
-
-\paragraph{Input Data Fusion}
-EtE-AD models require not only sensor data but also signal information, like the ego-vehicle speed and a high-level navigation command. 
-It is interesting to study how to properly fuse these inputs. 
-To compare, we implement several types of input data fusion in Table~\ref{tab:ablation_study_inputfusion}: adding, concatenation, and tokenization. 
-In the first, the speed and command features are simply added to the image features. 
-This addition could be done either before (the default operation in CIL++) or after the Transformer Encoder block. 
-We name the latter as late fusion adding (LF.A). 
-Another common data fusion method is concatenation, which firstly stacks all the features and takes an extra join FC layer to fuse them, which we term as late fusion concatenation (LF.C). 
-Since the transformer model uses a self-attention mechanism to fuse features between tokens, we can tokenize the speed and navigation command features and feed them into the transformer block along with the image features. 
-We term this approach as Token. 
-Our results suggest that there is no obvious difference between tokenization and early adding fusion. 
-These two approaches show better results than the late fusion.
-
-
-\paragraph{Multi-view Fusion}
-CIL++ uses attention layers to fuse multi-view information. 
-To understand their contribution, we remove the transformer block and simply use the ResNet34 which retains the average pooling and an FC layer for embedding each image view. 
-The embedding outputs are then stacked and fed to the FC join layers for fusion. 
-We term this approach as view stacking (VS) in Table~\ref{tab:ablation_study_sa}. 
-The speed and command features are added to the joint embedding before feeding into the action prediction MLP. 
-We see that without the self-attention layers, the SR drops from 88\% to 70\%. 
-We think this is because the average pooling layer causes a loss of spatial information, while this information is very important for actual driving. 
-The agent should take different actions according to the location of dynamic obstacles. 
-We also use a transformer block to process the output of the ResNet average pooling layer (GAP), instead of using the flattened feature map from the last convolutional layer of ResNet34. 
-The results drop significantly, {\eg}, and the SR goes from 88\% to 64\%.
+%\subsubsection{Ablation Study}
+%\label{sec:Ablation Study}
+%To inspect the impact of some components of CIL++, we provide an ablation study. 
+%Specifically, we are interested in the fusions of input data and multi-view. 
+%
+%\paragraph{Input Data Fusion}
+%EtE-AD models require not only sensor data but also signal information, like the ego-vehicle speed and a high-level navigation command. 
+%It is interesting to study how to properly fuse these inputs. 
+%To compare, we implement several types of input data fusion in Table~\ref{tab:ablation_study_inputfusion}: adding, concatenation, and tokenization. 
+%In the first, the speed and command features are simply added to the image features. 
+%This addition could be done either before (the default operation in CIL++) or after the Transformer Encoder block. 
+%We name the latter as late fusion adding (LF.A). 
+%Another common data fusion method is concatenation, which firstly stacks all the features and takes an extra join FC layer to fuse them, which we term as late fusion concatenation (LF.C). 
+%Since the transformer model uses a self-attention mechanism to fuse features between tokens, we can tokenize the speed and navigation command features and feed them into the transformer block along with the image features. 
+%We term this approach as Token. 
+%Our results suggest that there is no obvious difference between tokenization and early adding fusion. 
+%These two approaches show better results than the late fusion.
+%
+%
+%\paragraph{Multi-view Fusion}
+%CIL++ uses attention layers to fuse multi-view information. 
+%To understand their contribution, we remove the transformer block and simply use the ResNet34 which retains the average pooling and an FC layer for embedding each image view. 
+%The embedding outputs are then stacked and fed to the FC join layers for fusion. 
+%We term this approach as view stacking (VS) in Table~\ref{tab:ablation_study_sa}. 
+%The speed and command features are added to the joint embedding before feeding into the action prediction MLP. 
+%We see that without the self-attention layers, the SR drops from 88\% to 70\%. 
+%We think this is because the average pooling layer causes a loss of spatial information, while this information is very important for actual driving. 
+%The agent should take different actions according to the location of dynamic obstacles. 
+%We also use a transformer block to process the output of the ResNet average pooling layer (GAP), instead of using the flattened feature map from the last convolutional layer of ResNet34. 
+%The results drop significantly, {\eg}, and the SR goes from 88\% to 64\%.
 
 
 \begin{figure}[t]
@@ -401,14 +373,14 @@ The results drop significantly, {\eg}, and the SR goes from 88\% to 64\%.
 
 \subsection{Performance of Experts}
 
-\textbf{\textsf{Sample Efficiency:}}
-To improve the sample efficiency of PPO, we propose to use BEV instead of camera images, Beta instead of Gaussian distributions, and the exploration loss in addition to the entropy loss.
-Since the benefit of using a BEV representation is obvious, here we only ablate the Beta distribution and the exploration loss.
-As shown in Fig.~\ref{fig:rl}, the baseline PPO with Gaussian distribution and entropy loss is trapped in a local minimum where staying still is the most rewarding strategy.
-Leveraging the exploration loss, PPO+exp can be successfully trained despite relatively high variance and low sample efficiency.
-The Beta distribution helps substantially, but without the exploration loss the training still collapsed in some cases due to insufficient exploration (cf. dashed blue line in Fig.~\ref{fig:rl}).
-Our Roach (PPO+beta+exp) uses both Beta distribution and exploration loss to ensure stable and sample efficient training.
-The training takes around 1.7M steps in each of the six CARLA servers, this accounts for 10M steps in total, which takes roughly a week on an AWS EC2 g4dn.4xlarge or 4 days on a 2080 Ti machine with 12 cores.
+%\textbf{\textsf{Sample Efficiency:}}
+%To improve the sample efficiency of PPO, we propose to use BEV instead of camera images, Beta instead of Gaussian distributions, and the exploration loss in addition to the entropy loss.
+%Since the benefit of using a BEV representation is obvious, here we only ablate the Beta distribution and the exploration loss.
+%As shown in Fig.~\ref{fig:rl}, the baseline PPO with Gaussian distribution and entropy loss is trapped in a local minimum where staying still is the most rewarding strategy.
+%Leveraging the exploration loss, PPO+exp can be successfully trained despite relatively high variance and low sample efficiency.
+%The Beta distribution helps substantially, but without the exploration loss the training still collapsed in some cases due to insufficient exploration (cf. dashed blue line in Fig.~\ref{fig:rl}).
+%Our Roach (PPO+beta+exp) uses both Beta distribution and exploration loss to ensure stable and sample efficient training.
+%The training takes around 1.7M steps in each of the six CARLA servers, this accounts for 10M steps in total, which takes roughly a week on an AWS EC2 g4dn.4xlarge or 4 days on a 2080 Ti machine with 12 cores.
 
 
 
@@ -588,6 +560,34 @@ The LeaderBoard instruction suggests that it is used to disambiguate situations 
 	\vspace{-2.5ex}
 	\label{table:infraction}
 \end{table*}
+
+
+\subsubsection{Visualizing CIL++'s Attention}
+\label{sec:Visualization}
+We are  interested in the image content to which CIL++ pays attention. 
+Following Grad-CAM \cite{Selvaraju:2017}, gradients flow from the action space to the final convolutional layer of the ResNet backbone. 
+This should produce a map that highlights the important image areas for action prediction. 
+However, since CIL++ solves a regression task, its output could be either negative or positive values, while Grad-CAM is originally designed for image classification tasks which always provide positive outputs. 
+To adapt Grad-CAM to our case, we cannot merely take into account the positive gradient of the feature map. 
+The computation should be divided into two cases depending on the sign of the output value. 
+Negative gradients are used to calculate the weights for the feature map when the acceleration or steering angle value is lower than zero, otherwise, the positive gradient is used.
+
+
+% _results\_results\CILv2\CILv2_3cam_single_lane\Eval\Valid_gradCAM_Roach_LBCRoutes_3cam_valid\30\-1\85.jpg
+Fig.~\ref{fig:attention_ped_greed} shows the activation map at an intersection. 
+Three image areas are highly activated: the traffic light in the right image, the crossing pedestrians in the central one, and the lane shoulder in the left one. 
+Thus, we believe that CIL++ shows a proper understanding of this scene, and a clear causality between observation and action since it decides to brake due to the pedestrians, even though the traffic light is in green and a \emph{turn-left} navigation command is given.
+
+\begin{figure*}[ht!]
+	\centering
+	\includegraphics[width=\linewidth]{fig/attention_ped_greed.jpg}
+	\caption{Activation maps of CIL++ at an intersection in Town02. 
+		Three image areas from different views are highly activated: 
+		the traffic light at the right image, the crossing pedestrians at the central one, and the lane shoulder at the left one. 
+		Causality between observation and action is shown as a strong braking (0.794) due to the pedestrians, even though the traffic light in green and the \emph{turn-left} command.}
+	\label{fig:attention_ped_greed}
+\end{figure*}
+
 
 
 \subsubsection{Ablation}
