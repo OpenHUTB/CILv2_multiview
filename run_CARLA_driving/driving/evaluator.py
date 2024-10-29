@@ -443,7 +443,7 @@ class Evaluator(object):
 def main():
     description = "CARLA Evaluation: evaluate your Agent in CARLA simulator\n"
 
-    # general parameters
+    # 常规参数
     parser = argparse.ArgumentParser(description=description, formatter_class=RawTextHelpFormatter)
     parser.add_argument('--host', default='localhost',
                         help='IP of the host server (default: localhost)')
@@ -460,21 +460,31 @@ def main():
     parser.add_argument('--timeout', default="180.0",
                         help='Set the CARLA client timeout value in seconds')
 
-    # simulation setup
-    parser.add_argument('--routes', help='Name of the route to be executed. Point to the route_xml_file to be executed.', required=True)
-    parser.add_argument('--scenarios', help='Name of the scenario annotation file to be mixed with the route.', required=True)
+    # 模拟设置
+    # 要执行路线的名称。指向要执行的route_xml_file。
+    parser.add_argument('--routes',
+                        help='Name of the route to be executed. Point to the route_xml_file to be executed.',
+                        required=True)
+    # 与路线混合的场景注释文件的名称。
+    parser.add_argument('--scenarios',
+                        help='Name of the scenario annotation file to be mixed with the route.', required=True)
+    # 每条路线的重复次数。
     parser.add_argument('--repetitions', type=int, default=1, help='Number of repetitions per route.')
 
-    # agent-related options
+    # 代理相关选项
     parser.add_argument("-a", "--agent", type=str, help="Path to Agent's py file to evaluate", required=True)
     parser.add_argument("--agent-config", type=str, help="Path to Agent's configuration file", default="")
 
     parser.add_argument("--track", type=str, default='SENSORS', help="Participation track: SENSORS, MAP")
     parser.add_argument('--resume', type=bool, default=False, help='Resume execution from last checkpoint?')
-    parser.add_argument("--checkpoint", type=str, default='./simulation_results.json', help="Path to checkpoint used for saving statistics and resuming")
+    parser.add_argument("--checkpoint", type=str, default='./simulation_results.json',
+                        help="Path to checkpoint used for saving statistics and resuming")
 
-    parser.add_argument('--docker', type=str, default='', help='Use docker to run CARLA off-screen, this is typically for running CARLA on server')
-    parser.add_argument('--gpus', nargs='+', dest='gpus', type=str, default=0, help='The GPUs used for running the agent model. The firtst one will be used for running docker')
+    parser.add_argument('--docker', type=str, default='',
+                        help='Use docker to run CARLA off-screen, this is typically for running CARLA on server')
+    parser.add_argument('--gpus', nargs='+', dest='gpus', type=str, default=0,
+                        help='The GPUs used for running the agent model. '
+                             'The firtst one will be used for running docker')
 
     parser.add_argument('--save-driving-vision', action="store_true", help=' to save the driving visualization')
     parser.add_argument('--save-driving-measurement', action="store_true", help=' to save the driving measurements')
@@ -483,16 +493,16 @@ def main():
 
     arguments = parser.parse_args()
 
-    gpus=[]
+    gpus = []
     if arguments.gpus:
-        # Check if the vector of GPUs passed are valid.
+        # 检查传递的 GPU 向量是否有效。
         for gpu in arguments.gpus[0].split(','):
             try:
                 int(gpu)
                 gpus.append(int(gpu))
-            except ValueError:  # Reraise a meaningful error.
+            except ValueError:  # 重新抛出有意义的错误。
                 raise ValueError("GPU is not a valid int number")
-        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(arguments.gpus)  # This must to be ahead of the whole excution
+        os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(arguments.gpus)  # 这必须先于整个执行
         arguments.gpus = gpus
     else:
         raise ValueError('You need to define the ids of GPU you want to use by adding: --gpus')
@@ -500,7 +510,6 @@ def main():
     if arguments.save_driving_vision or arguments.save_driving_measurement:
         if not os.environ['SENSOR_SAVE_PATH']:
             raise RuntimeError('environemnt argument SENSOR_SAVE_PATH need to be setup for saving data')
-
 
     if not os.path.exists(os.path.join(arguments.checkpoint, arguments.scenarios.split('/')[-1].split('.')[-2])):
         os.makedirs(os.path.join(arguments.checkpoint, arguments.scenarios.split('/')[-1].split('.')[-2]))
@@ -516,7 +525,7 @@ def main():
 
     ServerDocker=None
     if arguments.docker:
-        docker_params={'docker_name':arguments.docker, 'gpu':arguments.gpus[0], 'quality_level':'Epic'}
+        docker_params={'docker_name': arguments.docker, 'gpu': arguments.gpus[0], 'quality_level': 'Epic'}
         ServerDocker = ServerManagerDocker(docker_params)
 
     try:

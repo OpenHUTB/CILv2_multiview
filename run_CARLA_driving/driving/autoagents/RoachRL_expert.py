@@ -39,16 +39,19 @@ def checkpoint_parse_configuration_file(filename):
     return configuration_dict['yaml'], configuration_dict['checkpoint'], \
            configuration_dict['agent_name']
 
+
 def get_entry_point():
     return 'RoachRL_expert'
+
 
 class Track(Enum):
 
     """
-    This enum represents the different tracks of the CARLA AD leaderboard.
+    此枚举表示 Carla 自动驾驶排行榜的不同轨迹。
     """
     SENSORS = 'SENSORS'
     MAP = 'MAP'
+
 
 def load_entry_point(name):
     mod_name, attr_name = name.split(":")
@@ -56,15 +59,16 @@ def load_entry_point(name):
     fn = getattr(mod, attr_name)
     return fn
 
+
 class RoachRL_expert(object):
 
     """
-    Autonomous agent base class. All user agents have to be derived from this class
+    自主代理基类。所有用户代理都必须从该类派生
     """
 
     def __init__(self, path_to_conf_file, save_driving_vision):
         self.track = Track.SENSORS
-        #  current global plans to reach a destination
+        # 当前到达目的地的全局规划
         self._global_plan = None
         self._global_plan_world_coord = None
 
@@ -142,7 +146,6 @@ class RoachRL_expert(object):
         self._ego_vehicle=ego_vehicle
         self._obs_managers.attach_ego_vehicle(self._ego_vehicle, self._route_plan)
 
-
     def sensors(self):  # pylint: disable=no-self-use
         """
         Define the sensor suite required by the agent
@@ -206,7 +209,6 @@ class RoachRL_expert(object):
                                     # 'depth_right']
 
         return sensors
-
 
     def __call__(self, timestamp):
         """
@@ -309,7 +311,7 @@ class RoachRL_expert(object):
 
     def destroy(self):
         """
-        Destroy (clean-up) the agent
+        销毁（清除）代理
         :return:
         """
         self._model = None

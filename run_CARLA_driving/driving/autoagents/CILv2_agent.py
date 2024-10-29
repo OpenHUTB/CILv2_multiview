@@ -153,7 +153,7 @@ class CILv2_agent(object):
 
     def reset_global_plan(self):
         """
-        reset the plan (route) for the agent
+        重置代理的规划（路线）
         """
         current_loc = self._ego_vehicle.get_location()
         last_gps, _ = self._global_plan[-1]
@@ -177,9 +177,9 @@ class CILv2_agent(object):
 
     def sensors(self):  # pylint: disable=no-self-use
         """
-        Define the sensor suite required by the agent
+        定义代理所需的传感器套件
 
-        :return: a list containing the required sensors in the following format:
+        :return: 包含以下格式的所需传感器的列表:
 
         """
 
@@ -230,8 +230,8 @@ class CILv2_agent(object):
 
     def __call__(self, timestamp):
         """
-        Execute the agent call, e.g. agent()
-        Returns the next vehicle controls
+        执行代理调用，例如 agent()
+        返回下一个车辆控制
         """
         self.input_data = self.sensor_interface.get_data()
 
@@ -249,11 +249,11 @@ class CILv2_agent(object):
 
     def run_step(self):
         """
-        Execute one step of navigation.
-        :return: control
+        执行一步导航。
+        :return: 控制
         """
         
-        self.control = carla.VehicleControl()
+        self.control = carla.VehicleControl()  # 使用典型的驾驶控制来管理车辆的基本运动。
         self.norm_rgb = [[self.process_image(self.input_data[camera_type][1]).unsqueeze(0).cuda() for camera_type in g_conf.DATA_USED]]
         self.norm_speed = [torch.cuda.FloatTensor([self.process_speed(self.input_data['SPEED'][1]['speed'])]).unsqueeze(0)]
         if g_conf.DATA_COMMAND_ONE_HOT:
@@ -283,7 +283,7 @@ class CILv2_agent(object):
 
     def destroy(self):
         """
-        Destroy (clean-up) the agent
+        销毁（清理）代理
         :return:
         """
         self._model = None
@@ -316,7 +316,7 @@ class CILv2_agent(object):
         image = Image.fromarray(image)
         image = image.resize((g_conf.IMAGE_SHAPE[2], g_conf.IMAGE_SHAPE[1])).convert('RGB')
         image = TF.to_tensor(image)
-        # Normalization is really necessary if you want to use any pretrained weights.
+        # 如果您想使用任何预训练的权重，那么归一化确实是必要的。
         image = TF.normalize(image, mean=g_conf.IMG_NORMALIZATION['mean'], std=g_conf.IMG_NORMALIZATION['std'])
         return image
 
@@ -349,6 +349,7 @@ class CILv2_agent(object):
             _, _, cmd = self.waypointer.tick_lb(gps, imu)
             return encode_directions_6(cmd.value), cmd.value
 
+    # 记录驾驶时的图像
     def record_driving(self, current_input_data):
         if not os.path.exists(self.vision_save_path):
             os.makedirs(self.vision_save_path)
@@ -393,7 +394,7 @@ class CILv2_agent(object):
             font_2 = ImageFont.truetype(os.path.join(os.getcwd(), 'signs', 'arial.ttf'), 55)
             font_3 = ImageFont.truetype(os.path.join(os.getcwd(), 'signs', 'arial.ttf'), 25)
 
-            # third person
+            # 第三人称视角
             draw_mat.text((260 , 40), str("Third Person Perspective"), fill=(255, 255, 255), font=font_2)
             mat.paste(rgb_backontop, (0, 120))
 
@@ -403,14 +404,14 @@ class CILv2_agent(object):
             draw_mat.text((435 + rgb_backontop.width, 80), str("0.0"+'\u00b0'), fill=(255, 255, 255), font=font)
             draw_mat.text((735 + rgb_backontop.width, 80), str("60.0"+'\u00b0'), fill=(255, 255, 255), font=font)
             mat.paste(cams[0], (rgb_backontop.width+10, 120))
-            mat.paste(cams[1], (rgb_backontop.width+10 +int(cams[0].width) + 10, 120))
+            mat.paste(cams[1], (rgb_backontop.width+10 + int(cams[0].width) + 10, 120))
             mat.paste(cams[2], (rgb_backontop.width+10 + int((cams[0].width) + 10)*2, 120))
 
-            # command
+            # 命令
             draw_mat.text((rgb_backontop.width+125, int(rgb_backontop.height/2)+130), str("Command Input"), fill=(255, 255, 255), font=font)
             mat.paste(command_sign, (rgb_backontop.width+100, int(rgb_backontop.height/2) + 170))
 
-            # speed
+            # 速度
             draw_mat.text((rgb_backontop.width+580, int(rgb_backontop.height/2)+130), str("Speed Input (m/s)"), fill=(255, 255, 255), font=font)
             speed_gauge = go.Figure(go.Indicator(
                 mode="gauge+number",
@@ -433,7 +434,7 @@ class CILv2_agent(object):
             draw_mat.text((rgb_backontop.width+610, int(rgb_backontop.height/2) + 215), str("0" ), fill=(255, 255, 255), font=font_3)
             draw_mat.text((rgb_backontop.width+775, int(rgb_backontop.height/2) + 215), str("12"), fill=(255, 255, 255), font=font_3)
 
-            # steer
+            # 转向
             draw_mat.text((rgb_backontop.width + 50, 120 + int(rgb_backontop.height/2) + 180),
                           str("Steering Prediction  "+ "%.3f" % np.clip(self.steer, -1, 1)),
                           fill=(255, 255, 255),
@@ -474,9 +475,9 @@ class CILv2_agent(object):
             draw_mat.text((rgb_backontop.width+70, 120 + int(rgb_backontop.height/2) + 240), str("-1" ), fill=(255, 255, 255), font=font)
             draw_mat.text((rgb_backontop.width+360, 120 + int(rgb_backontop.height/2) + 240), str("1"), fill=(255, 255, 255), font=font)
 
-            # acceleration
-            draw_mat.text((rgb_backontop.width+500 , 120 + int(rgb_backontop.height/2) + 180),
-                          str("Acceleration Prediction  "+ "%.3f" % np.clip(self.acceleration, -1, 1)),
+            # 加速度
+            draw_mat.text((rgb_backontop.width+500, 120 + int(rgb_backontop.height/2) + 180),
+                          str("Acceleration Prediction  " + "%.3f" % np.clip(self.acceleration, -1, 1)),
                           fill=(255, 255, 255),
                           font=font)
             if self.acceleration > 0.0:
@@ -515,10 +516,10 @@ class CILv2_agent(object):
             draw_mat.text((rgb_backontop.width+530, 120 + int(rgb_backontop.height/2) + 240), str("-1" ), fill=(255, 255, 255), font=font)
             draw_mat.text((rgb_backontop.width+820, 120 + int(rgb_backontop.height/2) + 240), str("1"), fill=(255, 255, 255), font=font)
 
-            mat = mat.resize((int(mat.size[0] / 3), int(mat.size[1] / 3)))   # comment this if you don't want to resize
+            mat = mat.resize((int(mat.size[0] / 3), int(mat.size[1] / 3)))   # 如果你不想调整大小，请注释掉
             mat.save(os.path.join(self.vision_save_path, str(self.datapoint_count).zfill(6) + '.jpg'))
             if self.save_measurement:
-                # we record the driving measurement data
+                # 我们记录驾驶测量数据
                 data = current_input_data['can_bus'][1]
                 data.update({'steer': np.nan_to_num(self.control.steer)})
                 data.update({'throttle': np.nan_to_num(self.control.throttle)})

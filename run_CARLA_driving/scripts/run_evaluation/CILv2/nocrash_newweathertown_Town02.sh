@@ -79,7 +79,7 @@ for run in "${function_array[@]}"; do
     PYTHON_RETURN=1
     # python 执行返回1表示不成功，一直需要执行到成功（即返回0）
     until [ $PYTHON_RETURN == 0 ]; do
-      # 拿到数组的一个函数名，并执行
+      # 拿到数组的一个函数名，并执行，运行的结果保存到：_results/sensor/nocrash_newweathertown_{empty,regular,busy}_Town02_lbc/*
       ${run}
       PYTHON_RETURN=$?
       echo "${RED} PYTHON_RETURN=${PYTHON_RETURN}!!! Start Over!!!${NC}" >&2

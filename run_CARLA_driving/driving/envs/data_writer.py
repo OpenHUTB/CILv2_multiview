@@ -2,6 +2,7 @@ import os
 import json
 from json.decoder import JSONDecodeError
 
+
 class Writer(object):
     """
         Organizing the writing process, note that the sensors are written on a separate thread.

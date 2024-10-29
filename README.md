@@ -19,11 +19,11 @@ Please cite our paper if you find this work useful (will be soon updated with th
          primaryClass={cs.CV}
          }
 
-### Video
+### 视频
 Please watch our online [video](https://youtu.be/fY56Gliz_Rw?si=VfXa-_b6TgdVgLZD) for more interesting scenario demonstrations
 
 -------------------------------------------------------------
-### Summary
+### 概要
 
 在此存储库中，您可以找到以下材料：
 
@@ -96,10 +96,12 @@ Cuda 版本： 11.6
         mkdir -p $TRAINING_RESULTS_ROOT/_results
         tar -zxvf _results.tar.gz -C $TRAINING_RESULTS_ROOT/_results/
 
-* 对训练好的 CIL++ 进行基准测试（连接不上服务器导致失败后，再次运行可继续）: 
+* 对训练好的 CIL++ 在未见过的Town02新天气上进行基准测试（连接不上服务器导致失败后，再次运行可继续），包括Town03和未见过的Town05基准测试: 
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
+      
+        run ./scripts/run_evaluation/CILv2/leaderboard_Town05.sh
 
 -------------------------------------------------------------
 ### 使用 Roach RL expert 进行数据收集
@@ -168,7 +170,7 @@ Cuda 版本： 11.6
         cd $TRAINING_RESULTS_ROOT/_results/<folder_name>/<exp_name>/
 
     其中 `folder_name` 是实验文件夹名称，`exp_name` 是配置文件名。
-    您的模型都保存在 ./checkpoints/
+    您的模型都保存在 `./checkpoints/`
 
 * 定义基准测试的配置文件：
 

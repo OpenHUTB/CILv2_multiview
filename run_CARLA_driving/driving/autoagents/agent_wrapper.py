@@ -6,7 +6,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """
-Wrapper for autonomous agents required for tracking and checking of used sensors
+用于跟踪和检查所用传感器的自主代理的包装器
 """
 
 from __future__ import print_function
@@ -34,7 +34,7 @@ SENSORS_LIMITS = {
 
 class AgentError(Exception):
     """
-    Exceptions thrown when the agent returns an error during the simulation
+    当代理在模拟过程中返回错误时抛出的异常
     """
 
     def __init__(self, message):
@@ -44,7 +44,7 @@ class AgentError(Exception):
 class AgentWrapper(object):
 
     """
-    Wrapper for autonomous agents required for tracking and checking of used sensors
+    用于跟踪和检查所用传感器的自主代理的包装器
     """
 
     allowed_sensors = [
@@ -66,7 +66,7 @@ class AgentWrapper(object):
 
     def __init__(self, agent):
         """
-        Set the autonomous agent
+        设置自主代理
         """
         self._agent = agent
 
@@ -78,15 +78,15 @@ class AgentWrapper(object):
 
     def setup_sensors(self, vehicle, other_actors_dict=None, route=None):
         """
-        Create the sensors defined by the user and attach them to the ego-vehicle
-        :param vehicle: ego vehicle
+        创建用户定义的传感器并将其连接到自主车辆
+        :param vehicle: 自主车辆
         :return:
         """
         bp_library = CarlaDataProvider.get_world().get_blueprint_library()
         for sensor_spec in self._agent.sensors():
-            # These are the pseudosensors (not spawned)
+            # 这些是伪传感器（未生成）
             if sensor_spec['type'].startswith('sensor.opendrive_map'):
-                # The HDMap pseudo sensor is created directly here
+                # HDMap 伪传感器直接在这里创建
                 delta_time = CarlaDataProvider.get_world().get_settings().fixed_delta_seconds
                 frame_rate = 1 / delta_time
                 sensor = OpenDriveMapReader(vehicle, frame_rate)
@@ -95,11 +95,11 @@ class AgentWrapper(object):
                 frame_rate = 1 / delta_time
                 sensor = SpeedometerReader(vehicle, frame_rate, other_actors_dict)
             elif sensor_spec['type'].startswith('sensor.can_bus'):
-                # The speedometer pseudo sensor is created directly here
+                # 速度表伪传感器直接在此处创建
                 delta_time = CarlaDataProvider.get_world().get_settings().fixed_delta_seconds
                 frame_rate = 1 / delta_time
                 sensor = CanbusReader(vehicle, frame_rate, other_actors_dict, route)
-            # These are the sensors spawned on the carla world
+            # 这些是 Carla 世界中产生的传感器
             else:
                 bp = bp_library.find(str(sensor_spec['type']))
                 if sensor_spec['type'].startswith('sensor.camera'):
@@ -164,21 +164,21 @@ class AgentWrapper(object):
 
                     sensor_location = carla.Location()
                     sensor_rotation = carla.Rotation()
-                # create sensor
+                # 创建传感器
                 sensor_transform = carla.Transform(sensor_location, sensor_rotation)
                 sensor = CarlaDataProvider.get_world().spawn_actor(bp, sensor_transform, vehicle)
-            # setup callback
+            # 设置回调
             sensor.listen(CallBack(sensor_spec['id'], sensor_spec['type'], sensor, self._agent.sensor_interface))
             self._sensors_list.append(sensor)
 
-        # Tick once to spawn the sensors
+        # 生成一次节拍信号可生成传感器
         CarlaDataProvider.get_world().tick()
 
     @staticmethod
     def validate_sensor_configuration(sensors, agent_track, selected_track):
         """
-        Ensure that the sensor configuration is valid, in case the challenge mode is used
-        Returns true on valid configuration, false otherwise
+        如果使用挑战模式，请确保传感器配置有效
+        有效配置时返回true，否则返回false
         """
 
         #if Track(selected_track) != agent_track:
@@ -189,34 +189,33 @@ class AgentWrapper(object):
 
         for sensor in sensors:
 
-            # Check if the is has been already used
+            # 检查是否已使用
             sensor_id = sensor['id']
             if sensor_id in sensor_ids:
                 raise SensorConfigurationInvalid("Duplicated sensor tag [{}]".format(sensor_id))
             else:
                 sensor_ids.append(sensor_id)
 
-            # Check if the sensor is valid
+            # 检查传感器是否有效
             if agent_track == Track.SENSORS:
                 if sensor['type'].startswith('sensor.opendrive_map'):
                     raise SensorConfigurationInvalid("Illegal sensor used for Track [{}]!".format(agent_track))
 
-            # Check the sensors validity
+            # 检查传感器的有效性
             if sensor['type'] not in AgentWrapper.allowed_sensors:
                 raise SensorConfigurationInvalid("Illegal sensor used. {} are not allowed!".format(sensor['type']))
 
-            # Check the extrinsics of the sensor
+            # 检查传感器的外部特性
             if 'x' in sensor and 'y' in sensor and 'z' in sensor:
                 if math.sqrt(sensor['x']**2 + sensor['y']**2 + sensor['z']**2) > MAX_ALLOWED_RADIUS_SENSOR:
                     raise SensorConfigurationInvalid(
                         "Illegal sensor extrinsics used for Track [{}]!".format(agent_track))
 
-            # Check the amount of sensors
+            # 检查传感器数量
             if sensor['type'] in sensor_count:
                 sensor_count[sensor['type']] += 1
             else:
                 sensor_count[sensor['type']] = 1
-
 
         for sensor_type, max_instances_allowed in SENSORS_LIMITS.items():
             if sensor_type in sensor_count and sensor_count[sensor_type] > max_instances_allowed:
@@ -228,7 +227,7 @@ class AgentWrapper(object):
 
     def cleanup(self):
         """
-        Remove and destroy all sensors
+        移除并销毁所有传感器
         """
         for i, _ in enumerate(self._sensors_list):
             if self._sensors_list[i] is not None:

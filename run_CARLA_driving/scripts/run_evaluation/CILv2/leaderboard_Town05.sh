@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# To run Town05 leaderboard driving test for trained CIL++ agent
+# 对经过训练的 CIL++ 代理运行 Town05 排行榜驾驶测试
 
 leaderboard_Town05_cilv2 () {
     python ${DRIVING_TEST_ROOT}/driving/evaluator.py \
@@ -21,10 +21,10 @@ leaderboard_Town05_cilv2 () {
     --save-driving-vision
 }
 
+
 function_array=("leaderboard_Town05_cilv2")
 
-
-# resume benchmark in case carla is crashed, until the benchmark is finished
+# 如果 Carla 崩溃，则恢复基准测试，直到基准测试完成
 RED=$'\e[0;31m'
 NC=$'\e[0m'
 for run in "${function_array[@]}"; do
