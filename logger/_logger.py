@@ -31,6 +31,7 @@ def create_log(save_full_path, train_log_frequency=1, train_image_log_frequency=
     TRAIN_IMAGE_LOG_FREQUENCY = train_image_log_frequency
     tl = Logger(os.path.join(save_full_path, 'tensorboard_logs'))
 
+
 def add_scalar(tag, value, iteration=None):
 
     """
@@ -43,17 +44,18 @@ def add_scalar(tag, value, iteration=None):
     else:
         raise ValueError('iteration is not supposed to be None')
 
+
 def add_gradCAM_attentions_to_disk(process_type, model, source_input, input_rgb_frames,
                                             epoch, save_path=None, batch_id=None):
 
     global TRAIN_IMAGE_LOG_FREQUENCY
     cmap = plt.get_cmap('jet')
 
-    ## 用于保存主干的训练注意力图
+    # 用于保存主干的训练注意力图
     if process_type == 'Train':
         pass
 
-    ## 用于保存主干的验证注意力图
+    # 用于保存主干的验证注意力图
     elif process_type == 'Valid':
         S = len(source_input[0])
         cam_num = len(source_input[0][0])

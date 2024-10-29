@@ -19,7 +19,6 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-
 class ServerManager(object):
     def __init__(self, opt_dict):
         log_level = logging.INFO
@@ -46,7 +45,7 @@ class ServerManagerDocker(ServerManager):
         self._docker_id = ''
 
     def reset(self, host="127.0.0.1", port=2000):
-        # first we check if there is need to clean up
+        # 首先，我们检查是否需要清理（停止之前的Carla服务）
         if self._proc is not None:
             logging.info('Stopping previous server [PID=%s]', self._proc.pid)
             self.stop()
@@ -54,13 +53,13 @@ class ServerManagerDocker(ServerManager):
             self._outs, self._errs = self._proc.communicate()
 
         self._docker_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(64))
-        # temporary config file
-        # TODO quality level to be set here
+        # 临时配置文件
+        # TODO 此处设置质量关卡
         my_env = os.environ.copy()
         my_env["NV_GPU"] = str(self._gpu)
         if not os.path.exists(os.path.join(os.getcwd(),'CARLA_recorder')):
-            os.makedirs(os.path.join(os.getcwd(),'CARLA_recorder'))
-        # for running docker for CARLA version in prior to 0.9.9
+            os.makedirs(os.path.join(os.getcwd(), 'CARLA_recorder'))
+        # 用于在 0.9.9 之前的 CARLA 版本中运行 docker
         if self._docker_name in ['carla_099_t10']:
             self._proc = subprocess.Popen(['docker', 'run', '--name', self._docker_id, '--rm', '-d', '-p',
                                            f'{port}-{port+2}:{port}-{port+2}', '--runtime=nvidia', '-e',
@@ -68,7 +67,7 @@ class ServerManagerDocker(ServerManager):
                                            'CarlaUE4.sh', f'-quality-level={self._quality_level}', f'-carla-port={port}'],
                                           shell=False, stdout=subprocess.PIPE, env=my_env)
 
-        # for running docker for CARLA 0.9.10. Notice that the Dockerfile needs to be modified to match the docker running
+        # 用于运行 CARLA 0.9.10 的 docker。请注意，需要修改 Dockerfile 以匹配运行的 docker
         elif self._docker_name in ['carla_0910_t10', 'carla_0910_t10:0.9.10', 'carla_0911:0.9.11']:
             self._proc = subprocess.Popen(['docker', 'run', '--name', self._docker_id, '--rm', '-d', '-p',
                                            f'{port}-{port+2}:{port}-{port+2}', '--gpus', f'device={self._gpu}', '--cpus', '5.0',
@@ -77,7 +76,7 @@ class ServerManagerDocker(ServerManager):
                                            self._docker_name, '/bin/bash', './CarlaUE4.sh', '-opengl',
                                            f'-quality-level={self._quality_level}', f'-carla-port={port}'],
                                           shell=False, stdout=subprocess.PIPE, env=my_env)
-        # for running docker for CARLA 0.9.13
+        # 用于运行 CARLA 0.9.13 的 docker
         elif self._docker_name in ['carlasim/carla:0.9.13', 'carlasim/carla_allmaps:0.9.13', 'carlasim/carla_allmaps:0.9.14',
                                    'carlasim/carla_allmaps:0.9.15']:
             self._proc = subprocess.Popen(['docker', 'run', '--name', self._docker_id, '--rm', '-d', '-p',
@@ -93,7 +92,7 @@ class ServerManagerDocker(ServerManager):
 
         logging.debug(" Starting a docker server of id %s at port %d" % (self._docker_id, port))
 
-        time.sleep(20)
+        time.sleep(20)  # 停止20秒
 
     def stop(self):
         logging.debug("Killed a docker of id %s " % self._docker_id)
@@ -101,10 +100,7 @@ class ServerManagerDocker(ServerManager):
         self._proc = subprocess.Popen(exec_command)
 
 
-
-
 def start_test_server(port=6666, gpu=0, docker_name='carlalatest:latest'):
-
     params = {'docker_name': docker_name,
               'gpu': gpu
               }
@@ -115,15 +111,12 @@ def start_test_server(port=6666, gpu=0, docker_name='carlalatest:latest'):
     return docker_server
 
 
-
 def check_test_server(port):
-
-    # Check if a server is open at some port
-
+    # 检查服务器是否在某个端口开放
     try:
-        print ( " TRYING TO CONNECT ", port)
+        print( " TRYING TO CONNECT ", port)
         client = carla.Client(host='localhost', port=port)
-        print ( "GETTING VERSION ")
+        print( "GETTING VERSION ")
         client.get_server_version()
         del client
         return True

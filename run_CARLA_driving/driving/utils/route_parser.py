@@ -4,7 +4,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """
-Module used to parse all the route and scenario configuration parameters.
+用于解析所有路线和场景配置参数的模块。
 """
 from collections import OrderedDict
 import json
@@ -16,22 +16,22 @@ import carla
 from agents.navigation.local_planner import RoadOption
 from srunner.scenarioconfigs.route_scenario_configuration import RouteScenarioConfiguration
 
-# TODO  check this threshold, it could be a bit larger but not so large that we cluster scenarios.
-TRIGGER_THRESHOLD = 2.0  # Threshold to say if a trigger position is new or repeated, works for matching positions
-TRIGGER_ANGLE_THRESHOLD = 10  # Threshold to say if two angles can be considering matching when matching transforms.
+# TODO  检查这个阈值，它可能有点大，但不会大到让我们聚类场景。
+TRIGGER_THRESHOLD = 2.0  # 判断触发位置是新的还是重复的阈值，适用于匹配位置
+TRIGGER_ANGLE_THRESHOLD = 10  # 在匹配变换时，用于表示两个角度是否可以考虑匹配的阈值。
 
 
 class RouteParser(object):
 
     """
-    Pure static class used to parse all the route and scenario configuration parameters.
+    纯静态类，用于解析所有路线和场景配置参数。
     """
 
     @staticmethod
     def parse_annotations_file(annotation_filename):
         """
-        Return the annotations of which positions where the scenarios are going to happen.
-        :param annotation_filename: the filename for the anotations file
+        返回场景将要发生位置的注释。
+        :param annotation_filename: 注释文件的文件名
         :return:
         """
         with open(annotation_filename, 'r') as f:
@@ -39,20 +39,20 @@ class RouteParser(object):
 
         final_dict = OrderedDict()
 
-        for env_name, env_dict in annotation_dict['envs'].items():   #annotation_dict['available_scenarios']
+        for env_name, env_dict in annotation_dict['envs'].items():   # annotation_dict['available_scenarios']
             final_dict.update({env_name: env_dict})
 
         package_name = annotation_dict['package_name']
 
-        return final_dict, package_name  # the file has a current maps name that is an one element vec
+        return final_dict, package_name  # 该文件具有当前地图名称，该名称是一个元素向量
 
     @staticmethod
     def parse_routes_file(route_filename, scenario_file, single_route=None):
         """
-        Returns a list of route elements.
-        :param route_filename: the path to a set of routes.
-        :param single_route: If set, only this route shall be returned
-        :return: List of dicts containing the waypoints, id and town of the routes
+        返回路线元素的列表。
+        :param route_filename: 一组路线的路径。
+        :param single_route: 如果设置，则只返回此路线
+        :return: 包含路线的航点、ID 和城镇的字典列表
         """
 
         list_route_descriptions = []
@@ -69,7 +69,7 @@ class RouteParser(object):
             new_config.weather = RouteParser.parse_weather(route)
             new_config.scenario_file = scenario_file
 
-            waypoint_list = []  # the list of waypoints that can be found on this route
+            waypoint_list = []  # 此路线上可找到的航点列表
             for waypoint in route.iter('waypoint'):
                 waypoint_list.append(carla.Location(x=float(waypoint.attrib['x']),
                                                     y=float(waypoint.attrib['y']),
@@ -84,10 +84,10 @@ class RouteParser(object):
     @staticmethod
     def parse_scenarios_routes_file(route_root, envs_dict, package_name):
         """
-        Returns a list of route elements.
-        :param route_filename: the path to a set of routes.
-        :param single_route: If set, only this route shall be returned
-        :return: List of dicts containing the waypoints, id and town of the routes
+        返回路线元素的列表。
+        :param route_filename: 一组路线的路径。
+        :param single_route: 如果设置，则只返回此路线
+        :return: 包含路线的航点、ID 和城镇的字典列表
         """
 
         list_scenario_route_descriptions = []
@@ -120,8 +120,7 @@ class RouteParser(object):
     @staticmethod
     def parse_weather(preset_weather):
         """
-        Returns a carla.WeatherParameters with the corresponding weather for that route. If the route
-        has no weather attribute, the default one is triggered.
+        返回 carla.WeatherParameters，其中包含该路线的相应天气。如果路线没有天气属性，则触发默认属性。
         """
 
         weather = carla.WeatherParameters()
@@ -161,7 +160,7 @@ class RouteParser(object):
     @staticmethod
     def check_trigger_position(new_trigger, existing_triggers):
         """
-        Check if this trigger position already exists or if it is a new one.
+        检查此触发位置是否已经存在或者是否是新的。
         :param new_trigger:
         :param existing_triggers:
         :return:
@@ -183,7 +182,7 @@ class RouteParser(object):
     @staticmethod
     def convert_waypoint_float(waypoint):
         """
-        Convert waypoint values to float
+        将航点值转换为浮点数 float
         """
         waypoint['x'] = float(waypoint['x'])
         waypoint['y'] = float(waypoint['y'])
@@ -193,13 +192,13 @@ class RouteParser(object):
     @staticmethod
     def match_world_location_to_route(world_location, route_description):
         """
-        We match this location to a given route.
+        我们将此位置与给定的路线进行匹配。
             world_location:
             route_description:
         """
         def match_waypoints(waypoint1, wtransform):
             """
-            Check if waypoint1 and wtransform are similar
+            检查 waypoint1 和 wtransform 是否相似
             """
             dx = float(waypoint1['x']) - wtransform.location.x
             dy = float(waypoint1['y']) - wtransform.location.y
@@ -212,7 +211,7 @@ class RouteParser(object):
                 and (dyaw < TRIGGER_ANGLE_THRESHOLD or dyaw > (360 - TRIGGER_ANGLE_THRESHOLD))
 
         match_position = 0
-        # TODO this function can be optimized to run on Log(N) time
+        # TODO 该函数可以优化为以 Log(N) 时间运行
         for route_waypoint in route_description:
             if match_waypoints(world_location, route_waypoint[0]):
                 return match_position
@@ -223,7 +222,7 @@ class RouteParser(object):
     @staticmethod
     def get_scenario_type(scenario, match_position, trajectory):
         """
-        Some scenarios have different types depending on the route.
+        有些场景根据路线不同会有不同的类型。
         :param scenario: the scenario name
         :param match_position: the matching position for the scenarion
         :param trajectory: the route trajectory the ego is following

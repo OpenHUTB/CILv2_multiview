@@ -25,7 +25,7 @@ def threaded(fn):
 
 class SensorConfigurationInvalid(Exception):
     """
-    Exceptions thrown when the sensors used by the agent are not allowed for that specific submissions
+    当代理使用的传感器不允许用于该特定提交时引发的异常
     """
 
     def __init__(self, message):
@@ -34,7 +34,7 @@ class SensorConfigurationInvalid(Exception):
 
 class SensorReceivedNoData(Exception):
     """
-    Exceptions thrown when the sensors used by the agent take too long to receive data
+    代理使用的传感器接收数据时间过长时引发的异常
     """
 
     def __init__(self, message):
@@ -68,7 +68,7 @@ class BaseReader(object):
             if self._callback is not None:
                 current_time = GameTime.get_time()
 
-                # Second part forces the sensors to send data at the first tick, regardless of frequency
+                # 第二部分迫使传感器在第一个节拍发送数据，而不管频率如何
                 if current_time - latest_time + 0.0025 > (1 / self._reading_frequency) or first_time:
                     self._callback(GenericMeasurement(self.__call__(), GameTime.get_frame()))
                     latest_time = GameTime.get_time()
@@ -78,7 +78,7 @@ class BaseReader(object):
                     time.sleep(0.001)
 
     def listen(self, callback):
-        # Tell that this function receives what the producer does.
+        # 告诉此函数接收生产者所做的操作。
         self._callback = callback
 
     def stop(self):
@@ -90,12 +90,12 @@ class BaseReader(object):
 
 class SpeedometerReader(BaseReader):
     """
-    Sensor to measure the speed of the vehicle.
+    用于测量车辆速度的传感器。
     """
     MAX_CONNECTION_ATTEMPTS = 10
 
     def _get_forward_speed(self, transform=None, velocity=None):
-        """ Convert the vehicle transform directly to forward speed """
+        """ 将车辆变换直接转换为前进速度 """
         if not velocity:
             velocity = self._vehicle.get_velocity()
         if not transform:
@@ -133,7 +133,7 @@ class OpenDriveMapReader(BaseReader):
 
 class CanbusReader(BaseReader):
     """
-    Sensor to measure the location of the vehicle and the navigation waypoint.
+    用于测量车辆位置和导航航路点的传感器。
     """
 
     def _truncate_global_route_till_local_target(self, ego_location, windows_size=5):
@@ -159,7 +159,7 @@ class CanbusReader(BaseReader):
         return latest_wp_transform
 
     def __call__(self):
-        """ We convert the vehicle physics information into a convenient dictionary """
+        """ 我们将车辆物理信息转换为方便的词典 """
         transform = self._vehicle.get_transform()
         latest_navigate_wp_transform = self._truncate_global_route_till_local_target(transform.location)
 
@@ -196,6 +196,7 @@ class CanbusReader(BaseReader):
 
         return can_bus_dict
 
+
 class CallBack(object):
     def __init__(self, tag, sensor_type, sensor, data_provider):
         self._tag = tag
@@ -219,7 +220,7 @@ class CallBack(object):
         else:
             logging.error('No callback method for this sensor.')
 
-    # Parsing CARLA physical Sensors
+    # 解析CARLA物理传感器
     def _parse_image_cb(self, image, tag):
         if 'ss' in tag:
             array = image
@@ -281,9 +282,8 @@ class SensorInterface(object):
         self._new_data_buffers = Queue()
         self._queue_timeout = 10
 
-        # Only sensor that doesn't get the data on tick, needs special treatment
+        # 只有无法获得节拍数据的传感器需要特殊处理
         self._opendrive_tag = None
-
 
     def register_sensor(self, tag, sensor_type, sensor):
         if tag in self._sensors_objects:
@@ -304,18 +304,15 @@ class SensorInterface(object):
         try: 
             data_dict = {}
             while len(data_dict.keys()) < len(self._sensors_objects.keys()):
-
-                # Don't wait for the opendrive sensor
+                # 不要等待opendrive传感器
                 if self._opendrive_tag and self._opendrive_tag not in data_dict.keys() \
                         and len(self._sensors_objects.keys()) == len(data_dict.keys()) + 1:
                     break
 
                 sensor_data = self._new_data_buffers.get(True, self._queue_timeout)
                 data_dict[sensor_data[0]] = ((sensor_data[1], sensor_data[2]))
-
                 # print(len(data_dict.keys()), len(self._sensors_objects.keys()))
                 # print(data_dict.keys(), self._sensors_objects.keys())
-
         except Empty:
             raise SensorReceivedNoData("A sensor took too long to send their data")
 

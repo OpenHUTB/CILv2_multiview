@@ -95,7 +95,7 @@ class RoachRL_expert(object):
         self._obs_configs = cfg['obs_configs']
         self._train_cfg = cfg['training']
 
-        # prepare policy
+        # 准备策略
         self._policy_class = load_entry_point(cfg['policy']['entry_point'])
         self._policy_kwargs = cfg['policy']['kwargs']
         print(f'Loading checkpoint: {self._ckpt}')
@@ -114,7 +114,7 @@ class RoachRL_expert(object):
 
     def set_global_plan(self, global_plan_gps, global_plan_world_coord):
         """
-        Set the plan (route) for the agent
+        为代理设置规划（路线）
         """
         ds_ids = downsample_route(global_plan_world_coord, 50)
         self._global_plan_world_coord = [(global_plan_world_coord[x][0], global_plan_world_coord[x][1]) for x in
@@ -125,7 +125,7 @@ class RoachRL_expert(object):
 
     def reset_global_plan(self):
         """
-        reset the plan (route) for the agent
+        为代理重置规划（路线）
         """
         current_loc = self._ego_vehicle.get_location()
         last_gps, _ = self._global_plan[-1]
@@ -148,9 +148,9 @@ class RoachRL_expert(object):
 
     def sensors(self):  # pylint: disable=no-self-use
         """
-        Define the sensor suite required by the agent
+        定义代理所需的传感器套件
 
-        :return: a list containing the required sensors in the following format:
+        :return: 包含所需传感器的列表，格式如下：
 
         """
 

@@ -80,6 +80,7 @@ def carla_rot_to_mat(carla_rotation):
     rotation_matrix = yaw_matrix.dot(pitch_matrix).dot(roll_matrix)
     return rotation_matrix
 
+
 def get_loc_rot_vel_in_ev(actor_list, ev_transform):
     location, rotation, absolute_velocity = [], [], []
     for actor in actor_list:

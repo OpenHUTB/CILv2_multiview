@@ -71,7 +71,7 @@ def train_upstream_task(model, optimizer):
             """
             _logger.add_scalar('Loss', loss.item(), model._current_iteration)
 
-            ## 向 tensorboard 添加损失
+            # 向 tensorboard 添加损失
             _logger.add_scalar('Loss_steer', steer_loss.item(), model._current_iteration)
             if g_conf.ACCELERATION_AS_ACTION:
                 _logger.add_scalar('Loss_acceleration', acceleration_loss.item(), model._current_iteration)
@@ -122,7 +122,7 @@ def execute(gpus_list, exp_batch, exp_name):
     seed_everything(seed=g_conf.MAGICAL_SEED)
 
     model = Models(g_conf.MODEL_TYPE, g_conf.MODEL_CONFIGURATION)
-    # print("===================== Model Configuration =====================")
+    # print("===================== 模型配置 =====================")
     # print("")
     # print(model)
 
@@ -131,6 +131,7 @@ def execute(gpus_list, exp_batch, exp_name):
         num_params += param.numel()
     print('model params: ', num_params)
 
+    # 在Adam的基础上增加了权重衰减（也称为L2正则化），这是对模型参数的系数惩罚，有助于防止过拟合
     optimizer = torch.optim.AdamW(model.parameters(), lr=g_conf.LEARNING_RATE)
     if len(gpus_list) > 1 and g_conf.DATA_PARALLEL:
         print("Using multiple GPUs parallel! ")

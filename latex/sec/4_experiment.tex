@@ -46,12 +46,15 @@ Training and testing weathers are the same for both Town01 and Town02.
 
 \subsection{Implementation Details}
 To optimize Eq. (\ref{eq:loss}), we use the Adam \cite{Kingma:2015} with an initial learning rate of $10^{-4}$ and weight decay of $0.01$. 
-We train for 80 epochs on 2 NVIDIA A40 GPUs in parallel, with a batch size of 120. 
+We train for 80 epochs on 1 NVIDIA A100 GPUs, with a batch size of 120. 
 The learning rate decays by half at epochs 30, 50, and 65. 
-% More training details can be found in the supplementary material.
 
 % 其他
-During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA \cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record. We employed a specific reward scheme and imposed additional penalties for large steering changes to prevent oscillatory maneuvers. After training the network, we compared the similarity between the network activations and those observed in the human brain. As depicted in Fig. \ref{fig:fig3}, we contrasted the similarity between the test participant and the brain-inspired network in processing the same event.
+During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. 
+Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA~\cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record.
+We employed a specific reward scheme and imposed additional penalties for large steering changes to prevent oscillatory maneuvers. 
+After training the network, we compared the similarity between the network activations and those observed in the human brain. 
+As depicted in Fig.~\ref{fig:fig3}, we contrasted the similarity between the test participant and the brain-inspired network in processing the same event.
 
 
 % 驾驶评估的3个不同数据集
@@ -110,12 +113,23 @@ The most important metrics are the average driving score (\emph{Avg.DS}) and the
 while \emph{Avg.RC} is the average distance towards the goal that the ego-vehicle is able to travel.
 
 
+% 高层导航命令
 \subsubsection{High-level Navigation Commands} 
 As in CILRS \cite{Codevilla:2019}, at training time we use simple navigation commands such as \emph{continue} in the lane, or \emph{go-straight/turn-left/turn-right} next time an intersection is reached. 
 However, in complex towns, after crossing an intersection in any direction, we may legally enter any of the multiple lanes. 
 Thus, since this can be known by the global navigation system, when the ego-vehicle enters a lane out of the pre-planned global trajectory, a corrective command is forced, like \emph{move-to-left-lane} or  \emph{move-to-right-lane} as soon as possible. 
 This corrective mechanism is used only at testing time. 
 Figure~\ref{fig:command_ambiguous} provides an example.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=1.0\linewidth]{fig/cmd_ambiguous.png}
+	\caption{Top: when the ego-vehicle is entering a new road segment from an intersection, the \emph{go-straight} navigation command is ambiguous. 
+	The ego-vehicle can legally move to any of the highlighted lanes. 
+	Bottom: four aerial views at different times with the pre-planned global trajectory shown in \textbf{\textcolor{orange}{orange}}. 
+	They illustrate how the high-level navigation command changes to \emph{move-to-right-lane}, to inform how to get back to the desired trajectory.}
+	\label{fig:command_ambiguous}
+\end{figure}
 
 
 \begin{table*}
@@ -143,6 +157,7 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 		For $\uparrow$, the higher the better, while for $\downarrow$ is the opposite.}
 	\label{tab:T2_NC_results}
 \end{table*}
+
 
 \begin{table*}
 	\centering
@@ -275,6 +290,30 @@ For HFOV=$100^\circ$, we have observed that the track of the road shoulder is ea
 For HFOV=$180^{\circ}$, the ego-vehicle can better perform the right driving maneuver, thanks to having the road shoulder as a reference.
 
 
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{fig/TLCausalConfusionA.png}
+		\caption{Roach RL \cite{Zhang:2021}: using semantic BeV as input during training time}
+		\label{fig:TLCausualConfusionB}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{fig/TLCausalConfusionB.png}
+		\caption{CIL++: only images from three views as input}
+		\label{fig:TLCausualConfusionA}
+	\end{subfigure}
+	%   \includegraphics[width=1.0\linewidth]{images/TLcausalConfusion.png}
+	\caption{Top Left: The expert we use for data collection is the teacher agent Roach RL \cite{Zhang:2021}, which has access to semantic BeVs. 
+		Note that, in simulation, this expert plays the role of a human driver in the real world, who would drive to collect on-board data. 
+		Top Right: Using an insufficient FOV, the red traffic light is not observable in the image when the expert stops close to it, which may cause causal confusion when applying imitation learning to train the student agent RIM. 
+		Bottom: CIL++ avoids this causal confusion by using a larger HFOV based on three complementary images (from different cameras). More specifically, RIM uses HFOV=$100^{\circ}$, while CIL++ uses HFOV=$180^{\circ}$.}
+	\label{fig:causalconfusion}
+\end{figure}
+
+
 \subsubsection{Multi-town Generalization}\label{sec:multi_towns_result}
 In this section, we assess the performance of CIL++ in much more complex scenarios, as provided by CARLA's multiple towns. 
 As mentioned in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with MILE~\cite{Hu:2022}, using CARLA's offline Leaderboard metrics (Sec.~\ref{lb_metrics}).
@@ -297,9 +336,20 @@ The computation should be divided into two cases depending on the sign of the ou
 Negative gradients are used to calculate the weights for the feature map when the acceleration or steering angle value is lower than zero, otherwise, the positive gradient is used.
 
 
+% _results\_results\CILv2\CILv2_3cam_single_lane\Eval\Valid_gradCAM_Roach_LBCRoutes_3cam_valid\30\-1\85.jpg
 Fig.~\ref{fig:attention_ped_greed} shows the activation map at an intersection. 
 Three image areas are highly activated: the traffic light in the right image, the crossing pedestrians in the central one, and the lane shoulder in the left one. 
 Thus, we believe that CIL++ shows a proper understanding of this scene, and a clear causality between observation and action since it decides to brake due to the pedestrians, even though the traffic light is in green and a \emph{turn-left} navigation command is given.
+
+\begin{figure*}[ht!]
+	\centering
+	\includegraphics[width=\linewidth]{fig/attention_ped_greed.jpg}
+	\caption{Activation maps of CIL++ at an intersection in Town02. 
+		Three image areas from different views are highly activated: 
+		the traffic light at the right image, the crossing pedestrians at the central one, and the lane shoulder at the left one. 
+		Causality between observation and action is shown as a strong braking (0.794) due to the pedestrians, even though the traffic light in green and the \emph{turn-left} command.}
+	\label{fig:attention_ped_greed}
+\end{figure*}
 
 
 % 速度、目标？

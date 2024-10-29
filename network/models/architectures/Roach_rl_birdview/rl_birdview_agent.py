@@ -12,6 +12,7 @@ def load_entry_point(name):
     fn = getattr(mod, attr_name)
     return fn
 
+
 class RlBirdviewAgent():
     def __init__(self, path_to_conf_file='config_agent.yaml'):
         self._logger = logging.getLogger(__name__)

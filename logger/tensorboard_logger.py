@@ -1,5 +1,3 @@
-
-
 # Code referenced from https://gist.github.com/gyglim/1f8dfb1b5c82627ae3efcfbbadb9f514
 import tensorflow as tf
 import scipy.misc
@@ -28,7 +26,6 @@ class Logger(object):
         with self.writer.as_default():
             tf.summary.scalar(tag, value, step=step)
             self.writer.flush()
-
 
     def image_summary(self, tag, images, step):
         """记录图像列表。"""

@@ -5,14 +5,14 @@ from json.decoder import JSONDecodeError
 
 class Writer(object):
     """
-        Organizing the writing process, note that the sensors are written on a separate thread.
-        directly on the sensor interface.
+        组织写入过程，注意传感器是在单独的线程上写入的。
+        直接在传感器接口上。
     """
 
     def __init__(self, full_path):
         """
         """
-        # path for the writter for this specific client
+        # 这个特定客户端的写入器路径
         self._full_path = os.path.join(full_path)
         self._latest_id = 0
         if not os.path.exists(self._full_path):
@@ -38,7 +38,7 @@ class Writer(object):
                 fo.seek(0)
                 fo.write(json.dumps(jsonObj, sort_keys=True, indent=4))
 
-    # in principle these are not needed.
+    # 原则上这些是不需要的。
     def write_gnss(self, gnss, tag):
         try:
             with open(os.path.join(self._full_path, tag + str(self._latest_id).zfill(6) + '.json'), 'r+') as fo2:
@@ -67,7 +67,7 @@ class Writer(object):
             save_path = os.path.join(self._full_path, 'bbox_patches')
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
-            # we check if the bbox data and rgb images are ready for drawing pathces
+            # 我们检查边界框和RGB图像是否准备好绘制 pathces
             exist_rgb_idx = [img[-10:-4] for img in sorted(os.listdir(self._full_path)) if img.startswith('rgb_'+tag.split('_')[-1]) and img.endswith('.png')]
             exist_bbox_idx = [json_f[-11:-5] for json_f in sorted(os.listdir(self._full_path)) if json_f.startswith(tag) and json_f.endswith('.json')]
             exist_bbox_img_idx = [bbox_img[-10:-4] for bbox_img in sorted(os.listdir(save_path)) if bbox_img.startswith(tag)]
