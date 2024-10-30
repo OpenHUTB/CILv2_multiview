@@ -69,6 +69,7 @@ def save_dict(endpoint, data):
         proxies = autodetect_proxy()
 
         if proxies:
+            # 使用 HTTP 的 PATCH 请求来更新资源
             _ = requests.patch(url=endpoint, headers={'content-type':'application/json'}, data=json.dumps(data, indent=4, sort_keys=True), proxies=proxies)
         else:
             _ = requests.patch(url=endpoint, headers={'content-type':'application/json'}, data=json.dumps(data, indent=4, sort_keys=True))

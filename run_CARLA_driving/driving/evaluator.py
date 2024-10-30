@@ -434,6 +434,7 @@ class Evaluator(object):
 
         # 保存全局统计数据
         print("\033[1m> Registering the global statistics\033[0m")
+        # 计算全局的性能指标，生成论文表格中的数据
         global_stats_record = self.statistics_manager.compute_global_statistics(route_indexer.total)
         StatisticsManager.save_global_record(global_stats_record, self.sensor_icons, route_indexer.total, args.checkpoint)
         if self.ServerDocker is not None:

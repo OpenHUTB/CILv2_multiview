@@ -207,7 +207,7 @@ class StatisticsManager(object):
 
     def compute_global_statistics(self, total_routes):
         global_record = RouteRecord()
-        global_record.scores['success_rate'] = 0
+        global_record.scores['success_rate'] = 0  # 成功率
         global_record.scores['success_rate_strict'] = 0
         global_record.route_id = -1
         global_record.index = -1
@@ -284,7 +284,7 @@ class StatisticsManager(object):
                           '{:.3f}'.format(stats_dict['scores']['score_composed']),
                           '{:.3f}'.format(stats_dict['scores']['score_route']),
                           '{:.3f}'.format(stats_dict['scores']['score_penalty']),
-                          # infractions
+                          # 违规
                           '{:.3f}'.format(stats_dict['infractions']['collisions_pedestrian']),
                           '{:.3f}'.format(stats_dict['infractions']['collisions_vehicle']),
                           '{:.3f}'.format(stats_dict['infractions']['collisions_layout']),

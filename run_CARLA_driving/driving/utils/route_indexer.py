@@ -5,7 +5,6 @@ import copy
 
 from srunner.scenarioconfigs.route_scenario_configuration import RouteScenarioConfiguration
 
-
 from driving.utils.route_parser import RouteParser
 from driving.utils.checkpoint_tools import fetch_dict, create_default_json_msg, save_dict
 
@@ -20,7 +19,7 @@ class RouteIndexer():
         self.routes_length = []
         self._index = 0
 
-        # retrieve routes
+        # 检索路线
         env_dict, package_name = RouteParser.parse_annotations_file(self._scenarios_file)
         route_configurations = RouteParser.parse_scenarios_routes_file(self._routes_file, env_dict, package_name)
 

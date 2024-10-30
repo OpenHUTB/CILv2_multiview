@@ -62,7 +62,7 @@ The learning rate decays by half at epochs 30, 50, and 65.
 The performance of the BID agent is constrained by the performance of the expert it is imitating. 
 When the expert performs poorly, the agent that mimics the expert will also exhibit poor performance. 
 The BID model is designed in strict accordance with the human brain's visual information processing process, both structurally and functionally. 
-When optimized, the model's output results are very close to those of the human brain in terms of evaluating the similarity in activation.
+When optimized, the model's output results are very close to those of the expert in terms of evaluating the similarity.
 
 
 We follow the \emph{NoCrash} benchmark~\cite{Codevilla:2019} and the offline CARLA leaderboard benchmark~\cite{Zhang:2021,Hu:2022} for experiments on small single-lane towns (Sec.~\ref{sec:small_town_results}) and multiple towns (Sec.~ \ref{sec:multi_towns_result}), respectively.
@@ -104,7 +104,7 @@ All infraction values are normalized per driven kilometer.
 
 
 \subsubsection{Offline Leaderboard Metrics.}\label{lb_metrics}
-To align our evaluation with \cite{Hu:2022}, we use the offline CARLA's Leaderboard metrics for multiple towns. 
+To align our evaluation with leaderboard\cite{Hu:2022}, we use the offline CARLA's Leaderboard metrics for multiple towns. 
 % Avg.DS 平均驾驶分数、平均路线完成
 The most important metrics are the average driving score (\emph{Avg.DS}) and the average route completion (\emph{Avg.RC}). 
 \emph{Avg.DS} is based on penalizing driving performance according to the terms defined in CARLA's Leaderboard, 
