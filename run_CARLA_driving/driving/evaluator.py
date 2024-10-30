@@ -36,7 +36,7 @@ from srunner.scenariomanager.watchdog import Watchdog
 from driving.scenarios.scenario_manager import ScenarioManager
 from driving.scenarios.route_scenario import RouteScenario
 from driving.envs.sensor_interface import SensorConfigurationInvalid
-from driving.autoagents.agent_wrapper import  AgentWrapper, AgentError
+from driving.autoagents.agent_wrapper import AgentWrapper, AgentError
 from driving.utils.statistics_manager import StatisticsManager
 from driving.utils.route_indexer import RouteIndexer
 from driving.utils.server_manager import ServerManagerDocker, find_free_port
@@ -524,9 +524,9 @@ def main():
 
     statistics_manager = StatisticsManager()
 
-    ServerDocker=None
+    ServerDocker = None
     if arguments.docker:
-        docker_params={'docker_name': arguments.docker, 'gpu': arguments.gpus[0], 'quality_level': 'Epic'}
+        docker_params = {'docker_name': arguments.docker, 'gpu': arguments.gpus[0], 'quality_level': 'Epic'}
         ServerDocker = ServerManagerDocker(docker_params)
 
     try:

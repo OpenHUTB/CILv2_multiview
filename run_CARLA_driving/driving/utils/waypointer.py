@@ -36,7 +36,7 @@ class Waypointer:
         ref_rot_in_global = carla.Rotation(yaw=np.rad2deg(compass) - 90.0)
         loc_in_ev = self.vec_global_to_ref(next_vec_in_global, ref_rot_in_global)
 
-        # Fix the command given too late bug in the intersection
+        # 修复路口命令给出太晚的错误
         self.next_idx = min(self.current_idx+1, len(self._global_plan_gps) - 2)
         _, next_road_option_0 = self._global_plan_gps[max(0, self.next_idx)]
         _, next_road_option_1 = self._global_plan_gps[self.next_idx + 1]
@@ -256,7 +256,7 @@ class Waypointer:
 
     def _get_next_turn_loc(self, global_route):
         truncate_current_turn = False
-        s=0
+        s = 0
         for i, point in enumerate(global_route):
             if point[1] in [RoadOption.RIGHT, RoadOption.LEFT, RoadOption.STRAIGHT]:
                 continue

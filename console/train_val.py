@@ -160,9 +160,9 @@ def execute(gpus_list, exp_batch, exp_name):
         optimizer.load_state_dict(checkpoint['optimizer'])
         # 从检查点加载优化器状态后，我们手动将其移动到 GPU 内存
         for state in optimizer.state.values():
-            for k,v in state.items():
+            for k, v in state.items():
                 if torch.is_tensor(v):
-                    state[k]=v.cuda()
+                    state[k] = v.cuda()
         for param_group in optimizer.param_groups:
             print('')
             print('    Resum training from epoch -> ', checkpoint['epoch'])

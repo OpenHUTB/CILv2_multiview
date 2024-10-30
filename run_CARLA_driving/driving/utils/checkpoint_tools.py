@@ -8,6 +8,11 @@ import os.path
 
 
 def autodetect_proxy():
+    """
+    自动检测代理
+    Returns: HTTPS和HTTP代理
+
+    """
     proxies = {}
 
     proxy_https = os.getenv('HTTPS_PROXY', os.getenv('https_proxy', None))
@@ -70,9 +75,11 @@ def save_dict(endpoint, data):
 
         if proxies:
             # 使用 HTTP 的 PATCH 请求来更新资源
-            _ = requests.patch(url=endpoint, headers={'content-type':'application/json'}, data=json.dumps(data, indent=4, sort_keys=True), proxies=proxies)
+            _ = requests.patch(url=endpoint, headers={'content-type': 'application/json'},
+                               data=json.dumps(data, indent=4, sort_keys=True), proxies=proxies)
         else:
-            _ = requests.patch(url=endpoint, headers={'content-type':'application/json'}, data=json.dumps(data, indent=4, sort_keys=True))
+            _ = requests.patch(url=endpoint, headers={'content-type': 'application/json'},
+                               data=json.dumps(data, indent=4, sort_keys=True))
     else:
         with open(endpoint, 'w') as fd:
             json.dump(data, fd, indent=4, sort_keys=True)

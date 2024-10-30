@@ -177,13 +177,16 @@ class CILv2_agent(object):
 
     def sensors(self):  # pylint: disable=no-self-use
         """
-        定义代理所需的传感器套件
+        定义代理所需的所有传感器
 
         :return: 包含以下格式的所需传感器的列表:
 
         """
 
+        # 所使用的相机分辨率是：300x300
+        # 包括：左、中、右（每个视野都是60度，共组成180度的视野）
         if self.vision_save_path:
+            # 如果需要保存跟踪时的图像，则还有一个后(x=-4.5)上(z=4)方、稍微向下看（俯仰pitch=-20）的相机
             sensors = [
                 {'type': 'sensor.camera.rgb', 'x': -4.5, 'y': 0.0, 'z': 4.0, 'roll': 0.0, 'pitch': -20.0, 'yaw': 0.0,
                  'width': 1088, 'height': 680, 'fov': 120, 'id': 'rgb_backontop', 'lens_circle_setting': False},
@@ -249,13 +252,17 @@ class CILv2_agent(object):
 
     def run_step(self):
         """
+        从挑战评估开始，模拟的每个步骤都会调用此函数
         执行一步导航。
         :return: 控制
         """
         
         self.control = carla.VehicleControl()  # 使用典型的驾驶控制来管理车辆的基本运动。
+        # 获取模型所需的输入图片
         self.norm_rgb = [[self.process_image(self.input_data[camera_type][1]).unsqueeze(0).cuda() for camera_type in g_conf.DATA_USED]]
+        # 得到模型输入所需的速度
         self.norm_speed = [torch.cuda.FloatTensor([self.process_speed(self.input_data['SPEED'][1]['speed'])]).unsqueeze(0)]
+        # 获得模型输入所需的导航命令
         if g_conf.DATA_COMMAND_ONE_HOT:
             self.direction = \
                 [torch.cuda.FloatTensor(self.process_command(self.input_data['GPS'][1], self.input_data['IMU'][1])[0]).unsqueeze(0).cuda()]
@@ -264,15 +271,17 @@ class CILv2_agent(object):
             self.direction = \
                 [torch.cuda.LongTensor([self.process_command(self.input_data['GPS'][1], self.input_data['IMU'][1])[1]-1]).unsqueeze(0).cuda()]
 
+        # 执行模型的前向推导
         actions_outputs, _, self.attn_weights = self._model.forward_eval(self.norm_rgb, self.direction, self.norm_speed)
 
+        # 将模型的输出（转向、加速度）转为 方向盘、油门、刹车
         action_outputs = self.process_control_outputs(actions_outputs.detach().cpu().numpy().squeeze())
 
         self.steer, self.throttle, self.brake = action_outputs
-        self.control.steer = float(self.steer)
-        self.control.throttle = float(self.throttle)
-        self.control.brake = float(self.brake)
-        self.control.hand_brake = False
+        self.control.steer = float(self.steer)  # 转向
+        self.control.throttle = float(self.throttle)  # 油门
+        self.control.brake = float(self.brake)  # 删车
+        self.control.hand_brake = False  # 默认不带手刹
 
         if self.vision_save_path:
             self.record_driving(self.input_data)
@@ -327,7 +336,7 @@ class CILv2_agent(object):
 
     def process_control_outputs(self, action_outputs):
         if g_conf.ACCELERATION_AS_ACTION:
-            steer, self.acceleration = action_outputs[0], action_outputs[1]
+            steer, self.acceleration = action_outputs[0], action_outputs[1]  # 获取模型的输出：转向、加速度
             if self.acceleration >= 0.0:
                 throttle = self.acceleration
                 brake = 0.0

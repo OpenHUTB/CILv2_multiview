@@ -96,12 +96,16 @@ Cuda 版本： 11.6
         mkdir -p $TRAINING_RESULTS_ROOT/_results
         tar -zxvf _results.tar.gz -C $TRAINING_RESULTS_ROOT/_results/
 
-* 对训练好的 CIL++ 在未见过的Town02新天气上进行基准测试（连接不上服务器导致失败后，再次运行可继续），包括Town03和未见过的Town05基准测试: 
+* 对训练好的 CIL++ 在未见过的Town02新天气上进行基准测试（连接不上服务器导致失败后，再次运行可继续），包括Town03和未见过的Town05基准测试（只有图片结果，没有量化的性能指标）: 
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
       
         run ./scripts/run_evaluation/CILv2/leaderboard_Town05.sh
+
+* 参考 [链接](https://openhutb.github.io/carla_doc/scenario_runner/agent_evaluation) 对代理进行评估
+
+        python run_CARLA_driving\driving\evaluator.py --agent run_CARLA_driving\driving\autoagents\CILv2_agent.py
 
 -------------------------------------------------------------
 ### 使用 Roach RL expert 进行数据收集
