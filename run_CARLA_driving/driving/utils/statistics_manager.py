@@ -279,6 +279,7 @@ class StatisticsManager(object):
 
         stats_dict = route_record.__dict__
         data['_checkpoint']['global_record'] = stats_dict
+        # 保存的指标包括：成功分数、严格成功分数、分数构成、路线分数、处罚分数
         data['values'] = ['{:.3f}'.format(stats_dict['scores']['success_rate']),
                           '{:.3f}'.format(stats_dict['scores']['success_rate_strict']),
                           '{:.3f}'.format(stats_dict['scores']['score_composed']),
@@ -296,11 +297,11 @@ class StatisticsManager(object):
                           '{:.3f}'.format(stats_dict['infractions']['vehicle_blocked'])
                           ]
 
-        data['labels'] = ['Success rate',
-                          'Success rate (strict)',
-                          'Avg. driving score',
-                          'Avg. route completion',
-                          'Avg. infraction penalty',
+        data['labels'] = ['Success rate',                   # SR
+                          'Success rate (strict)',          # S.SR
+                          'Avg. driving score',             # Avg.DS
+                          'Avg. route completion',          # Avg.RC,   Route compl.
+                          'Avg. infraction penalty',        # Infrac penalty
                           'Collisions with pedestrians',
                           'Collisions with vehicles',
                           'Collisions with layout',
