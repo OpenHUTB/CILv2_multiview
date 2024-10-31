@@ -76,6 +76,7 @@ class CILv2_agent(object):
     def __init__(self, path_to_conf_file, save_driving_vision, save_driving_measurement, plug_in_expert=False):
         self.track = Track.SENSORS
         # 当前全局规划将要到达的目的地
+        # 在执行开始时，英雄代理应该行驶的整个路线是在“self.global_plan”变量上设置的
         self._global_plan = None
         self._global_plan_world_coord = None
 

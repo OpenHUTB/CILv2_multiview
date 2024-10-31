@@ -86,7 +86,7 @@ class StatisticsManager(object):
 
     def __init__(self):
         self._master_scenario = None
-        self._registry_route_records = []
+        self._registry_route_records = []  # 注册的路线记录
 
     def resume(self, endpoint):
         data = fetch_dict(endpoint)
@@ -147,36 +147,36 @@ class StatisticsManager(object):
                 if node.list_traffic_events:
                     # 分析所有交通事件
                     for event in node.list_traffic_events:
-                        if event.get_type() == TrafficEventType.COLLISION_STATIC:
+                        if event.get_type() == TrafficEventType.COLLISION_STATIC:  # 碰撞静止的东西
                             score_penalty *= PENALTY_COLLISION_STATIC
                             route_record.infractions['collisions_layout'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.COLLISION_PEDESTRIAN:
+                        elif event.get_type() == TrafficEventType.COLLISION_PEDESTRIAN:  # 碰撞行人
                             score_penalty *= PENALTY_COLLISION_PEDESTRIAN
                             route_record.infractions['collisions_pedestrian'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.COLLISION_VEHICLE:
+                        elif event.get_type() == TrafficEventType.COLLISION_VEHICLE:  # 碰撞车辆
                             score_penalty *= PENALTY_COLLISION_VEHICLE
                             route_record.infractions['collisions_vehicle'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.OUTSIDE_ROUTE_LANES_INFRACTION:
+                        elif event.get_type() == TrafficEventType.OUTSIDE_ROUTE_LANES_INFRACTION:  # 到车道外违规
                             score_penalty *= (1 - event.get_dict()['percentage'] / 100)
                             route_record.infractions['outside_route_lanes'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.TRAFFIC_LIGHT_INFRACTION:
+                        elif event.get_type() == TrafficEventType.TRAFFIC_LIGHT_INFRACTION:  # 红绿灯违规
                             score_penalty *= PENALTY_TRAFFIC_LIGHT
                             route_record.infractions['red_light'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.ROUTE_DEVIATION:
+                        elif event.get_type() == TrafficEventType.ROUTE_DEVIATION:  # 路线偏移
                             score_penalty *= PENALTY_ROUTE_DEV
                             route_record.infractions['route_dev'].append(event.get_message())
-                            #failure = "Agent deviated from the route"
+                            # failure = "Agent deviated from the route"
 
-                        elif event.get_type() == TrafficEventType.STOP_INFRACTION:
+                        elif event.get_type() == TrafficEventType.STOP_INFRACTION:  # 停止标志违规
                             score_penalty *= PENALTY_STOP
                             route_record.infractions['stop_infraction'].append(event.get_message())
 
-                        elif event.get_type() == TrafficEventType.VEHICLE_BLOCKED:
+                        elif event.get_type() == TrafficEventType.VEHICLE_BLOCKED:  # 车辆阻塞
                             route_record.infractions['vehicle_blocked'].append(event.get_message())
                             failure = "Agent got blocked"
 

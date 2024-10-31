@@ -228,7 +228,7 @@ class Scenario(object):
 
     def _extract_nodes_from_tree(self, tree):  # pylint: disable=no-self-use
         """
-        Returns the list of all nodes from the given tree
+        返回给定树的所有节点的列表
         """
         node_list = [tree]
         more_nodes_exist = True
@@ -248,7 +248,7 @@ class Scenario(object):
 
     def get_criteria(self):
         """
-        Return the list of test criteria (all leave nodes)
+        返回测试标准列表（所有离开节点）
         """
         criteria_list = self._extract_nodes_from_tree(self.criteria_tree)
         return criteria_list

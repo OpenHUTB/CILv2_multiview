@@ -100,12 +100,11 @@ Cuda 版本： 11.6
 
         cd $DRIVING_TEST_ROOT
         run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
+
+* 参考 [链接](https://openhutb.github.io/carla_doc/scenario_runner/agent_evaluation) 对代理进行评估（调用`run_CARLA_driving\driving\evaluator.py`）：
       
         run ./scripts/run_evaluation/CILv2/leaderboard_Town05.sh
 
-* 参考 [链接](https://openhutb.github.io/carla_doc/scenario_runner/agent_evaluation) 对代理进行评估
-
-        python run_CARLA_driving\driving\evaluator.py --agent run_CARLA_driving\driving\autoagents\CILv2_agent.py
 
 -------------------------------------------------------------
 ### 使用 Roach RL expert 进行数据收集

@@ -125,19 +125,19 @@ class RouteParser(object):
 
         weather = carla.WeatherParameters()
         if preset_weather == 'ClearNoon':
-            weather = carla.WeatherParameters.ClearNoon
+            weather = carla.WeatherParameters.ClearNoon  # 清晰的中午
         elif preset_weather == 'CloudyNoon':
-            weather = carla.WeatherParameters.CloudyNoon
+            weather = carla.WeatherParameters.CloudyNoon  # 多云的中午
         elif preset_weather == 'WetNoon':
-            weather = carla.WeatherParameters.WetNoon
+            weather = carla.WeatherParameters.WetNoon  # 潮湿的中午
         elif preset_weather == 'WetCloudyNoon':
-            weather = carla.WeatherParameters.WetCloudyNoon
+            weather = carla.WeatherParameters.WetCloudyNoon  # 潮湿多余的中午
         elif preset_weather == 'MidRainyNoon':
-            weather = carla.WeatherParameters.MidRainyNoon
+            weather = carla.WeatherParameters.MidRainyNoon  # 下中雨的中午
         elif preset_weather == 'HardRainNoon':
-            weather = carla.WeatherParameters.HardRainNoon
+            weather = carla.WeatherParameters.HardRainNoon  # 下大雨的中午
         elif preset_weather == 'SoftRainNoon':
-            weather = carla.WeatherParameters.SoftRainNoon
+            weather = carla.WeatherParameters.SoftRainNoon  # 下细雨的中午
         elif preset_weather == 'ClearSunset':
             weather = carla.WeatherParameters.ClearSunset
         elif preset_weather == 'CloudySunset':
@@ -154,8 +154,6 @@ class RouteParser(object):
             weather = carla.WeatherParameters.SoftRainSunset
 
         return weather
-
-
 
     @staticmethod
     def check_trigger_position(new_trigger, existing_triggers):

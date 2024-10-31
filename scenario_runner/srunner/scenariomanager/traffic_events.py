@@ -13,7 +13,7 @@ from enum import Enum
 class TrafficEventType(Enum):
 
     """
-    This enum represents different traffic events that occur during driving.
+    该枚举代表驾驶过程中发生的不同交通事件。
     """
 
     NORMAL_DRIVING = 0

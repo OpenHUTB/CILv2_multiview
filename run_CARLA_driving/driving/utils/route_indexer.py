@@ -9,6 +9,7 @@ from driving.utils.route_parser import RouteParser
 from driving.utils.checkpoint_tools import fetch_dict, create_default_json_msg, save_dict
 
 
+# 路线检索类
 class RouteIndexer():
     def __init__(self, routes_file, scenarios_file, repetitions):
         self._routes_file = routes_file
@@ -24,7 +25,7 @@ class RouteIndexer():
         route_configurations = RouteParser.parse_scenarios_routes_file(self._routes_file, env_dict, package_name)
 
         self.n_routes = len(route_configurations)
-        self.total = self.n_routes*self._repetitions
+        self.total = self.n_routes*self._repetitions  # 总共的路线数 = 一次的路线数 * 重复的次数
 
         for i, config in enumerate(route_configurations):
             for repetition in range(repetitions):

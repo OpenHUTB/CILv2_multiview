@@ -118,7 +118,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
     @staticmethod
     def get_velocity(actor):
         """
-        returns the absolute velocity for the given actor
+        返回给定参与者的绝对速度
         """
         for key in CarlaDataProvider._actor_velocity_map:
             if key.id == actor.id:

@@ -5,7 +5,7 @@ import os
 import time
 from threading import Thread
 
-from queue import Queue
+from queue import Queue  # queue 模块实现了多生产者、多消费者队列。这特别适用于消息必须安全地在多线程间交换的线程编程。
 from queue import Empty
 
 import carla
@@ -109,7 +109,7 @@ class SpeedometerReader(BaseReader):
         return speed
 
     def __call__(self):
-        """ We convert the vehicle physics information into a convenient dictionary """
+        """ 我们将车辆物理信息转换成方便的词典 """
 
         # protect this access against timeout
         attempts = 0
@@ -279,13 +279,23 @@ class SensorInterface(object):
     def __init__(self):
         self._sensors_objects = {}
         self._data_buffers = {}
-        self._new_data_buffers = Queue()
+        self._new_data_buffers = Queue()  # 传感器的新数据缓冲队列
         self._queue_timeout = 10
 
         # 只有无法获得节拍数据的传感器需要特殊处理
         self._opendrive_tag = None
 
     def register_sensor(self, tag, sensor_type, sensor):
+        """
+        传感器注册
+        Args:
+            tag:
+            sensor_type: 传感器类型
+            sensor: 传感器
+
+        Returns:
+
+        """
         if tag in self._sensors_objects:
             raise SensorConfigurationInvalid("Duplicated sensor tag [{}]".format(tag))
 
@@ -298,6 +308,7 @@ class SensorInterface(object):
         if tag not in self._sensors_objects:
             raise SensorConfigurationInvalid("The sensor with tag [{}] has not been created!".format(tag))
 
+        # 将 item 放入队列
         self._new_data_buffers.put((tag, timestamp, data))
 
     def get_data(self):
@@ -309,6 +320,7 @@ class SensorInterface(object):
                         and len(self._sensors_objects.keys()) == len(data_dict.keys()) + 1:
                     break
 
+                # 从队列中移除并返回一个项目。将最多阻塞 timeout 秒，如果在这段时间内项目不能得到，将引发 Empty 异常
                 sensor_data = self._new_data_buffers.get(True, self._queue_timeout)
                 data_dict[sensor_data[0]] = ((sensor_data[1], sensor_data[2]))
                 # print(len(data_dict.keys()), len(self._sensors_objects.keys()))
