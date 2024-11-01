@@ -1,4 +1,4 @@
-% CVPR 2024 Paper Template; see https://github.com/cvpr-org/author-kit
+% CVPR 2025 Paper Template; see https://github.com/cvpr-org/author-kit
 
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
@@ -10,8 +10,8 @@
 \usepackage{amsmath} % assumes amsmath package installed
 \usepackage{verbatim} % 块注释
 % \begin{comment} 
-%	... （需要被注释段落）
-% \end{comment}
+	%	... （需要被注释段落）
+	% \end{comment}
 
 % Import additional packages in the preamble file, before hyperref
 \input{preamble}
@@ -24,32 +24,34 @@
 % If you comment hyperref and then uncomment it, you should delete *.aux before re-running LaTeX.
 % (Or just hit 'q' on the first LaTeX run, let it finish, and you should be clear).
 \definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
-\usepackage[pagebackref,breaklinks,colorlinks,citecolor=cvprblue]{hyperref}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 
 %%%%%%%%% PAPER ID  - PLEASE UPDATE
 \def\paperID{*****} % *** Enter the Paper ID here
 \def\confName{CVPR}
-\def\confYear{2024}
+\def\confYear{2025}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-%\title{\LaTeX\ Author Guidelines for \confName~Proceedings}
-\title{A Brain-Inspired Perception and Decision Driving Model Based on Neural Pathway Anatomical Alignment}
+% \title{\LaTeX\ Author Guidelines for \confName~Proceedings}
+\title{A Brain-Inspired Perception and Decision Driving Model \\Based on Neural Pathway Anatomical Alignment}
+
 %%%%%%%%% AUTHORS - PLEASE UPDATE
 \author{First Author\\
 Institution1\\
 Institution1 address\\
 {\tt\small firstauthor@i1.org}
-% For a paper whose authors are all at the same institution,\part{\part{title}}
+% For a paper whose authors are all at the same institution,
 % omit the following lines up until the closing ``}''.
 % Additional authors and addresses can be added with ``\and'',
 % just like the second author.
 % To save space, use either the email address or home page, not both
 \and
 Second Author\\
-Institution2\\\usepackage{bm}
+Institution2\\
 First line of institution2 address\\
 {\tt\small secondauthor@i2.org}
 }
+
 \begin{document}
 \maketitle
 \input{sec/0_abstract}    
@@ -58,7 +60,6 @@ First line of institution2 address\\
 \input{sec/3_method}
 \input{sec/4_experiment}
 \input{sec/5_conclusion}
-\newpage
 {
     \small
     \bibliographystyle{ieeenat_fullname}
