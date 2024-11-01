@@ -29,6 +29,15 @@ import random
 import numpy as np
 import subprocess
 
+import sys
+sys.path.append(r"/home/d/workspace/CILv2_multiview/scenario_runner")
+sys.path.append(r"/home/d/workspace/CILv2_multiview/CARLA_0.9.13/PythonAPI/carla")
+sys.path.append(r"/home/d/workspace/CILv2_multiview/run_CARLA_driving/driving/autoagents")
+sys.path.append(r"/home/d/workspace/CILv2_multiview/run_CARLA_driving")
+# /home/d/workspace/CILv2_multiview/run_CARLA_driving/driving/__init__.py
+
+# --debug=0 --scenarios=/home/d/workspace/CILv2_multiview/run_CARLA_driving/data/leaderboard/leaderboard_Town05.json --routes=/home/d/workspace/CILv2_multiview/run_CARLA_driving/data/leaderboard --repetitions=1 --resume=True --track=SENSORS --agent=${DRIVING_TEST_ROOT}/driving/autoagents/CILv2_agent.py --checkpoint=/home/d/workspace/CILv2_multiview/run_CARLA_driving/results/leaderboard   --agent-config=/home/d/workspace/CILv2_multiview/_results/_results/Ours/Town12346_5/config40.json  --docker=carlasim/carla:0.9.13 --gpus=0     --fps=20  --PedestriansSeed=0 --trafficManagerSeed=0 --save-driving-vision
+
 from srunner.scenariomanager.carla_data_provider import *
 from srunner.scenariomanager.timer import GameTime
 from srunner.scenariomanager.watchdog import Watchdog

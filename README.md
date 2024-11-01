@@ -99,12 +99,13 @@ Cuda 版本： 11.6
 * 对训练好的 CIL++ 在未见过的Town02新天气上进行基准测试（连接不上服务器导致失败后，再次运行可继续），包括Town03和未见过的Town05基准测试（只有图片结果，没有量化的性能指标）: 
 
         cd $DRIVING_TEST_ROOT
-        run ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
+        ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
 
-* 参考 [链接](https://openhutb.github.io/carla_doc/scenario_runner/agent_evaluation) 对代理进行评估（调用`run_CARLA_driving\driving\evaluator.py`）：
+* 参考 [链接](https://openhutb.github.io/carla_doc/scenario_runner/agent_evaluation) 对代理进行评估（调用`run_CARLA_driving\driving\evaluator.py`），结果保存到`run_CARLA_driving/results/leaderboard/leaderboard_Town05/Ours_Town12346_5_40_Seed0_20FPS.json`：
       
-        run ./scripts/run_evaluation/CILv2/leaderboard_Town05.sh
+        ./scripts/run_evaluation/CILv2/leaderboard_Town05.sh
 
+注意：如果已经验证完成，再次运行会报错：`_timer.cancel() AttributeError: 'NoneType' object has no attribute 'cancel'`，不影响。
 
 -------------------------------------------------------------
 ### 使用 Roach RL expert 进行数据收集

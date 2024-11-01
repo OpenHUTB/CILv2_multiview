@@ -29,7 +29,7 @@ export SENSOR_SAVE_PATH=$ROOTDIR/_results/sensor
 # ./scripts/run_evaluation/CILv2/nocrash_newweathertown_Town02.sh
 
 # 进行测试
-python main.py --process-type val_only --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
+# python main.py --process-type val_only --gpus 0 --folder CILv2 --exp CILv2_3cam_smalltest
 
 # 启动docker
 # docker: Error response from daemon: could not select device driver "" with capabilities: [[gpu]].
