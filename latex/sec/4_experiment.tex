@@ -360,6 +360,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 %The results drop significantly, {\eg}, and the SR goes from 88\% to 64\%.
 
 
+% 训练之后（多个过程）的误差曲线
 \begin{figure}[t]
 	\begin{center}
 		\includegraphics[width=\linewidth]{img/rl.png}
@@ -481,6 +482,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 \end{figure*}
 
 
+% 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
 	\setlength{\tabcolsep}{2.67pt}
@@ -490,19 +492,21 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		Success Rate \% $\uparrow$
 		&  NCd-tt & NCd-tn  & NCd-nt & NCd-nn  \\ 
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}
-		LBC \cite{chen2020learning} (0.9.6) & 
-		$71 \pm 5$ & $63 \pm 3$ & $51 \pm 3$ & $39 \pm 6$ \\
 		SAM \cite{zhao2021sam} (0.8.4) & 
 		$54 \pm 3$ & $47 \pm 5$ & $29 \pm 3$ & $29 \pm 2$ \\
+		LBC \cite{chen2020learning} (0.9.6) & 
+		$71 \pm 5$ & $63 \pm 3$ & $51 \pm 3$ & $39 \pm 6$ \\
 		LSD \cite{ohn2020learning} (0.8.4) & 
 		N/A & N/A & $30 \pm 4$ & $32 \pm 3$ \\
 		DA-RB\textsuperscript{+}(E) \cite{prakash2020exploring} & 
 		$66 \pm 5$ & $56 \pm 1$ & $36 \pm 3$ & $35 \pm 2$ \\
 		DA-RB\textsuperscript{+} \cite{prakash2020exploring} (0.8.4)  & 
 		$62 \pm 1$ & $60 \pm 1$ & $34 \pm 2$ & $25 \pm 1$ \\
-		Our baseline, $\mathcal{L}_\text{A}\text{(AP)}$ & 
+		Our baseline, $\mathcal{L}$ & 
 		$\mathbf{88} \pm 4$ & $29 \pm 3$ & $32 \pm 11$ & $28 \pm 4$ \\
-		Our best, $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ & 
+		Our improved, $\mathcal{L}_\text{D} $ & 
+		$\mathbf{88} \pm 4$ & $29 \pm 3$ & $32 \pm 11$ & $28 \pm 4$ \\
+		Our best, $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$ & 
 		$86 \pm 5$ & $\mathbf{82} \pm 2$ & $\mathbf{78} \pm 5$ & $\mathbf{78} \pm 0$ \\
 		\bottomrule
 	\end{tabular}
@@ -571,6 +575,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 \end{table*}
 
 
+% 可视化注意力
 \subsubsection{Visualizing BID's Attention}
 \label{sec:Visualization}
 \hspace{1pc}We are interested in the image content to which BID pays attention. 
@@ -599,7 +604,7 @@ Thus, we believe that BID shows a proper understanding of this scene, and a clea
 
 
 
-% 消融实验
+% 消融实验：速度（包括背侧通路）、导航
 \subsubsection{Ablation}
 
 \hspace{1pc}The performance of an IL agent is limited by the performance of the expert it is imitating.
@@ -609,6 +614,7 @@ To ensure a high performance upper-bound and hence a fair comparison, we conduct
 In order to compare with the state-of-the-art, the best model from the ablation studies is still evaluated on NoCrash with dense traffic in Table~\ref{table:sucess_rate_nc_dense}.
 
 
+% 说明消融的各个指标？
 The input measurement vector $\mathbf{m}_\text{IL}$ is different for the NoCrash and for the LeaderBoard. 
 For NoCrash, $\mathbf{m}_\text{IL}$ is just the speed.
 For the LeaderBoard, $\mathbf{m}_\text{IL}$ contains additionally a 2D vector pointing to the next desired waypoint.
@@ -618,13 +624,14 @@ The LeaderBoard instruction suggests that it is used to disambiguate situations 
 
 % 另外的
 Fig.~\ref{fig:score_eu_lb_tt_tn} shows driving scores of experts and IL agents at each DAGGER iteration on NoCrash and offline LeaderBoard with busy traffic.
-The baseline $\mathcal{L}_\text{A}(\text{AP})$ is our implementation of DA-RB\textsuperscript{+} supervised by our Autopilot. 
-Given our improved Autopilot, it is expected that $\mathcal{L}_\text{A}(\text{AP})$ can achieve higher success rates than those reported in the DA-RB paper, but this is not observed in Table~\ref{table:sucess_rate_nc_dense}.
-The large performance gap between the Autopilot and $\mathcal{L}_\text{A}(\text{AP})$ (cf. Fig.~\ref{fig:score_eu_lb_tt_tn}), especially while generalizing to a new town and new weather, indicates the limitation of this baseline.
+The baseline $\mathcal{L}$ is our implementation of baseline BID trained by expert. 
+Given our improved and best BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ can achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
+The large performance gap between baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially while generalizing to a new town and new weather, indicates the limitation of this baseline.
 
 
-By replacing the Autopilot with Roach, $\mathcal{L}_\text{A}$ performs better overall than $\mathcal{L}_\text{A}(\text{AP})$.
-Further learning from the action distribution, $\mathcal{L}_\text{K}$ generalizes better than $\mathcal{L}_\text{A}$ on the NoCrash but not on the offline LeaderBoard.
+% 一步步添加后的效果
+By adding dorsal stream and speed embedding based on baseline, $\mathcal{L}_\text{D}$ performs better overall than $\mathcal{L}$.
+Further learning from the action distribution, $\mathcal{L}_\text{D}$ generalizes better than $\mathcal{L}$ on the NoCrash but not on the offline LeaderBoard.
 Feature matching only helps when $\mathbf{j}_\text{IL}$ is provided with the necessary information needed to reproduce $\mathbf{j}_\text{RL}$.
 In our case, $\mathbf{j}_\text{RL}$ contains navigational information as the desired route is rendered in the BEV input.
 For the LeaderBoard, navigational information is partially encoded in $\mathbf{m}_\text{IL}$, which includes the vector to the next desired waypoint, so better performance is observed by using $\mathcal{L}_\text{F}$.
