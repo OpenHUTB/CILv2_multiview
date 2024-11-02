@@ -11,8 +11,8 @@
 
 \subsection{Benchmarks} \label{sec:Dataset}
 
-All evaluations are completed on CARLA simulator \cite{Dosovitskiy:2017} 0.9.10. 
-We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the LeaderBoard  benchmark.
+All evaluations are completed on CARLA simulator \cite{Dosovitskiy:2017} 0.9.13. 
+We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the LeaderBoard benchmark.
 Each benchmark specified its training towns and weather, where agent is allowed to collect data, and evaluates the agent in new towns and weather.
 The NoCrash benchmark considers generalization from Town01, a European town composed of solely one-lane roads and T-junctions, to Town02, a smallker version of Town01 with different textures.
 By contrast, the LeaderBoard considers a more difficult generalization task in six maps that cover diverse traffic situations, including freeways, US-style junctions, roundabouts, stop signs, lane changing and merging.
@@ -285,11 +285,11 @@ Thus, its performance still can be considered as a proper upper bound.
 
 Traffic lights tend to be on sidewalks, so detecting them from a close distance requires a sensor setting with a proper HFOV. 
 Otherwise, causal confusion can appear. 
-We think that the poor performance of RIM on the T.L metric is due to a narrow HFOV as illustrated in Fig.~\ref{fig:causalconfusion}.  
-To confirm this hypothesis, we conduct experiments using two HFOV settings for BID, 100 and 180. 
-As seen in Table~\ref{tab:FOVresults}, we note that the number of infractions (T.L, C.L, O.L, R.Dev) increase when we use a lower HFOV=$100^\circ$ compared to HFOV=$180^\circ$. 
-For HFOV=$100^\circ$, we have observed that the track of the road shoulder is easily out-of-observation at intersections, leading to more O.L, C.L, and R.Dev. 
-For HFOV=$180^{\circ}$, the ego-vehicle can better perform the right driving maneuver, thanks to having the road shoulder as a reference.
+%We think that the poor performance of RIM on the T.L metric is due to a narrow HFOV as illustrated in Fig.~\ref{fig:causalconfusion}.  
+%To confirm this hypothesis, we conduct experiments using two HFOV settings for BID, 100 and 180. 
+%As seen in Table~\ref{tab:FOVresults}, we note that the number of infractions (T.L, C.L, O.L, R.Dev) increase when we use a lower HFOV=$100^\circ$ compared to HFOV=$180^\circ$. 
+%For HFOV=$100^\circ$, we have observed that the track of the road shoulder is easily out-of-observation at intersections, leading to more O.L, C.L, and R.Dev. 
+%For HFOV=$180^{\circ}$, the ego-vehicle can better perform the right driving maneuver, thanks to having the road shoulder as a reference.
 
 
 \begin{figure}
@@ -367,14 +367,14 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 	\vspace{-4ex}
 	\caption{\textbf{Learning curves of RL experts }
 		trained in CARLA Town 1-6.
-		Solid lines show the mean and shaded areas show the standard deviation of episode returns across 3 seeds.
+		Solid lines show the mean and shaded areas show the standard deviation of episode returns across 5 seeds.
 		The dashed line shows an outlier run that collapsed.}
 	\vspace{-2ex}
 	\label{fig:rl}
 \end{figure}
 
 
-\subsection{Performance of Experts}
+%\subsection{Performance of Experts}
 
 %\textbf{\textsf{Sample Efficiency:}}
 %To improve the sample efficiency of PPO, we propose to use BEV instead of camera images, Beta instead of Gaussian distributions, and the exploration loss in addition to the entropy loss.
@@ -436,7 +436,8 @@ Among RL experts, PPO+beta and Roach, the two RL experts using a Beta distributi
 		\bottomrule
 	\end{tabular}
 	\vspace{-1ex}
-	\caption{\textbf{Success rate and driving score of experts.} Mean and standard deviation over 3 evaluation seeds. 
+	\caption{\textbf{Success rate and driving score of experts.} 
+	Mean and standard deviation over 5 evaluation seeds. 
 	NCd: NoCrash-dense. 
 	tt: train town \& weather. 
 	tn: train town \& new weather. 
@@ -451,7 +452,7 @@ Among RL experts, PPO+beta and Roach, the two RL experts using a Beta distributi
 
 
 
-\subsection{Performance of IL Agents}
+\subsubsection{Performance of IL Agents}
 
 The performance of an IL agent is limited by the performance of the expert it is imitating.
 If the expert performs poorly, it is not sensible to compare IL agents imitating that expert.
@@ -465,11 +466,16 @@ For NoCrash, $\mathbf{m}_\text{IL}$ is just the speed.
 For the LeaderBoard, $\mathbf{m}_\text{IL}$ contains additionally a 2D vector pointing to the next desired waypoint.
 This vector is computed from noisy GPS measurements and the desired route is specified as sparse GPS locations.
 The LeaderBoard instruction suggests that it is used to disambiguate situations where the semantics of left and right are not clear due to the complexity of the considered map.
+
 \begin{figure*}[t]
 	\centering
 	\includegraphics[width=0.99\textwidth]{img/score_eu_lb_tt_tn.pdf}
 	\vspace{-1ex}
-	\caption{\textbf{Driving score of experts and IL agents.} All IL agents (dashed lines) are supervised by Roach except for $\mathcal{L}_\text{A}(\text{AP})$, which is supervised by our Autopilot. For IL agents at the 5th iteration on NoCrash and all experts, results are reported as the mean over 3 evaluation seeds. Others are evaluated with one seed. The offline Leaderboard benchmark is used here.}
+	\caption{\textbf{Driving score of experts and IL agents.} 
+		All IL agents (dashed lines) are supervised by Roach except for $\mathcal{L}_\text{A}(\text{AP})$, which is supervised by our Autopilot. 
+		For IL agents at the 5th iteration on NoCrash and all experts, results are reported as the mean over 5 evaluation seeds. 
+		Others are evaluated with one seed. 
+		The offline Leaderboard benchmark is used here.}
 	\vspace{-1.5ex}
 	\label{fig:score_eu_lb_tt_tn}
 \end{figure*}
@@ -501,8 +507,8 @@ The LeaderBoard instruction suggests that it is used to disambiguate situations 
 		\bottomrule
 	\end{tabular}
 	\vspace{-1ex}
-	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.} 
-		Mean and standard deviation over 3 seeds. 
+	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
+		Mean and standard deviation over 5 seeds. 
 		Our models are from DAGGER iteration 5. 
 		For DA-RB, + means triangular perturbations are added to the off-policy dataset, (E) means ensemble of all iterations.}
 	\label{table:sucess_rate_nc_dense}
@@ -549,7 +555,7 @@ The LeaderBoard instruction suggests that it is used to disambiguate situations 
 		& $\mathbf{87} \pm 5$ & $\mathbf{88} \pm 3$ & $\mathbf{96} \pm 0$ & $\mathbf{91} \pm 3$ 
 		& $\mathbf{0.08} \pm 0.04$ & $0.01 \pm 0.02$ & $\mathbf{0.23} \pm 0.08$ & $\mathbf{0.61} \pm 0.23$ & $\mathbf{0.84} \pm 0.04$ \\
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
-		Roach
+		BID
 		& $95 \pm 2$ & $96 \pm 3$ & $100 \pm 0$ & $96 \pm 3$ 
 		& $0 \pm 0$ & $0.11 \pm 0.07$ & $0.04 \pm 0.05$ & $0.16 \pm 0.20$ & $0 \pm 0$ \\
 		Autopilot
@@ -559,7 +565,7 @@ The LeaderBoard instruction suggests that it is used to disambiguate situations 
 	\end{tabular}
 	\vspace{-1ex}
 	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
-		Mean and standard deviation over 3 evaluation seeds.}
+		Mean and standard deviation over 5 evaluation seeds.}
 	\vspace{-2.5ex}
 	\label{table:infraction}
 \end{table*}
@@ -621,7 +627,7 @@ while value estimation could help to regularize feature matching.
 \subsubsection{Comparison with the State-of-the-art}
 
 In Table~\ref{table:sucess_rate_nc_dense} we compare the baseline $\mathcal{L}_\text{A}(\text{AP})$ and our best performing agent $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ with the state-of-the-art on the NoCrash-dense benchmark.
-Our $\mathcal{L}_\text{A}(\text{AP})$ performs comparably to DA-RB\textsuperscript{+} except when generalizing to the new weather, where there is an incorrect rendering of after-rain puddles on CARLA 0.9.11 (see supplement for visualizations).
+Our $\mathcal{L}_\text{A}(\text{AP})$ performs comparably to DA-RB\textsuperscript{+} except when generalizing to the new weather, where there is an incorrect rendering of after-rain puddles on CARLA 0.9.13.
 This issue does not affect our best method $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ due to the stronger supervision of Roach. 
 By mimicking the weather-agnostic Roach, the performance of our IL agent drops by less than $10\%$ while generalizing to the new town and weather.
 Hence if the Autopilot is considered the performance upper-bound, it is fair to claim our approach saturates the NoCrash benchmark.
