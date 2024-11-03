@@ -120,9 +120,11 @@ Thus, since this can be known by the global navigation system, when the ego-vehi
 This corrective mechanism is used only at testing time. 
 Figure~\ref{fig:command_ambiguous} provides an example.
 
+% 各种环境下的场景说明
+% Roach_carla0913_fps10_dense_normalcamera_NoCrash_3cam/RouteScenario_0000/rgb_central001215.png
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=1.0\linewidth]{fig/cmd_ambiguous.png}
+	\includegraphics[width=1.0\linewidth]{fig/cmd_ambiguous.pdf}
 	\caption{Top: when the ego-vehicle is entering a new road segment from an intersection, the \emph{go-straight} navigation command is ambiguous. 
 	The ego-vehicle can legally move to any of the highlighted lanes. 
 	Bottom: four aerial views at different times with the pre-planned global trajectory shown in \textbf{\textcolor{orange}{orange}}. 
@@ -131,6 +133,7 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 \end{figure}
 
 
+% 三种不同场景的性能
 \begin{table*}
 	\centering
 	\resizebox{0.95\linewidth}{!}{
@@ -158,33 +161,33 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 \end{table*}
 
 
-\begin{table*}
-	\centering
-	\resizebox{0.95\linewidth}{!}{
-		\begin{tabular}{@{}lcccccccccccccccc@{}}
-			\toprule
-			&  \textbf{$\uparrow$ SR(\%)} &  \textbf{$\uparrow$ S.SR(\%)} &  \textbf{$\uparrow$ Avg.RC(\%)} &  \textbf{$\uparrow$ Avg.DS}  
-			& $\downarrow$ C.L & $\downarrow$ T.L & $\downarrow$ O.L & $\downarrow$ R.Dev 
-			\\
-			\midrule
-			HFOV $100^{\circ}$ & $52$ & $40$ & $83$ & $69.1$ 
-			&$428.6$& $19.6$ & $ 339.6$ & $10.7$ 
-			\\
-			HFOV $180^{\circ}$ & $100$ & $98$ & $100$ & $99.2$ 
-			&$7.3$& $0.0$ & $0.0$ & $0.0$ 
-			\\
-			\midrule
-			Expert & $100$ & $100$ & $100$ & $100.0$ 
-			& $0.0$ & $0.0$ & $0.0$ & $0.0$ 
-			\\
-			\bottomrule 
-		\end{tabular}
-	}
-	% 视场角(Field of View, FOV),包括水平视场角(HFOV)、垂直视场角(VFOV)和对角视场角(DFOV)
-	\caption{Impact of sensor suite HFOV in the NoCrash Regular case.
-		For HFOV=$100^{\circ}$ we use a single camera with a resolution of $W\times H=600\times170$ pixels, while for HFOV=$180^{\circ}$ we use the multi-view setting detailed in the main text.}
-	\label{tab:FOVresults}
-\end{table*}
+%\begin{table*}
+%	\centering
+%	\resizebox{0.95\linewidth}{!}{
+%		\begin{tabular}{@{}lcccccccccccccccc@{}}
+%			\toprule
+%			&  \textbf{$\uparrow$ SR(\%)} &  \textbf{$\uparrow$ S.SR(\%)} &  \textbf{$\uparrow$ Avg.RC(\%)} &  \textbf{$\uparrow$ Avg.DS}  
+%			& $\downarrow$ C.L & $\downarrow$ T.L & $\downarrow$ O.L & $\downarrow$ R.Dev 
+%			\\
+%			\midrule
+%			HFOV $100^{\circ}$ & $52$ & $40$ & $83$ & $69.1$ 
+%			&$428.6$& $19.6$ & $ 339.6$ & $10.7$ 
+%			\\
+%			HFOV $180^{\circ}$ & $100$ & $98$ & $100$ & $99.2$ 
+%			&$7.3$& $0.0$ & $0.0$ & $0.0$ 
+%			\\
+%			\midrule
+%			Expert & $100$ & $100$ & $100$ & $100.0$ 
+%			& $0.0$ & $0.0$ & $0.0$ & $0.0$ 
+%			\\
+%			\bottomrule 
+%		\end{tabular}
+%	}
+%	% 视场角(Field of View, FOV),包括水平视场角(HFOV)、垂直视场角(VFOV)和对角视场角(DFOV)
+%	\caption{Impact of sensor suite HFOV in the NoCrash Regular case.
+%		For HFOV=$100^{\circ}$ we use a single camera with a resolution of $W\times H=600\times170$ pixels, while for HFOV=$180^{\circ}$ we use the multi-view setting detailed in the main text.}
+%	\label{tab:FOVresults}
+%\end{table*}
 
 \begin{table*}
 	\centering
@@ -222,50 +225,51 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 \end{table*}
 
 
-\begin{table}
-	\centering
-	\begin{tabular}{@{}lccccc@{}}
-		\toprule
-		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
-		\midrule
-		LF.A & $72$ & $62$ & $86$ & $78.1$  \\
-		LF.C & $76$ & $66$ & $88$ & $80.6$  \\
-		Token & $88$ & $80$ & $93$ & $88.4$  \\
-		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\ 
-		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
-		\bottomrule 
-	\end{tabular}
-	\caption{Results of different data input fusion approaches for NoCrash Busy scenarios.}
-	\label{tab:ablation_study_inputfusion}
-\end{table}
+%\begin{table}
+%	\centering
+%	\begin{tabular}{@{}lccccc@{}}
+%		\toprule
+%		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
+%		\midrule
+%		LF.A & $72$ & $62$ & $86$ & $78.1$  \\
+%		LF.C & $76$ & $66$ & $88$ & $80.6$  \\
+%		Token & $88$ & $80$ & $93$ & $88.4$  \\
+%		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\ 
+%		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
+%		\bottomrule 
+%	\end{tabular}
+%	\caption{Results of different data input fusion approaches for NoCrash Busy scenarios.}
+%	\label{tab:ablation_study_inputfusion}
+%\end{table}
 
-\begin{table}
-	\centering
-	\begin{tabular}{@{}lcccccccccccccccc@{}}
-		\toprule
-		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
-		\midrule
-		GAP & $64$ & $46$ & $87$ & $75.1$  \\
-		VS & $70$ & $62$ & $89$ & $78.6$  \\
-		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\
-		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
-		\bottomrule
-	\end{tabular}
-	\caption{Results of different multi-view fusion approaches for NoCrash Busy scenarios.}
-	\label{tab:ablation_study_sa}
-\end{table}
+%\begin{table}
+%	\centering
+%	\begin{tabular}{@{}lcccccccccccccccc@{}}
+%		\toprule
+%		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
+%		\midrule
+%		GAP & $64$ & $46$ & $87$ & $75.1$  \\
+%		VS & $70$ & $62$ & $89$ & $78.6$  \\
+%		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\
+%		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
+%		\bottomrule
+%	\end{tabular}
+%	\caption{Results of different multi-view fusion approaches for NoCrash Busy scenarios.}
+%	\label{tab:ablation_study_sa}
+%\end{table}
 
 
 \subsection{Experimental Results}
 \label{sec:Results}
 % 基于模型的模仿学习
-\hspace{1pc}We compare BID with two SOTA vision-based eend-to-end-AD models, namely, the Roach IL model (here RIM) \cite{Zhang:2021}, MILE \cite{Hu:2022} and CIL++. 
+\hspace{1pc}We compare BID with three SOTA vision-based eend-to-end-AD models, namely, the Roach IL model (here RIM) \cite{Zhang:2021}, MILE \cite{Hu:2022} and CIL++\cite{xiao2023scaling}. 
 Notice that although BID uses the data generated by the Roach RL model, essentially training a BID model does not require human-labeled sensor data. 
 In our case, the Roach RL plays the role of a human driver at data acquisition time. 
 In contrast, training a RIM model requires teaching from the Roach RL expert who was trained with privileged information, while MILE is trained with semantic BeV as supervision.
 
 
 \subsubsection{Small Single-lane Towns} \label{sec:small_town_results}
+
 \hspace{1pc}We first use CARLA's Town01 and Town02 along with the NoCrash metrics (Sec.~\ref{nocrash_metrics}) for initial experiments. 
 Town01 is used for training and Town02 for testing (Sec.~\ref{sec:Dataset}). 
 MILE only provides a model trained on CARLA's multiple towns, but there is no model trained only on Town01, while RIM has versions trained on Town01 and multiple towns. 
@@ -283,8 +287,8 @@ For the expert, the failure cases in Busy scenarios are due to traffic deadlocks
 Thus, its performance still can be considered as a proper upper bound. 
 
 
-Traffic lights tend to be on sidewalks, so detecting them from a close distance requires a sensor setting with a proper HFOV. 
-Otherwise, causal confusion can appear. 
+%Traffic lights tend to be on sidewalks, so detecting them from a close distance requires a sensor setting with a proper HFOV. 
+%Otherwise, causal confusion can appear. 
 %We think that the poor performance of RIM on the T.L metric is due to a narrow HFOV as illustrated in Fig.~\ref{fig:causalconfusion}.  
 %To confirm this hypothesis, we conduct experiments using two HFOV settings for BID, 100 and 180. 
 %As seen in Table~\ref{tab:FOVresults}, we note that the number of infractions (T.L, C.L, O.L, R.Dev) increase when we use a lower HFOV=$100^\circ$ compared to HFOV=$180^\circ$. 
@@ -292,28 +296,28 @@ Otherwise, causal confusion can appear.
 %For HFOV=$180^{\circ}$, the ego-vehicle can better perform the right driving maneuver, thanks to having the road shoulder as a reference.
 
 
-\begin{figure}
-	\centering
-	\begin{subfigure}[b]{\linewidth}
-		\centering
-		\includegraphics[width=\textwidth]{fig/TLCausalConfusionA.png}
-		\caption{Roach RL \cite{Zhang:2021}: using semantic BeV as input during training time}
-		\label{fig:TLCausualConfusionB}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{\linewidth}
-		\centering
-		\includegraphics[width=\textwidth]{fig/TLCausalConfusionB.png}
-		\caption{BID: only images from three views as input}
-		\label{fig:TLCausualConfusionA}
-	\end{subfigure}
-	%   \includegraphics[width=1.0\linewidth]{images/TLcausalConfusion.png}
-	\caption{Top Left: The expert we use for data collection is the teacher agent Roach RL \cite{Zhang:2021}, which has access to semantic BeVs. 
-		Note that, in simulation, this expert plays the role of a human driver in the real world, who would drive to collect on-board data. 
-		Top Right: Using an insufficient FOV, the red traffic light is not observable in the image when the expert stops close to it, which may cause causal confusion when applying imitation learning to train the student agent RIM. 
-		Bottom: BID avoids this causal confusion by using a larger HFOV based on three complementary images (from different cameras). More specifically, RIM uses HFOV=$100^{\circ}$, while BID uses HFOV=$180^{\circ}$.}
-	\label{fig:causalconfusion}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\begin{subfigure}[b]{\linewidth}
+%		\centering
+%		\includegraphics[width=\textwidth]{fig/TLCausalConfusionA.png}
+%		\caption{Roach RL \cite{Zhang:2021}: using semantic BeV as input during training time}
+%		\label{fig:TLCausualConfusionB}
+%	\end{subfigure}
+%	\hfill
+%	\begin{subfigure}[b]{\linewidth}
+%		\centering
+%		\includegraphics[width=\textwidth]{fig/TLCausalConfusionB.png}
+%		\caption{BID: only images from three views as input}
+%		\label{fig:TLCausualConfusionA}
+%	\end{subfigure}
+%	%   \includegraphics[width=1.0\linewidth]{images/TLcausalConfusion.png}
+%	\caption{Top Left: The expert we use for data collection is the teacher agent Roach RL \cite{Zhang:2021}, which has access to semantic BeVs. 
+%		Note that, in simulation, this expert plays the role of a human driver in the real world, who would drive to collect on-board data. 
+%		Top Right: Using an insufficient FOV, the red traffic light is not observable in the image when the expert stops close to it, which may cause causal confusion when applying imitation learning to train the student agent RIM. 
+%		Bottom: BID avoids this causal confusion by using a larger HFOV based on three complementary images (from different cameras). More specifically, RIM uses HFOV=$100^{\circ}$, while BID uses HFOV=$180^{\circ}$.}
+%	\label{fig:causalconfusion}
+%\end{figure}
 
 
 \subsubsection{Multi-town Generalization}\label{sec:multi_towns_result}
@@ -361,18 +365,18 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 
 
 % 训练之后（多个过程）的误差曲线
-\begin{figure}[t]
-	\begin{center}
-		\includegraphics[width=\linewidth]{img/rl.png}
-	\end{center}
-	\vspace{-4ex}
-	\caption{\textbf{Learning curves of RL experts }
-		trained in CARLA Town 1-6.
-		Solid lines show the mean and shaded areas show the standard deviation of episode returns across 5 seeds.
-		The dashed line shows an outlier run that collapsed.}
-	\vspace{-2ex}
-	\label{fig:rl}
-\end{figure}
+%\begin{figure}[t]
+%	\begin{center}
+%		\includegraphics[width=\linewidth]{img/rl.png}
+%	\end{center}
+%	\vspace{-4ex}
+%	\caption{\textbf{Learning curves of RL experts }
+%		trained in CARLA Town 1-6.
+%		Solid lines show the mean and shaded areas show the standard deviation of episode returns across 5 seeds.
+%		The dashed line shows an outlier run that collapsed.}
+%	\vspace{-2ex}
+%	\label{fig:rl}
+%\end{figure}
 
 
 %\subsection{Performance of Experts}
@@ -401,55 +405,55 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 %Among RL experts, PPO+beta and Roach, the two RL experts using a Beta distribution, achieve the best performance, while the difference between both is not significant. PPO+exp performs slightly worse, but it still achieves better driving scores than our Autopilot. 
 
 
-\begin{table}
-	\setlength{\tabcolsep}{2.32pt}
-	\centering
-	\begin{tabular}{lccccc}
-		\toprule
-		Suc. Rate \% $\uparrow$
-		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
-		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-		PPO+exp & $86 \pm 6$ & $86 \pm 6$ & $79 \pm 6$ & $77 \pm 5$ & $67\pm3$  \\
-		PPO+beta & $\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $\mathbf{87} \pm 6$ & $72 \pm 5$  \\
-		Roach & $91 \pm 4$ & $90 \pm 7$ & $\mathbf{83} \pm 3$ & $83 \pm 3$ & $72 \pm 6$  \\
-		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-		AP (ours) & 
-		$\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $81 \pm 2$ & $\mathbf{75} \pm 8$ \\
-		AP-lbc \cite{chen2020learning}
-		& $86 \pm 3$ & $83 \pm 6$ & $60 \pm 3$ & $59 \pm 8$ & N/A \\
-		AP-darb \cite{prakash2020exploring}
-		& $71 \pm 4$ & $72 \pm 3$ & $41 \pm 2$ & $43 \pm 2$ & N/A \\
-		% \bottomrule
-		\toprule
-		Dri. Score \% $\uparrow$
-		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
-		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-		PPO+exp & $92 \pm 2$ & $92 \pm 2$ & $88 \pm 3$ & $86 \pm 1$ & $ 83\pm0$  \\
-		PPO+beta & $\mathbf{98} \pm 2$ & $\mathbf{98} \pm 2$ & $90 \pm 3$ & $\mathbf{92} \pm 2$ & $\mathbf{86} \pm 2$  \\
-		Roach & $95 \pm 2$ & $95 \pm 3$ & $\mathbf{91} \pm 3$ & $90 \pm 2$ & $85 \pm 3$  \\
-		% Roach
-		% & $93 \pm 1$ & $91 \pm 1$ & $91 \pm 4$ & $91 \pm 4$
-		% & $79 \pm 1$ \\
-		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-		AP (ours)
-		& $86 \pm 2$ & $86 \pm 2$ & $70 \pm 2$ & $70 \pm 1$
-		& $78 \pm 3$ \\
-		\bottomrule
-	\end{tabular}
-	\vspace{-1ex}
-	\caption{\textbf{Success rate and driving score of experts.} 
-	Mean and standard deviation over 5 evaluation seeds. 
-	NCd: NoCrash-dense. 
-	tt: train town \& weather. 
-	tn: train town \& new weather. 
-	nt: new town \& train weather. 
-	nn: new town \& weather. 
-	LB-all: all 76 routes of LeaderBoard with dynamic weather. 
-	AP: CARLA Autopilot. 
-	For RL experts the best checkpoint among all training seeds and runs is used.}
-	\label{table:expert_performance}
-	\vspace{-2ex}
-\end{table}
+%\begin{table}
+%	\setlength{\tabcolsep}{2.32pt}
+%	\centering
+%	\begin{tabular}{lccccc}
+%		\toprule
+%		Suc. Rate \% $\uparrow$
+%		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
+%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
+%		PPO+exp & $86 \pm 6$ & $86 \pm 6$ & $79 \pm 6$ & $77 \pm 5$ & $67\pm3$  \\
+%		PPO+beta & $\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $\mathbf{87} \pm 6$ & $72 \pm 5$  \\
+%		Roach & $91 \pm 4$ & $90 \pm 7$ & $\mathbf{83} \pm 3$ & $83 \pm 3$ & $72 \pm 6$  \\
+%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
+%		AP (ours) & 
+%		$\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $81 \pm 2$ & $\mathbf{75} \pm 8$ \\
+%		AP-lbc \cite{chen2020learning}
+%		& $86 \pm 3$ & $83 \pm 6$ & $60 \pm 3$ & $59 \pm 8$ & N/A \\
+%		AP-darb \cite{prakash2020exploring}
+%		& $71 \pm 4$ & $72 \pm 3$ & $41 \pm 2$ & $43 \pm 2$ & N/A \\
+%		% \bottomrule
+%		\toprule
+%		Dri. Score \% $\uparrow$
+%		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
+%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
+%		PPO+exp & $92 \pm 2$ & $92 \pm 2$ & $88 \pm 3$ & $86 \pm 1$ & $ 83\pm0$  \\
+%		PPO+beta & $\mathbf{98} \pm 2$ & $\mathbf{98} \pm 2$ & $90 \pm 3$ & $\mathbf{92} \pm 2$ & $\mathbf{86} \pm 2$  \\
+%		Roach & $95 \pm 2$ & $95 \pm 3$ & $\mathbf{91} \pm 3$ & $90 \pm 2$ & $85 \pm 3$  \\
+%		% Roach
+%		% & $93 \pm 1$ & $91 \pm 1$ & $91 \pm 4$ & $91 \pm 4$
+%		% & $79 \pm 1$ \\
+%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
+%		AP (ours)
+%		& $86 \pm 2$ & $86 \pm 2$ & $70 \pm 2$ & $70 \pm 1$
+%		& $78 \pm 3$ \\
+%		\bottomrule
+%	\end{tabular}
+%	\vspace{-1ex}
+%	\caption{\textbf{Success rate and driving score of experts.} 
+%	Mean and standard deviation over 5 evaluation seeds. 
+%	NCd: NoCrash-dense. 
+%	tt: train town \& weather. 
+%	tn: train town \& new weather. 
+%	nt: new town \& train weather. 
+%	nn: new town \& weather. 
+%	LB-all: all 76 routes of LeaderBoard with dynamic weather. 
+%	AP: CARLA Autopilot. 
+%	For RL experts the best checkpoint among all training seeds and runs is used.}
+%	\label{table:expert_performance}
+%	\vspace{-2ex}
+%\end{table}
 
 
 
@@ -468,9 +472,10 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 %This vector is computed from noisy GPS measurements and the desired route is specified as sparse GPS locations.
 %The LeaderBoard instruction suggests that it is used to disambiguate situations where the semantics of left and right are not clear due to the complexity of the considered map.
 
+% 不同迭代时的消融实验
 \begin{figure*}[t]
 	\centering
-	\includegraphics[width=0.99\textwidth]{img/score_eu_lb_tt_tn.pdf}
+	\includegraphics[width=0.99\textwidth]{fig/score_eu_lb_tt_tn.pdf}
 	\vspace{-1ex}
 	\caption{\textbf{Driving score of experts and IL agents.} 
 		All IL agents (dashed lines) are supervised by Roach except for $\mathcal{L}_\text{A}(\text{AP})$, which is supervised by our Autopilot. 
@@ -546,16 +551,16 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		& \#/Km, $\downarrow$
 		\\
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
-		$\mathcal{L}_\mathrm{A}(\text{AP})$
+		$\mathcal{L}_\mathrm{D}(\text{AP})$
 		& $31 \pm 7$ & $43 \pm 2$ & $62 \pm 6$ & $77 \pm 4$ 
 		& $0.54 \pm 0.53$ & $\mathbf{0}\pm0$ & $0.63 \pm 0.50$ & $3.33 \pm 0.58$ & $19.4\pm 14.4$ \\
-		$\mathcal{L}_\text{A}$
+		$\mathcal{L}_\text{D}$
 		& $57\pm7$ & $66\pm3$ & $84\pm3$ & $76\pm1$ 
 		& $2.07\pm1.37$ & $\mathbf{0}\pm0$ & $1.36\pm1.10$ & $1.4\pm0.2$ & $2.82\pm1.45$ \\
-		$\mathcal{L}_\text{K}$
+		$\mathcal{L}_\text{N}$
 		& $74\pm3$ & $79\pm0$ & $91\pm2$ & $86\pm1$ 
 		& $0.50\pm0.25$ & $\mathbf{0}\pm0$ & $0.53\pm0.18$ & $0.68\pm0.08$ & $3.39\pm0.20$ \\
-		$\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$
+		$\mathcal{L}_\text{D}+\mathcal{L}_\text{N}(\text{c})$
 		& $\mathbf{87} \pm 5$ & $\mathbf{88} \pm 3$ & $\mathbf{96} \pm 0$ & $\mathbf{91} \pm 3$ 
 		& $\mathbf{0.08} \pm 0.04$ & $0.01 \pm 0.02$ & $\mathbf{0.23} \pm 0.08$ & $\mathbf{0.61} \pm 0.23$ & $\mathbf{0.84} \pm 0.04$ \\
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
@@ -592,15 +597,17 @@ Fig.~\ref{fig:attention_ped_greed} shows the activation map at an intersection.
 Three image areas are highly activated: the traffic light in the right image, the crossing pedestrians in the central one, and the lane shoulder in the left one. 
 Thus, we believe that BID shows a proper understanding of this scene, and a clear causality between observation and action since it decides to brake due to the pedestrians, even though the traffic light is in green and a \emph{turn-left} navigation command is given.
 
-\begin{figure*}[ht!]
+
+% 验证集的1350帧，激活图的第45张
+\begin{figure}[ht!]
 	\centering
-	\includegraphics[width=\linewidth]{fig/attention_ped_greed.jpg}
+	\includegraphics[width=\linewidth]{fig/attention_ped_greed.pdf}
 	\caption{Activation maps of BID at an intersection in Town02. 
 		Three image areas from different views are highly activated: 
 		the traffic light at the right image, the crossing pedestrians at the central one, and the lane shoulder at the left one. 
 		Causality between observation and action is shown as a strong braking (0.794) due to the pedestrians, even though the traffic light in green and the \emph{turn-left} command.}
 	\label{fig:attention_ped_greed}
-\end{figure*}
+\end{figure}
 
 
 
@@ -609,7 +616,7 @@ Thus, we believe that BID shows a proper understanding of this scene, and a clea
 
 \hspace{1pc}The performance of an IL agent is limited by the performance of the expert it is imitating.
 If the expert performs poorly, it is not sensible to compare IL agents imitating that expert.
-As shown in Table~\ref{table:expert_performance}, this issue is evident in the NoCrash new town with dense traffic, where Autopilots do not perform well. 
+This issue is evident in the NoCrash new town with dense traffic, where Autopilots do not perform well. 
 To ensure a high performance upper-bound and hence a fair comparison, we conduct ablation studies (Fig.~\ref{fig:score_eu_lb_tt_tn} and Table~\ref{table:infraction}) under the busy traffic setting such that our Autopilot can achieve a driving score of 80\% and a success rate of 90\%. 
 In order to compare with the state-of-the-art, the best model from the ablation studies is still evaluated on NoCrash with dense traffic in Table~\ref{table:sucess_rate_nc_dense}.
 
@@ -632,16 +639,16 @@ The large performance gap between baseline and $\mathcal{L}_\text{D} + \mathcal{
 % 一步步添加后的效果
 By adding dorsal stream and speed embedding based on baseline, $\mathcal{L}_\text{D}$ performs better overall than $\mathcal{L}$.
 Further learning from the action distribution, $\mathcal{L}_\text{D}$ generalizes better than $\mathcal{L}$ on the NoCrash but not on the offline LeaderBoard.
-Feature matching only helps when $\mathbf{j}_\text{IL}$ is provided with the necessary information needed to reproduce $\mathbf{j}_\text{RL}$.
-In our case, $\mathbf{j}_\text{RL}$ contains navigational information as the desired route is rendered in the BEV input.
-For the LeaderBoard, navigational information is partially encoded in $\mathbf{m}_\text{IL}$, which includes the vector to the next desired waypoint, so better performance is observed by using $\mathcal{L}_\text{F}$.
-But for NoCrash this information is missing as $\mathbf{m}_\text{IL}$ is just the speed, hence it is impractical for $\mathbf{j}_\text{IL}$ to mimic $\mathbf{j}_\text{RL}$ and this causes the inferior performance of $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}$ and $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}+\mathcal{L}_\text{V}$.
-To confirm this hypothesis, we evaluate a single-branch network architecture where the measurement vector $\mathbf{m}_\text{IL}$ is augmented by the command encoded as a one-hot vector.
-Using feature matching with this architecture, $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ and $\mathcal{L}_\text{K}+\mathcal{L}_\text{V}+\mathcal{L}_\text{F}(\text{c})$ achieve the best driving score among IL agents in the NoCrash new town \& weather generalization test, even outperforming the Autopilot.
+Feature matching only helps when $E_s$ is provided with the necessary information needed to produce driving action.
+In our case, $E_N$ contains navigational information as the desired route is provoded by nagivation command.
+For the LeaderBoard, navigational information is partially encoded in $E_N$, which includes the vector to the next desired waypoint, so better performance is observed by using $E_N$.
+%But for NoCrash this information is missing as $\mathbf{m}_\text{IL}$ is just the speed, hence it is impractical for $\mathbf{j}_\text{IL}$ to mimic $\mathbf{j}_\text{RL}$ and this causes the inferior performance of $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}$ and $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}+\mathcal{L}_\text{V}$.
+To confirm this hypothesis, we evaluate a single-branch network architecture where the measurement vector $E_N$ is augmented by the command encoded as a one-hot vector.
+Using feature matching with this architecture, $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieves the best driving score among IL agents in the NoCrash new town \& weather generalization test, even outperforming the Autopilot.
 
 
-Using value supervision in addition to feature matching helps the DAGGER process to converge faster as shown by $\mathcal{L}_\text{K}+\mathcal{L}_\text{V}+\mathcal{L}_\text{F}$ and $\mathcal{L}_\text{K}+\mathcal{L}_\text{V}+\mathcal{L}_\text{F}(\text{c})$.
-However, without feature matching, using value supervision alone $\mathcal{L}_\text{K}+\mathcal{L}_\text{V}$ does not demonstrate superior performance.
+Using value supervision in addition to feature matching helps the DAGGER process to converge faster as shown by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
+However, without feature matching, using value supervision alone $\mathcal{L}_\text{D}$ does not demonstrate superior performance.
 This indicates a potential synergy between feature matching and value estimation.
 Intuitively, the latent feature of Roach encodes the information needed for value estimation, hence mimicking this feature should help to predict the value,
 while value estimation could help to regularize feature matching.
@@ -661,9 +668,9 @@ while value estimation could help to regularize feature matching.
 
 \hspace{1pc}Table~\ref{table:infraction} provides the detailed performance and infraction analysis on the NoCrash benchmark with busy traffic in the new town \& weather setting.
 Most notably, the extremely high ``Agent blocked'' of our baseline $\mathcal{L}_\text{A}(\text{AP})$ is due to reflections from after-rain puddles.
-This problem is largely alleviated by imitating Roach, which drives more naturally, and $\mathcal{L}_\text{A}$ shows an absolute improvement of $23\%$ in terms of driving score.
+This problem is largely alleviated by imitating Roach, which drives more naturally, and $\mathcal{L}_\text{D}$ shows an absolute improvement of $23\%$ in terms of driving score.
 In other words this is the gain achieved by using a better expert, but the same imitation learning approach. 
-Further using the improved supervision from soft targets and latent features results in our best model $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$, which demonstrates another $22\%$ absolute improvement.
+Further using the improved supervision from soft targets and latent features results in our best model $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, which demonstrates another $22\%$ absolute improvement.
 By handling red lights in a better way, this agent achieves $88\%$, an expert-level driving score, using a single camera image as input.
 
 
