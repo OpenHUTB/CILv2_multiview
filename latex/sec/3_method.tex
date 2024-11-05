@@ -46,7 +46,7 @@ Concurrently, the ventral pathway receives these features, and the IT (Inferior 
 
 % 模型的输入
 % the ego vehicle's forward speed $s_t\in\mathbb{R}$
-At time $t$, the current state $\mathbf{F}_t$ consists of a set of images from the left, central, and right cameras $\mathbf{F}_{t}=\{\mathbf{f}_{l,t}, \mathbf{f}_{c,t}, \mathbf{f}_{r,t} \}$ and a high-level navigation command $\mathbf{c}_t\in\mathbb{R}^{k}$ which is encoded as a one-hot vector embedding.
+At time $t$, the current state $\mathbf{F}_t$ consists of a set of images from the left, central, and right cameras $\mathbf{F}_{t}=\{\mathbf{f}_{l,t}, \mathbf{f}_{c,t}, \mathbf{f}_{r,t} \}$ and a high-level navigation command $\mathbf{n}_t\in\mathbb{R}^{k}$ which is encoded as a one-hot vector embedding.
 %
 %At time $t$, each image $\mathbf{f}_{v,t}\in \mathbb{R}^{W\times H\times 3}$ from the multi-view camera setting is processed by a share-weight ResNet34 \cite{He:2016}, pre-trained on ImageNet \cite{Deng:2009}. 
 % Cornet
@@ -55,11 +55,7 @@ The circuitry is identical in each of its visual areas (except for V1$_\text{COR
 Due to high computational demands, first area V1$_\text{COR}$ performs a 7 $ \times $ 7 convolution with stride 2, 3 $ \times $ 3 max pooling with stride 2, and a 3 $ \times $ 3 convolution. 
 Areas V2$_\text{COR}$, V4$_\text{COR}$ and IT$_\text{COR}$ perform two 1 $ \times $ 1 convolutions, a bottleneck-style 3 $ \times $ 3 convolution with stride 2, expanding the number of features fourfold, and a 1 $ \times $ 1 convolution. 
 To implement recurrence, outputs of an area are passed through that area several times. 
-For instance, after V2$_\text{COR}$ processed the input once, that result is passed into V2$_\text{COR}$ again and treated as a new input (while the original input is discarded). 
-V2$_\text{COR}$ and IT$_\text{COR}$ are repeated twice, V4$_\text{COR}$ is repeated four times as this results in the most minimal configuration that produced the best model as determined by our scores. 
-As in ResNet, each convolution (except the first 1 $ \times $ 1) is followed by batch normalization\cite{ioffe2015batch} and ReLU nonlinearity. 
-Batch normalization was not shared over time\cite{ebski2018residual}. 
-There are no across-area bypass or across-area feedback connections in the current definition of ventral pathway and retinal and LGN processing are not explicitly modeled.
+
 
 %
 After this series of processing, our network is able to effectively extract and output multi-dimensional features of the current environment to decision network, including the appearance features of objects, motion features.

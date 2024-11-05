@@ -48,6 +48,13 @@ Training and testing weathers are the same for both Town01 and Town02.
 We train for 80 epochs on 1 NVIDIA A6000 GPU, with a batch size of 120. 
 The learning rate decays by half at epochs 30, 50, and 65. 
 
+% Cornet详细信息
+In ventral stream, after V2$_\text{COR}$ processed the input once, that result is passed into V2$_\text{COR}$ again and treated as a new input (while the original input is discarded). 
+V2$_\text{COR}$ and IT$_\text{COR}$ are repeated twice, V4$_\text{COR}$ is repeated four times as this results in the most minimal configuration that produced the best model as determined by our scores. 
+As in ResNet, each convolution (except the first 1 $ \times $ 1) is followed by batch normalization and ReLU nonlinearity. 
+Batch normalization was not shared over time. 
+There are no across-area bypass or across-area feedback connections in the current definition of ventral pathway and retinal and LGN processing are not explicitly modeled.
+
 % 其他
 %During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. 
 %Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA~\cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record.
@@ -475,7 +482,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 % 不同迭代时的消融实验
 \begin{figure*}[t]
 	\centering
-	\includegraphics[width=0.99\textwidth]{fig/score_eu_lb_tt_tn.pdf}
+	\includegraphics[width=0.99\textwidth]{fig/driving_scores.pdf}
 	\vspace{-1ex}
 	\caption{\textbf{Driving score of experts and IL agents.} 
 		All IL agents (dashed lines) are supervised by Roach except for $\mathcal{L}_\text{A}(\text{AP})$, which is supervised by our Autopilot. 
