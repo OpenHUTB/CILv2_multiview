@@ -14,7 +14,7 @@
 \hspace{1pc}All evaluations are completed on CARLA simulator \cite{Dosovitskiy:2017} 0.9.13. 
 We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the LeaderBoard benchmark.
 Each benchmark specified its training towns and weather, where agent is allowed to collect data, and evaluates the agent in new towns and weather.
-The NoCrash benchmark considers generalization from Town01, a European town composed of solely one-lane roads and T-junctions, to Town02, a smallker version of Town01 with different textures.
+The NoCrash benchmark considers generalization from Town01, a European town composed of solely one-lane roads and T-junctions, to Town02, a smaller version of Town01 with different textures.
 By contrast, the LeaderBoard considers a more difficult generalization task in six maps that cover diverse traffic situations, including freeways, US-style junctions, roundabouts, stop signs, lane changing and merging.
 Following the NoCrash benchmark, we test generalization from four training weather types to two new weather types.
 But to save computational resources, only two out of the four training weather types are evaluated.
@@ -38,12 +38,14 @@ First, we collect a dataset from Town01 in CARLA, which is a small town only ena
 In particular, we collect 15 hours of data at 10 fps ($\sim$540K frames from each camera view), under 4 training weathers, namely, ClearNoon, ClearSunset, HardRainNoon, and WetNoon. 
 % 测试：Town02 细雨的傍晚、潮湿的傍晚
 In this case, CARLA's Town02 is used for generalization testing under SoftRainSunset and WetSunset weather conditions. 
-Second, we collect a dataset from multiple CARLA's towns to include more complex scenarios such as multi-lane driving, entering and exiting highways, passing crossroads, {\etc} In order to keep the same setting as \cite{Hu:2022}, we hold Town05 for testing, and collect 25 hours of data at 10 fps from Town01 to Town06 (5 hours per town; $\sim$900K frames from each camera). 
+Second, we collect a dataset from multiple CARLA's towns to include more complex scenarios such as multi-lane driving, entering and exiting highways, passing crossroads, {\etc} 
+In order to keep the same setting as \cite{Hu:2022}, we hold Town05 for testing, and collect 25 hours of data at 10 fps from Town01 to Town06 (5 hours per town; $\sim$900K frames from each camera). 
 Training and testing weathers are the same for both Town01 and Town02. 
 
 
 
 \subsection{Implementation Details}
+
 \hspace{1pc}To optimize Eq. (\ref{eq:loss}), we use the Adam \cite{Kingma:2015} with an initial learning rate of $10^{-4}$ and weight decay of $0.01$. 
 We train for 80 epochs on 1 NVIDIA A6000 GPU, with a batch size of 120. 
 The learning rate decays by half at epochs 30, 50, and 65. 
@@ -66,7 +68,7 @@ There are no across-area bypass or across-area feedback connections in the curre
 % 驾驶评估的3个不同数据集（不包含实验结果）
 \subsection{Driving Evaluation}
 \label{sec:Metrics}
-The performance of the BID agent is constrained by the performance of the expert it is imitating. 
+\hspace{1pc}The performance of the BID agent is constrained by the performance of the expert it is imitating. 
 When the expert performs poorly, the agent that mimics the expert will also exhibit poor performance. 
 The BID model is designed in strict accordance with the human brain's visual information processing process, both structurally and functionally. 
 When optimized, the model's output results are very close to those of the expert in terms of evaluating the similarity.
@@ -76,6 +78,7 @@ We follow the \emph{NoCrash} benchmark~\cite{Codevilla:2019} and the offline CAR
 
 
 \subsubsection{NoCrash Metrics.}\label{nocrash_metrics}
+
 \hspace{1pc}It consists of 3 tasks with increasing levels of difficulty: \emph{Empty}, \emph{Regular}, and \emph{Dense}, according to the number of dynamic objects in the scene ({\ie}, pedestrians and vehicles). 
 In Town 2, the numbers of dynamic objects are specified as:
 \begin{itemize}
@@ -480,13 +483,16 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 %The LeaderBoard instruction suggests that it is used to disambiguate situations where the semantics of left and right are not clear due to the complexity of the considered map.
 
 % 不同迭代时的消融实验
+% CILv2_multiview\network\models\architectures\CIL_multiview\evaluator.py
 \begin{figure*}[t]
 	\centering
 	\includegraphics[width=0.99\textwidth]{fig/driving_scores.pdf}
 	\vspace{-1ex}
-	\caption{\textbf{Driving score of experts and IL agents.} 
-		All IL agents (dashed lines) are supervised by Roach except for $\mathcal{L}_\text{A}(\text{AP})$, which is supervised by our Autopilot. 
-		For IL agents at the 5th iteration on NoCrash and all experts, results are reported as the mean over 5 evaluation seeds. 
+	\caption{\textbf{Driving performance and training progress of BID.} 
+		All BID agents are evaluated in LBCRoutes after 30 peoch.
+		Top figure. Ground truth and model prediction of steers are figured with green and blue, respectively.
+		Bottom figure. The errors of training progress for every 5 epoch are displayed, including MAE (mean absolute error), MAE of acceleration and steer. 
+		Results are reported as the mean over 5 evaluation seeds. 
 		Others are evaluated with one seed. 
 		The offline Leaderboard benchmark is used here.}
 	\vspace{-1.5ex}
