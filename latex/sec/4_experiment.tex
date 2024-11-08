@@ -531,6 +531,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 	\vspace{-1ex}
 	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
 		Mean and standard deviation over 5 seeds. 
+		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
 		Our models are from DAGGER iteration 5. 
 		For DA-RB, + means triangular perturbations are added to the off-policy dataset, (E) means ensemble of all iterations.}
 	\label{table:sucess_rate_nc_dense}
@@ -565,24 +566,24 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		\\
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
 		$\mathcal{L}_\mathrm{D}(\text{AP})$
-		& $31 \pm 7$ & $43 \pm 2$ & $62 \pm 6$ & $77 \pm 4$ 
-		& $0.54 \pm 0.53$ & $\mathbf{0}\pm0$ & $0.63 \pm 0.50$ & $3.33 \pm 0.58$ & $19.4\pm 14.4$ \\
+		& $32 \pm 5$ & $42 \pm 3$ & $61 \pm 5$ & $76 \pm 4$ 
+		& $0.53 \pm 0.55$ & $\mathbf{0}\pm0$ & $0.63 \pm 0.50$ & $3.33 \pm 0.58$ & $19.4\pm 14.4$ \\
 		$\mathcal{L}_\text{D}$
-		& $57\pm7$ & $66\pm3$ & $84\pm3$ & $76\pm1$ 
-		& $2.07\pm1.37$ & $\mathbf{0}\pm0$ & $1.36\pm1.10$ & $1.4\pm0.2$ & $2.82\pm1.45$ \\
+		& $58\pm6$ & $65\pm3$ & $85\pm2$ & $76\pm1$ 
+		& $2.06\pm1.28$ & $\mathbf{0}\pm0$ & $1.37\pm1.10$ & $1.5\pm0.2$ & $2.83\pm1.46$ \\
 		$\mathcal{L}_\text{N}$
-		& $74\pm3$ & $79\pm0$ & $91\pm2$ & $86\pm1$ 
-		& $0.50\pm0.25$ & $\mathbf{0}\pm0$ & $0.53\pm0.18$ & $0.68\pm0.08$ & $3.39\pm0.20$ \\
+		& $75\pm2$ & $78\pm0$ & $90\pm2$ & $85\pm1$ 
+		& $0.51\pm0.25$ & $\mathbf{0}\pm0$ & $0.52\pm0.17$ & $0.69\pm0.06$ & $3.36\pm0.21$ \\
 		$\mathcal{L}_\text{D}+\mathcal{L}_\text{N}(\text{c})$
-		& $\mathbf{87} \pm 5$ & $\mathbf{88} \pm 3$ & $\mathbf{96} \pm 0$ & $\mathbf{91} \pm 3$ 
-		& $\mathbf{0.08} \pm 0.04$ & $0.01 \pm 0.02$ & $\mathbf{0.23} \pm 0.08$ & $\mathbf{0.61} \pm 0.23$ & $\mathbf{0.84} \pm 0.04$ \\
+		& $\mathbf{88} \pm 5$ & $\mathbf{89} \pm 3$ & $\mathbf{97} \pm 0$ & $\mathbf{90} \pm 3$ 
+		& $\mathbf{0.07} \pm 0.04$ & $0.01 \pm 0.01$ & $\mathbf{0.22} \pm 0.07$ & $\mathbf{0.62} \pm 0.22$ & $\mathbf{0.83} \pm 0.03$ \\
 		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
 		BID
-		& $95 \pm 2$ & $96 \pm 3$ & $100 \pm 0$ & $96 \pm 3$ 
-		& $0 \pm 0$ & $0.11 \pm 0.07$ & $0.04 \pm 0.05$ & $0.16 \pm 0.20$ & $0 \pm 0$ \\
+		& $96 \pm 2$ & $96 \pm 3$ & $99 \pm 0$ & $97 \pm 2$ 
+		& $0 \pm 0$ & $0.12 \pm 0.08$ & $0.03 \pm 0.06$ & $0.14 \pm 0.18$ & $0 \pm 0$ \\
 		Autopilot
-		& $91 \pm 1$ & $79 \pm 2$ & $98 \pm 1$ & $80 \pm 2$ 
-		& $0 \pm 0$ & $0 \pm 0$ & $0.18 \pm 0.08$ & $1.93 \pm 0.23$ & $0.18 \pm 0.08$\\
+		& $91 \pm 1$ & $78 \pm 2$ & $97 \pm 1$ & $81 \pm 2$ 
+		& $0 \pm 0$ & $0 \pm 0$ & $0.19 \pm 0.07$ & $1.92 \pm 0.22$ & $0.17 \pm 0.09$\\
 		\bottomrule
 	\end{tabular}
 	\vspace{-1ex}
