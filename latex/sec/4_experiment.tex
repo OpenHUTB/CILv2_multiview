@@ -148,18 +148,18 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 	\centering
 	\resizebox{0.95\linewidth}{!}{
 		\begin{tabular}{@{}lccc|ccc|ccc@{}}
-			\toprule
+			\hline
 			& \multicolumn{3}{c}{Empty} & \multicolumn{3}{c}{Regular} & \multicolumn{3}{c}{Busy}  \\
 			
 			& \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L  & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ C.V \\
-			\midrule
+			\hline
 			
 			RIM\cite{Zhang:2021}  & $100\pm0.0$ & $85\pm1.2$ & $66\pm5.0$ & $97\pm2.3$ & $86\pm7.2$ & $66\pm54$ & $81\pm5.0$& $68\pm7.2$ & $63\pm52.7$\\
 			CIL++ & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
 			BID & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
-			\midrule
+			\hline
 			Expert & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$ & $100\pm0.0$ & $97\pm0.0$ & $13\pm4.6$ & $84\pm2.0$ & $82\pm2.0$ & $37\pm14.1$ \\
-			\bottomrule 
+			\hline 
 		\end{tabular}
 	}
 	\caption{Town02 NoCrash results.
@@ -203,13 +203,13 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 	\centering
 	\resizebox{0.95\linewidth}{!}{
 		\begin{tabular}{@{}lccccccccccccccccccccc@{}}
-			\toprule
+			\hline
 			%   & SR(\%) 
 			%   & S.SR(\%) 
 			& \textbf{$\uparrow$ Avg.RC(\%)} & \textbf{$\uparrow$ Avg.DS }
 			& $\downarrow$ C.V & $\downarrow$ C.L & $\downarrow$ T.L & $\downarrow$ O.L & $\downarrow$ R.Dev 
 			\\
-			\midrule
+			\hline
 			RIM\cite{Zhang:2021}  & $92\pm3.1$ & $51\pm7.9$ 
 			& $7.5\pm1.3$ & $4.3\pm1.6$ & $26.0\pm8.9$ & $5.4\pm2.7$ & $3.0\pm3.2$ & \\
 			MILE~\cite{Hu:2022}
@@ -221,11 +221,11 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 			BID 
 			& $98\pm1.7$ & $68\pm2.7$ 
 			& $6.0\pm0.5$ & $3.8\pm0.7$ & $5.8\pm5.1$ & $6.1\pm2.2$ & $9.4\pm3.6$ \\
-			\midrule
+			\hline
 			Expert 
 			& $99\pm0.8$ & $89\pm1.7$ 
 			& $3.2\pm1.1$ & $0.0\pm0.0$ & $1.3\pm0.4$ & $0.0\pm0.0$ & $0.0\pm0.0$ \\
-			\bottomrule 
+			\hline
 		\end{tabular}
 	}
 	\caption{Town05 results according to CARLA's offline metrics. All models are tested on CARLA 0.9.13. 
@@ -506,10 +506,11 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 	\setlength{\tabcolsep}{2.67pt}
 	\centering
 	\begin{tabular}{lccccc}
-		\toprule
+		\hline
 		Success Rate \% $\uparrow$
 		&  NCd-tt & NCd-tn  & NCd-nt & NCd-nn  \\ 
-		\cmidrule(lr){1-1}\cmidrule(lr){2-5}
+		\hline
+		% \cmidrule(lr){1-1}\cmidrule(lr){2-5}
 		SAM \cite{zhao2021sam} (0.8.4) & 
 		$54 \pm 3$ & $47 \pm 5$ & $29 \pm 3$ & $29 \pm 2$ \\
 		LBC \cite{chen2020learning} (0.9.6) & 
@@ -526,7 +527,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		$\mathbf{88} \pm 4$ & $29 \pm 3$ & $32 \pm 11$ & $28 \pm 4$ \\
 		Our best, $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$ & 
 		$86 \pm 5$ & $\mathbf{82} \pm 2$ & $\mathbf{78} \pm 5$ & $\mathbf{78} \pm 0$ \\
-		\bottomrule
+		\hline
 	\end{tabular}
 	\vspace{-1ex}
 	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
@@ -542,7 +543,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 	\setlength{\tabcolsep}{3.8pt}
 	\centering
 	\begin{tabular}{lccccccccc} 
-		\toprule
+		\hline
 		& \begin{tabular}{@{}c@{}}Success \\ rate \end{tabular} 
 		& \begin{tabular}{@{}c@{}}Driving \\ score \end{tabular} 
 		& \begin{tabular}{@{}c@{}}Route \\ compl. \end{tabular} 
@@ -552,7 +553,8 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		& \begin{tabular}{@{}c@{}}Collision \\ vehicle \end{tabular}  
 		& \begin{tabular}{@{}c@{}}Red light \\ infraction \end{tabular}  
 		& \begin{tabular}{@{}c@{}}Agent \\ blocked \end{tabular}  \\
-		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
+		\hline
+		% \cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
 		iter 5
 		& \%, $\uparrow$
 		& \%, $\uparrow$
@@ -564,7 +566,8 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		& \#/Km, $\downarrow$
 		& \#/Km, $\downarrow$
 		\\
-		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
+		\hline
+		%\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
 		$\mathcal{L}_\mathrm{D}(\text{AP})$
 		& $32 \pm 5$ & $42 \pm 3$ & $61 \pm 5$ & $76 \pm 4$ 
 		& $0.53 \pm 0.55$ & $\mathbf{0}\pm0$ & $0.63 \pm 0.50$ & $3.33 \pm 0.58$ & $19.4\pm 14.4$ \\
@@ -577,14 +580,15 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		$\mathcal{L}_\text{D}+\mathcal{L}_\text{N}(\text{c})$
 		& $\mathbf{88} \pm 5$ & $\mathbf{89} \pm 3$ & $\mathbf{97} \pm 0$ & $\mathbf{90} \pm 3$ 
 		& $\mathbf{0.07} \pm 0.04$ & $0.01 \pm 0.01$ & $\mathbf{0.22} \pm 0.07$ & $\mathbf{0.62} \pm 0.22$ & $\mathbf{0.83} \pm 0.03$ \\
-		\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
+		\hline
+		%\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
 		BID
 		& $96 \pm 2$ & $96 \pm 3$ & $99 \pm 0$ & $97 \pm 2$ 
 		& $0 \pm 0$ & $0.12 \pm 0.08$ & $0.03 \pm 0.06$ & $0.14 \pm 0.18$ & $0 \pm 0$ \\
 		Autopilot
 		& $91 \pm 1$ & $78 \pm 2$ & $97 \pm 1$ & $81 \pm 2$ 
 		& $0 \pm 0$ & $0 \pm 0$ & $0.19 \pm 0.07$ & $1.92 \pm 0.22$ & $0.17 \pm 0.09$\\
-		\bottomrule
+		\hline
 	\end{tabular}
 	\vspace{-1ex}
 	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
