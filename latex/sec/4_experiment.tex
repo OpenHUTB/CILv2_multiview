@@ -94,44 +94,43 @@ For a more detailed comparison, we also provide the strict success rate (\emph{S
 % traffic infraction：交通违法行为
 which measures the percentage of successful episodes under a zero tolerance policy for any traffic infractions, such as failing to stop at a red light or deviating from planned route.
 % T.L：在红灯时不停的次数
-Additionally, we include other infraction metrics: \emph{T.L} is the number of times not stopping at a red traffic light; 
+Additionally, we include other infraction metrics.
+\emph{T.L}: the number of times the vehicle fails to stop at a red traffic light.
 % 和其他车辆碰撞的次数
-\emph{C.V} is the number of collisions with other vehicles; 
+\emph{C.V}: The number of collisions with other vehicles.
 % R.Dev：当高层命令没有很好地执行，路线偏差的次数
-\emph{R.Dev} is the number of route deviations, {\ie}, when the high-level command is not well-executed; 
+\emph{R.Dev}: The number of route deviations, where the high-level command is not proerly executed.
 % O.L：考虑了自主车辆驶出车道的情况（例如，在对面车道或人行道上）
-\emph{O.L} accounts for the ego-vehicle driving out-of-lane ({\eg}, in the opposite lane or in the sidewalk); 
+\emph{O.L}: The number of times the ego-vehicle drives out of its lane ({\eg}, into the opposite lane or onto the sidewalk).
 % C.L：与城镇布局发生碰撞的次数
 \emph{C.L} is the number of collisions with the town layout. 
-All infraction values are normalized per driven kilometer.
+All infraction values are normalized per kilometer driven.
 
 
 \subsubsection{Offline Leaderboard Metrics.}\label{lb_metrics}
-\hspace{1pc}To align our evaluation with leaderboard\cite{Hu:2022}, we use the offline CARLA's Leaderboard metrics for multiple towns. 
+\hspace{1pc}To align our evaluation with CARLA leaderboard\cite{Hu:2022}, we use the offline CARLA Leaderboard metrics for multiple towns. 
 % Avg.DS 平均驾驶分数、平均路线完成
-The most important metrics are the average driving score (\emph{Avg.DS}) and the average route completion (\emph{Avg.RC}). 
-\emph{Avg.DS} is based on penalizing driving performance according to the terms defined in CARLA's Leaderboard, 
+The key metrics are the average driving score (\emph{Avg.DS}) and the average route completion (\emph{Avg.RC}). 
+\emph{Avg.DS} penalizes driving performance based on the criteria defined in the CARLA Leaderboard, 
 % Avg.RC：自车辆能够行驶至目标的平均距离。
-while \emph{Avg.RC} is the average distance towards the goal that the ego-vehicle is able to travel.
+while \emph{Avg.RC} measures the average distance the ego-vehicles is able to travel toward the goal.
 
 
 % 高层导航命令
 \subsubsection{High-level Navigation Commands} 
-\hspace{1pc}As in CILRS \cite{Codevilla:2019}, at training time we use simple navigation commands such as \emph{continue} in the lane, or \emph{go-straight/turn-left/turn-right} next time an intersection is reached. 
-However, in complex towns, after crossing an intersection in any direction, we may legally enter any of the multiple lanes. 
-Thus, since this can be known by the global navigation system, when the ego-vehicle enters a lane out of the pre-planned global trajectory, a corrective command is forced, like \emph{move-to-left-lane} or  \emph{move-to-right-lane} as soon as possible. 
-This corrective mechanism is used only at testing time. 
-Figure~\ref{fig:command_ambiguous} provides an example.
+\hspace{1pc}As in CILRS \cite{Codevilla:2019}, during training, we use simple navigation commands such as ``continue in the lane" or ``go-straight/turn-left/turn-right" when reaching an intersection.
+However, in more complex towns, after crossing an intersection, the ego-vehicle may legally enter any of the multiple available lanes. 
+Since this information is avaiable through the global navigation system, if the ego-vehicle deviates from the pre-planned trajectory by entering a different lane, a corrective command is issued, such as ``move to left lane" or ``move to right lane" as soon as possible. 
+This corrective mechanism is only applied during testing. 
+An example of this process is shown in Figure~\ref{fig:command_ambiguous}.
 
 % 各种环境下的场景说明
 % Roach_carla0913_fps10_dense_normalcamera_NoCrash_3cam/RouteScenario_0000/rgb_central001215.png
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1.0\linewidth]{fig/dataset_examples.pdf}
-	\caption{Top: when the ego-vehicle is entering a new road segment from an intersection, the \emph{go-straight} navigation command is ambiguous. 
-	The ego-vehicle can legally move to any of the highlighted lanes. 
-	Bottom: four aerial views at different times with the pre-planned global trajectory shown in \textbf{\textcolor{red}{red}}. 
-	They illustrate how the high-level navigation command changes to \emph{move-to-right-lane}, to inform how to get back to the desired trajectory.}
+	\caption{Top: When the ego-vehicle enters a new road segment from an intersection, the ``go-straight" navigation command becomes ambiguous, as the ego-vehicle is legally allowed to move into any of the highlighted lanes.
+	Bottom: Four aerial views taken at different times, with the pre-planned global trajectory shown in \textbf{\textcolor{red}{red}}, illustrate how the high-level navigation command shifts to ``move-to-right-lane," guiding the vehicle back to the desired trajectory.}
 	\label{fig:command_ambiguous}
 \end{figure}
 
@@ -139,10 +138,10 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 % 三种不同场景的性能
 \begin{table*}
 	\caption{Town02 NoCrash results.
-		RIM stands for Roach IL and the Expert is Roach RL~\cite{Zhang:2021}. 
+		RIM refers to Roach IL and the Expert refers to Roach RL~\cite{Zhang:2021}. 
 		All models are tested on CARLA 0.9.13. 
-		Mean and standard deviations are computed using three runs with different seeds. 
-		For $\uparrow$, the higher the better, while for $\downarrow$ is the opposite.}
+		Mean values and standard deviations are computed from three runs with different seeds. 
+		For metrics denoted with $\uparrow$, higher values indicate better performance, while for those marked with $\downarrow$, lower values are preferable.}
 	\centering
 	\resizebox{0.95\linewidth}{!}{
 		\begin{tabular}{@{}lccc|ccc|ccc@{}}
@@ -165,9 +164,10 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 
 
 \begin{table*}
-	\caption{Town05 results according to CARLA's offline metrics. All models are tested on CARLA 0.9.13. 
-		Mean and standard deviations are computed using three runs with different seeds. 
-		For $\uparrow$, the higher the better; for $\downarrow$, the opposite.}
+	\caption{Town05 results based on CARLA's offline metrics. 
+		All models are tested on CARLA 0.9.13. 
+		Mean values and standard deviations are computed from three runs with different random seeds.
+		For metrics marked with $\uparrow$, higher values indicate better performance, while for those marked with $\downarrow$, lower values are preferred.}
 	\centering
 	\resizebox{0.88\linewidth}{!}{
 		\begin{tabular}{@{}lccccccccccccccccccccc@{}}
@@ -200,252 +200,43 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 \end{table*}
 
 
-%\begin{table}
-%	\centering
-%	\begin{tabular}{@{}lccccc@{}}
-%		\toprule
-%		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
-%		\midrule
-%		LF.A & $72$ & $62$ & $86$ & $78.1$  \\
-%		LF.C & $76$ & $66$ & $88$ & $80.6$  \\
-%		Token & $88$ & $80$ & $93$ & $88.4$  \\
-%		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\ 
-%		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
-%		\bottomrule 
-%	\end{tabular}
-%	\caption{Results of different data input fusion approaches for NoCrash Busy scenarios.}
-%	\label{tab:ablation_study_inputfusion}
-%\end{table}
-
-%\begin{table}
-%	\centering
-%	\begin{tabular}{@{}lcccccccccccccccc@{}}
-%		\toprule
-%		& $\uparrow$ SR(\%) & $\uparrow$ S.SR(\%) & $\uparrow$ Avg.RC(\%) & $\uparrow$ Avg.DS  \\
-%		\midrule
-%		GAP & $64$ & $46$ & $87$ & $75.1$  \\
-%		VS & $70$ & $62$ & $89$ & $78.6$  \\
-%		CIL++ & $88$ & $84$ & $93$ & $88.8$  \\
-%		BID & $88$ & $84$ & $93$ & $88.8$  \\ 
-%		\bottomrule
-%	\end{tabular}
-%	\caption{Results of different multi-view fusion approaches for NoCrash Busy scenarios.}
-%	\label{tab:ablation_study_sa}
-%\end{table}
-
-
 \subsection{Experimental Results}
 \label{sec:Results}
 % 基于模型的模仿学习
-\hspace{1pc}We compare BID with three SOTA vision-based eend-to-end-AD models, namely, the Roach IL model (here RIM) \cite{Zhang:2021}, MILE \cite{Hu:2022} and CIL++\cite{xiao2023scaling}. 
-Notice that although BID uses the data generated by the Roach RL model, essentially training a BID model does not require human-labeled sensor data. 
-In our case, the Roach RL plays the role of a human driver at data acquisition time. 
-In contrast, training a RIM model requires teaching from the Roach RL expert who was trained with privileged information, while MILE is trained with semantic BeV as supervision.
+\hspace{1pc}We compare BID with three state-of-the-art, vision-based eend-to-end autonomous driving models: the Roach IL model (here RIM) \cite{Zhang:2021}, MILE \cite{Hu:2022} and CIL++\cite{xiao2023scaling}. 
+It is important to note that although BID uses data generated by the Roach RL model, training a BID model does not require human-labeled sensor data. 
+In this case, the Roach RL model acts as a human driver during data acquisition. 
+In contrast, training a RIM model requires supervision from the Roach RL expert, who is trained with privileged information, while MILE is trained using semantic Bird’s Eye View (BeV) data for supervision.
 
 
 \subsubsection{Small Single-lane Towns} \label{sec:small_town_results}
 
-\hspace{1pc}We first use CARLA's Town01 and Town02 along with the NoCrash metrics (Sec.~\ref{nocrash_metrics}) for initial experiments. 
-Town01 is used for training and Town02 for testing (Sec.~\ref{sec:Dataset}). 
-MILE only provides a model trained on CARLA's multiple towns, but there is no model trained only on Town01, while RIM has versions trained on Town01 and multiple towns. 
-Thus, for a fair comparison, we only use RIM's single-town trained model. 
-We show in Table~\ref{tab:T2_NC_results} SR and S.SR for the considered traffic densities (Empty, Regular, Busy). 
-In order to have a more focused evaluation, we show T.L only for the Empty and Regular cases, while C.V is shown only for the Busy case. 
-Note that scenarios with no or few dynamic obstacles can better show the ego-vehicle reaction to red traffic lights, while collisions are better evaluated in scenarios with more dynamic objects. 
+\hspace{1pc}We first conduct initial experiments using CARLA's Town01 and Town02, along with the NoCrash metrics (Sec.~\ref{nocrash_metrics}). 
+Town01 is used for training, while Town02 is reserved for testing (Sec.~\ref{sec:Dataset}). 
+MILE provides a model trained on multiple CARLA towns, but no model is available that is specifically trained on Town01 alone. 
+On the other hand, RIM has models trained on both Town01 and multiple towns. To ensure a fair comparison, we only use RIM’s model trained on Town01. 
+In Table~\ref{tab:T2_NC_results}, we present the success rate (SR) and strict success rate (S.SR) for the different traffic densities (Empty, Regular, Busy). 
+For a more focused evaluation, we report T.L (traffic light violations) for the Empty and Regular cases, and C.V (collisions with vehicles) only for the Busy case. 
+It is important to note that scenarios with fewer or no dynamic obstacles are more effective for evaluating the ego-vehicle's reaction to red traffic lights, while collisions are more appropriately assessed in scenarios with higher traffic density and more dynamic objects.
 
 
-In general, BID achieves the best results in all the tasks. 
-In the Empty case, BID clearly outperforms RIM in avoiding traffic light infractions, which also contributes to a better S.SR. 
-We reach the same conclusion in the Regular case. 
-In the Busy case, BID reaches almost the expert's performance, again, being clearly better than RIM for S.SR and producing fewer collisions with vehicles. 
-For the expert, the failure cases in Busy scenarios are due to traffic deadlocks, which lead to a timeout in route completion. 
-Thus, its performance still can be considered as a proper upper bound. 
-
-
-%Traffic lights tend to be on sidewalks, so detecting them from a close distance requires a sensor setting with a proper HFOV. 
-%Otherwise, causal confusion can appear. 
-%We think that the poor performance of RIM on the T.L metric is due to a narrow HFOV as illustrated in Fig.~\ref{fig:causalconfusion}.  
-%To confirm this hypothesis, we conduct experiments using two HFOV settings for BID, 100 and 180. 
-%As seen in Table~\ref{tab:FOVresults}, we note that the number of infractions (T.L, C.L, O.L, R.Dev) increase when we use a lower HFOV=$100^\circ$ compared to HFOV=$180^\circ$. 
-%For HFOV=$100^\circ$, we have observed that the track of the road shoulder is easily out-of-observation at intersections, leading to more O.L, C.L, and R.Dev. 
-%For HFOV=$180^{\circ}$, the ego-vehicle can better perform the right driving maneuver, thanks to having the road shoulder as a reference.
-
-
-%\begin{figure}
-%	\centering
-%	\begin{subfigure}[b]{\linewidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{fig/TLCausalConfusionA.png}
-%		\caption{Roach RL \cite{Zhang:2021}: using semantic BeV as input during training time}
-%		\label{fig:TLCausualConfusionB}
-%	\end{subfigure}
-%	\hfill
-%	\begin{subfigure}[b]{\linewidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{fig/TLCausalConfusionB.png}
-%		\caption{BID: only images from three views as input}
-%		\label{fig:TLCausualConfusionA}
-%	\end{subfigure}
-%	%   \includegraphics[width=1.0\linewidth]{images/TLcausalConfusion.png}
-%	\caption{Top Left: The expert we use for data collection is the teacher agent Roach RL \cite{Zhang:2021}, which has access to semantic BeVs. 
-%		Note that, in simulation, this expert plays the role of a human driver in the real world, who would drive to collect on-board data. 
-%		Top Right: Using an insufficient FOV, the red traffic light is not observable in the image when the expert stops close to it, which may cause causal confusion when applying imitation learning to train the student agent RIM. 
-%		Bottom: BID avoids this causal confusion by using a larger HFOV based on three complementary images (from different cameras). More specifically, RIM uses HFOV=$100^{\circ}$, while BID uses HFOV=$180^{\circ}$.}
-%	\label{fig:causalconfusion}
-%\end{figure}
+In general, BID achieves the best results across all tasks. 
+In the Empty case, BID significantly outperforms RIM in avoiding traffic light infractions, contributing to a higher S.SR. 
+This conclusion holds true in the Regular case as well. 
+In the Busy case, BID comes close to matching the expert’s performance, again outperforming RIM in terms of S.SR and resulting in fewer collisions with vehicles. 
+For the expert, failure cases in Busy scenarios are primarily due to traffic deadlocks, which cause a timeout in route completion. 
+Despite this, the expert's performance can still be considered a valid upper bound.
 
 
 \subsubsection{Multi-town Generalization}\label{sec:multi_towns_result}
-\hspace{1pc}In this section, we assess the performance of BID in much more complex scenarios, as provided by CARLA's multiple towns. 
-As mentioned in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with MILE~\cite{Hu:2022}, using CARLA's offline Leaderboard metrics (Sec.~\ref{lb_metrics}).
-The results for all models trained on multi-town data are shown in Table~\ref{tab:T5_results}. 
-RIM shows the worst performance among the three models, incurring more infractions, thus obtaining a significantly lower Avg.DS. 
-BID achieves 98\% Avg.RC, which is on par with MILE. 
-In terms of Avg.DS, MILE remains the best scoring, yielding a 73\% while BID achieves a 68\%. 
-We observe that this is because MILE seldom drives outside the pre-planned lane, given the route map as input. 
-On the contrary, BID lacks the explicit use of this route map since it only receives high-level navigation commands. 
-
-
-% 速度、目标？
-%\subsubsection{Ablation Study}
-%\label{sec:Ablation Study}
-%To inspect the impact of some components of CIL++, we provide an ablation study. 
-%Specifically, we are interested in the fusions of input data and multi-view. 
-%
-%\paragraph{Input Data Fusion}
-%EtE-AD models require not only sensor data but also signal information, like the ego-vehicle speed and a high-level navigation command. 
-%It is interesting to study how to properly fuse these inputs. 
-%To compare, we implement several types of input data fusion in Table~\ref{tab:ablation_study_inputfusion}: adding, concatenation, and tokenization. 
-%In the first, the speed and command features are simply added to the image features. 
-%This addition could be done either before (the default operation in CIL++) or after the Transformer Encoder block. 
-%We name the latter as late fusion adding (LF.A). 
-%Another common data fusion method is concatenation, which firstly stacks all the features and takes an extra join FC layer to fuse them, which we term as late fusion concatenation (LF.C). 
-%Since the transformer model uses a self-attention mechanism to fuse features between tokens, we can tokenize the speed and navigation command features and feed them into the transformer block along with the image features. 
-%We term this approach as Token. 
-%Our results suggest that there is no obvious difference between tokenization and early adding fusion. 
-%These two approaches show better results than the late fusion.
-%
-%
-%\paragraph{Multi-view Fusion}
-%CIL++ uses attention layers to fuse multi-view information. 
-%To understand their contribution, we remove the transformer block and simply use the ResNet34 which retains the average pooling and an FC layer for embedding each image view. 
-%The embedding outputs are then stacked and fed to the FC join layers for fusion. 
-%We term this approach as view stacking (VS) in Table~\ref{tab:ablation_study_sa}. 
-%The speed and command features are added to the joint embedding before feeding into the action prediction MLP. 
-%We see that without the self-attention layers, the SR drops from 88\% to 70\%. 
-%We think this is because the average pooling layer causes a loss of spatial information, while this information is very important for actual driving. 
-%The agent should take different actions according to the location of dynamic obstacles. 
-%We also use a transformer block to process the output of the ResNet average pooling layer (GAP), instead of using the flattened feature map from the last convolutional layer of ResNet34. 
-%The results drop significantly, {\eg}, and the SR goes from 88\% to 64\%.
-
-
-% 训练之后（多个过程）的误差曲线
-%\begin{figure}[t]
-%	\begin{center}
-%		\includegraphics[width=\linewidth]{img/rl.png}
-%	\end{center}
-%	\vspace{-4ex}
-%	\caption{\textbf{Learning curves of RL experts }
-%		trained in CARLA Town 1-6.
-%		Solid lines show the mean and shaded areas show the standard deviation of episode returns across 5 seeds.
-%		The dashed line shows an outlier run that collapsed.}
-%	\vspace{-2ex}
-%	\label{fig:rl}
-%\end{figure}
-
-
-%\subsection{Performance of Experts}
-
-%\textbf{\textsf{Sample Efficiency:}}
-%To improve the sample efficiency of PPO, we propose to use BEV instead of camera images, Beta instead of Gaussian distributions, and the exploration loss in addition to the entropy loss.
-%Since the benefit of using a BEV representation is obvious, here we only ablate the Beta distribution and the exploration loss.
-%As shown in Fig.~\ref{fig:rl}, the baseline PPO with Gaussian distribution and entropy loss is trapped in a local minimum where staying still is the most rewarding strategy.
-%Leveraging the exploration loss, PPO+exp can be successfully trained despite relatively high variance and low sample efficiency.
-%The Beta distribution helps substantially, but without the exploration loss the training still collapsed in some cases due to insufficient exploration (cf. dashed blue line in Fig.~\ref{fig:rl}).
-%Our Roach (PPO+beta+exp) uses both Beta distribution and exploration loss to ensure stable and sample efficient training.
-%The training takes around 1.7M steps in each of the six CARLA servers, this accounts for 10M steps in total, which takes roughly a week on an AWS EC2 g4dn.4xlarge or 4 days on a 2080 Ti machine with 12 cores.
-
-
-
-%\subsubsection{Driving Performance}
-%
-%Table~\ref{table:expert_performance} compares different experts on the NoCrash-dense and on all 76 LeaderBoard routes under dynamic weather with busy traffic.
-%Our Autopilot is a strong baseline expert that achieves a higher success rate than the Autopilot used in LBC and DA-RB.
-%We evaluate three RL experts - 
-%(1) Roach, the proposed RL coach using Beta distribution and exploration prior.
-%(2) PPO+beta, the RL coach trained without using the exploration prior. 
-%(3) PPO+exp, the RL coach trained without using the Beta distribution.
-%In general, our RL experts achieve comparable success rates and higher driving scores than Autopilots because RL experts handle traffic lights in a better way (cf. Table~\ref{table:infraction}).
-%The two Autopilots often run red lights because they drive over-conservatively and wait too long at the junction, thus missing the green light.
-%Among RL experts, PPO+beta and Roach, the two RL experts using a Beta distribution, achieve the best performance, while the difference between both is not significant. PPO+exp performs slightly worse, but it still achieves better driving scores than our Autopilot. 
-
-
-%\begin{table}
-%	\setlength{\tabcolsep}{2.32pt}
-%	\centering
-%	\begin{tabular}{lccccc}
-%		\toprule
-%		Suc. Rate \% $\uparrow$
-%		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
-%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-%		PPO+exp & $86 \pm 6$ & $86 \pm 6$ & $79 \pm 6$ & $77 \pm 5$ & $67\pm3$  \\
-%		PPO+beta & $\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $\mathbf{87} \pm 6$ & $72 \pm 5$  \\
-%		Roach & $91 \pm 4$ & $90 \pm 7$ & $\mathbf{83} \pm 3$ & $83 \pm 3$ & $72 \pm 6$  \\
-%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-%		AP (ours) & 
-%		$\mathbf{95} \pm 3$ & $\mathbf{95} \pm 3$ & $83 \pm 5$ & $81 \pm 2$ & $\mathbf{75} \pm 8$ \\
-%		AP-lbc \cite{chen2020learning}
-%		& $86 \pm 3$ & $83 \pm 6$ & $60 \pm 3$ & $59 \pm 8$ & N/A \\
-%		AP-darb \cite{prakash2020exploring}
-%		& $71 \pm 4$ & $72 \pm 3$ & $41 \pm 2$ & $43 \pm 2$ & N/A \\
-%		% \bottomrule
-%		\toprule
-%		Dri. Score \% $\uparrow$
-%		& NCd-tt & NCd-tn  & NCd-nt & NCd-nn & LB-all  \\ 
-%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-%		PPO+exp & $92 \pm 2$ & $92 \pm 2$ & $88 \pm 3$ & $86 \pm 1$ & $ 83\pm0$  \\
-%		PPO+beta & $\mathbf{98} \pm 2$ & $\mathbf{98} \pm 2$ & $90 \pm 3$ & $\mathbf{92} \pm 2$ & $\mathbf{86} \pm 2$  \\
-%		Roach & $95 \pm 2$ & $95 \pm 3$ & $\mathbf{91} \pm 3$ & $90 \pm 2$ & $85 \pm 3$  \\
-%		% Roach
-%		% & $93 \pm 1$ & $91 \pm 1$ & $91 \pm 4$ & $91 \pm 4$
-%		% & $79 \pm 1$ \\
-%		\cmidrule(lr){1-1}\cmidrule(lr){2-6}
-%		AP (ours)
-%		& $86 \pm 2$ & $86 \pm 2$ & $70 \pm 2$ & $70 \pm 1$
-%		& $78 \pm 3$ \\
-%		\bottomrule
-%	\end{tabular}
-%	\vspace{-1ex}
-%	\caption{\textbf{Success rate and driving score of experts.} 
-%	Mean and standard deviation over 5 evaluation seeds. 
-%	NCd: NoCrash-dense. 
-%	tt: train town \& weather. 
-%	tn: train town \& new weather. 
-%	nt: new town \& train weather. 
-%	nn: new town \& weather. 
-%	LB-all: all 76 routes of LeaderBoard with dynamic weather. 
-%	AP: CARLA Autopilot. 
-%	For RL experts the best checkpoint among all training seeds and runs is used.}
-%	\label{table:expert_performance}
-%	\vspace{-2ex}
-%\end{table}
-
-
-
-%\subsubsection{Performance of IL Agents}
-%
-%The performance of an IL agent is limited by the performance of the expert it is imitating.
-%If the expert performs poorly, it is not sensible to compare IL agents imitating that expert.
-%As shown in Table~\ref{table:expert_performance}, this issue is evident in the NoCrash new town with dense traffic, where Autopilots do not perform well. 
-%To ensure a high performance upper-bound and hence a fair comparison, we conduct ablation studies (Fig.~\ref{fig:score_eu_lb_tt_tn} and Table~\ref{table:infraction}) under the busy traffic setting such that our Autopilot can achieve a driving score of 80\% and a success rate of 90\%. 
-%In order to compare with the state-of-the-art, the best model from the ablation studies is still evaluated on NoCrash with dense traffic in Table~\ref{table:sucess_rate_nc_dense}.
-%
-%
-%The input measurement vector $\mathbf{m}_\text{IL}$ is different for the NoCrash and for the LeaderBoard. 
-%For NoCrash, $\mathbf{m}_\text{IL}$ is just the speed.
-%For the LeaderBoard, $\mathbf{m}_\text{IL}$ contains additionally a 2D vector pointing to the next desired waypoint.
-%This vector is computed from noisy GPS measurements and the desired route is specified as sparse GPS locations.
-%The LeaderBoard instruction suggests that it is used to disambiguate situations where the semantics of left and right are not clear due to the complexity of the considered map.
+\hspace{1pc}In this section, we evaluate the performance of BID in more complex scenarios provided by CARLA’s multiple towns. 
+As outlined in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with those used in MILE~\cite{Hu:2022}, and use CARLA’s offline Leaderboard metrics (Sec.~\ref{lb_metrics}). 
+The results for all models trained on multi-town data are presented in Table~\ref{tab:T5_results}. 
+RIM performs the worst among the three models, incurring more infractions and resulting in a significantly lower Avg.DS. 
+BID achieves an Avg.RC of 98\%, which is comparable to MILE. 
+However, in terms of Avg.DS, MILE scores the highest at 73\%, while BID achieves 68\%. 
+We attribute this difference to the fact that MILE rarely drives outside the pre-planned lane, as it is provided with the route map as input. 
+In contrast, BID does not use an explicit route map and instead relies solely on high-level navigation commands.
 
 % 不同迭代时的消融实验
 % CILv2_multiview\network\models\architectures\CIL_multiview\evaluator.py
@@ -455,11 +246,10 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 	\vspace{-1ex}
 	\caption{\textbf{Driving performance and training progress of BID.} 
 		All BID agents are evaluated in LBCRoutes after 30 peoch.
-		Top figure. Ground truth and model prediction of steers are figured with green and blue, respectively.
-		Bottom figure. The errors of training progress for every 5 epoch are displayed, including MAE (mean absolute error), MAE of acceleration and steer. 
-		Results are reported as the mean over 5 evaluation seeds. 
-		Others are evaluated with one seed. 
-		The offline Leaderboard benchmark is used here.}
+		Top figure: The ground truth and model prediction for steering angles are shown in green and blue, respectively.
+		Bottom figure: The errors in training progress are displayed every 5 epochs, including the mean absolute error (MAE) for steering and acceleration.
+		Results are reported as the mean over 5 evaluation seeds, while other metrics are evaluated with single seed. 
+		The offline Leaderboard benchmark is used for evaluation.}
 	\vspace{-1.5ex}
 	\label{fig:score_eu_lb_tt_tn}
 \end{figure*}
@@ -468,11 +258,11 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 % 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
-	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
-		Mean and standard deviation over 5 seeds. 
+	\caption{\textbf{Success rate of camera-based end-to-end imitation learning(IL) agents on NoCrash-dense.}
+		The mean and standard deviation are computed over 5 seeds. 
 		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
 		Our models are from DAGGER iteration 5. 
-		For DA-RB, + means triangular perturbations are added to the off-policy dataset, (E) means ensemble of all iterations.}
+		For DA-RB, ``+" indicates triangular perturbations have been added to the off-policy dataset, ``(E)" denotes an ensemble of all iterations.}
 	\setlength{\tabcolsep}{6.67pt}
 	\centering
 	\begin{tabular}{lccccc}
@@ -506,7 +296,7 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 
 \begin{table*}
 	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
-		Mean and standard deviation over 5 evaluation seeds.}
+		The mean and standard deviation are reported over 5 evaluation seeds.}
 	\setlength{\tabcolsep}{7.4pt}
 	\centering
 	\begin{tabular}{lccccccccc} 
@@ -566,29 +356,31 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 % 可视化注意力
 \subsubsection{Visualizing BID's Attention}
 \label{sec:Visualization}
-\hspace{1pc}We are interested in the image content to which BID pays attention. 
-Following Grad-CAM \cite{Selvaraju:2017}, gradients flow from the action space to the final convolutional layer of the ResNet backbone. 
-This should produce a map that highlights the important image areas for action prediction. 
-However, since BID solves a regression task, its output could be either negative or positive values, while Grad-CAM is originally designed for image classification tasks which always provide positive outputs. 
-To adapt Grad-CAM to our case, we cannot merely take into account the positive gradient of the feature map. 
-The computation should be divided into two cases depending on the sign of the output value. 
-Negative gradients are used to calculate the weights for the feature map when the acceleration or steering angle value is lower than zero, otherwise, the positive gradient is used.
+\hspace{1pc}We are interested in understanding which parts of the image BID focuses on during decision-making. 
+To achieve this, we use Grad-CAM~\cite{Selvaraju:2017}, where gradients flow from the action space to the final convolutional layer of the ResNet backbone. 
+This process generates a heatmap that highlights the image regions most important for action prediction. 
+However, since BID addresses a regression task, its output can take both positive and negative values, while Grad-CAM is originally designed for image classification tasks, where outputs are always positive. 
+To adapt Grad-CAM for our case, we cannot simply focus on the positive gradients of the feature map. 
+Instead, the computation is split into two cases based on the sign of the output value. 
+Negative gradients are used to compute the feature map weights when the acceleration or steering angle is negative, and positive gradients are used when the output is positive.
 
 
 % _results\_results\CILv2\CILv2_3cam_single_lane\Eval\Valid_gradCAM_Roach_LBCRoutes_3cam_valid\30\-1\85.jpg
-Fig.~\ref{fig:attention_ped_greed} shows the activation map at an intersection. 
-Three image areas are highly activated: the traffic light in the right image, the crossing pedestrians in the central one, and the lane shoulder in the left one. 
-Thus, we believe that BID shows a proper understanding of this scene, and a clear causality between observation and action since it decides to brake due to the pedestrians, even though the traffic light is in green and a \emph{turn-left} navigation command is given.
+Fig.~\ref{fig:attention_ped_greed} illustrates the activation map at an intersection. 
+Three regions of the image are highly activated: the traffic light on the right, the crossing pedestrians in the center, and the lane shoulder on the left. 
+This suggests that BID demonstrates a proper understanding of the scene and a clear connection between its observations and actions. 
+Specifically, BID decides to brake because of the pedestrians, even though the traffic light is green and the navigation command is to turn left. 
+This indicates that BID appropriately prioritizes the presence of pedestrians over the traffic signal and navigation command.
 
 
 % 验证集的1350帧，激活图的第45张
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=\linewidth]{fig/attention_ped_greed.pdf}
-	\caption{Activation maps of BID at an intersection in Town02. 
-		Three image areas from different views are highly activated: 
-		the traffic light at the right image, the crossing pedestrians at the central one, and the lane shoulder at the left one. 
-		Causality between observation and action is shown as a strong braking (0.794) due to the pedestrians, even though the traffic light in green and the \emph{turn-left} command.}
+	\caption{Activation maps of BID at an intersection in Town02 show three highly activated image areas from different viewpoints: 
+		the traffic light in the right image, the crossing pedestrians in the center, and the lane shoulder in the left image. 
+		The causality between observation and action is demonstrated by a strong braking response (0.794) due to the presence of pedestrians, despite the green traffic light and the ``turn-left" command. 
+		This highlights BID's ability to prioritize pedestrian safety over other factors in its decision-making process.}
 	\label{fig:attention_ped_greed}
 \end{figure}
 
@@ -597,64 +389,59 @@ Thus, we believe that BID shows a proper understanding of this scene, and a clea
 % 消融实验：速度（包括背侧通路）、导航
 \subsubsection{Ablation}
 
-\hspace{1pc}The performance of an IL agent is limited by the performance of the expert it is imitating.
-If the expert performs poorly, it is not sensible to compare IL agents imitating that expert.
-This issue is evident in the NoCrash new town with dense traffic, where Autopilots do not perform well. 
-To ensure a high performance upper-bound and hence a fair comparison, we conduct ablation studies (Fig.~\ref{fig:score_eu_lb_tt_tn} and Table~\ref{table:infraction}) under the busy traffic setting such that our Autopilot can achieve a driving score of 80\% and a success rate of 90\%. 
-In order to compare with the state-of-the-art, the best model from the ablation studies is still evaluated on NoCrash with dense traffic in Table~\ref{table:sucess_rate_nc_dense}.
+\hspace{1pc}The performance of an imitation learning (IL) agent is inherently limited by the quality of the expert it imitates. 
+If the expert's performance is poor, it is not meaningful to compare IL agents trained on that expert. 
+This issue becomes apparent in the NoCrash new town scenario with dense traffic, where autopilots typically perform poorly. 
+To establish a high-performance upper bound and ensure a fair comparison, we conduct ablation studies (Fig.~\ref{fig:score_eu_lb_tt_tn} and Table~\ref{table:infraction}) under the busy traffic setting, allowing our Autopilot to achieve a driving score of 80\% and a success rate of 90\%. 
+For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on NoCrash with dense traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
 
 
 % 说明消融的各个指标？
-The input measurement vector $\mathbf{m}_\text{IL}$ is different for the NoCrash and for the LeaderBoard. 
-For NoCrash, $\mathbf{m}_\text{IL}$ is just the speed.
-For the LeaderBoard, $\mathbf{m}_\text{IL}$ contains additionally a 2D vector pointing to the next desired waypoint.
-This vector is computed from noisy GPS measurements and the desired route is specified as sparse GPS locations.
-The LeaderBoard instruction suggests that it is used to disambiguate situations where the semantics of left and right are not clear due to the complexity of the considered map.
+The input measurement vector $\mathbf{m}_\text{IL}$ differs between the NoCrash and LeaderBoard benchmarks.
+For NoCrash, $\mathbf{m}_\text{IL}$ consists solely of the speed.
+In contrast, for the LeaderBoard, $\mathbf{m}_\text{IL}$ includes an additional 2D vector that points to the next desired waypoint. 
+This vector is derived from noisy GPS measurements, with the desired route specified by sparse GPS locations. 
+According to the LeaderBoard instructions, this additional vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
 
 
 % 另外的
-Fig.~\ref{fig:score_eu_lb_tt_tn} shows driving scores of experts and IL agents at each DAGGER iteration on NoCrash and offline LeaderBoard with busy traffic.
-The baseline $\mathcal{L}$ is our implementation of baseline BID trained by expert. 
-Given our improved and best BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ can achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
-The large performance gap between baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially while generalizing to a new town and new weather, indicates the limitation of this baseline.
+Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on NoCrash and offline LeaderBoard with busy traffic.
+The baseline $\mathcal{L}$ represents our implementation of the baseline BID trained by expert. 
+Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
+The significant performance gap between the baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially when generalizing to a new town and new weather, highlights the limitations of the baseline approach.
 
 
 % 一步步添加后的效果
-By adding dorsal stream and speed embedding based on baseline, $\mathcal{L}_\text{D}$ performs better overall than $\mathcal{L}$.
-Further learning from the action distribution, $\mathcal{L}_\text{D}$ generalizes better than $\mathcal{L}$ on the NoCrash but not on the offline LeaderBoard.
-Feature matching only helps when $E_s$ is provided with the necessary information needed to produce driving action.
-In our case, $E_N$ contains navigational information as the desired route is provoded by nagivation command.
-For the LeaderBoard, navigational information is partially encoded in $E_N$, which includes the vector to the next desired waypoint, so better performance is observed by using $E_N$.
-%But for NoCrash this information is missing as $\mathbf{m}_\text{IL}$ is just the speed, hence it is impractical for $\mathbf{j}_\text{IL}$ to mimic $\mathbf{j}_\text{RL}$ and this causes the inferior performance of $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}$ and $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}+\mathcal{L}_\text{V}$.
-To confirm this hypothesis, we evaluate a single-branch network architecture where the measurement vector $E_N$ is augmented by the command encoded as a one-hot vector.
-Using feature matching with this architecture, $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieves the best driving score among IL agents in the NoCrash new town \& weather generalization test, even outperforming the Autopilot.
+By incorporating the dorsal stream and speed embedding into the baseline, $\mathcal{L}_\text{D}$ outperforms $\mathcal{L}$ overall.
+Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}$ on the NoCrash benchmark, but not on the offline LeaderBoard.
+Feature matching only improves performance when $E_s$ is provided with the necessary information to produce accurate driving action.
+In our case, $E_N$ contains navigational information since the desired route is given throught nagivation command.
+For the LeaderBoard, navigational information is partially encoded in $E_N$, which includes the vector pointing to the next desired waypoint, leading to improved performance with the use of $E_N$.
+To test this hypothesis, we evaluate a single-branch network architecture where the measurement vector $E_N$ is augmented with the navigation command encoded as a one-hot vector.
+With feature matching applied to this architecture, $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieves the best driving score among IL agents in the NoCrash new town and weather generalization test, even outperforming the Autopilot.
 
 
-Using value supervision in addition to feature matching helps the DAGGER process to converge faster as shown by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
-However, without feature matching, using value supervision alone $\mathcal{L}_\text{D}$ does not demonstrate superior performance.
-This indicates a potential synergy between feature matching and value estimation.
-Intuitively, the latent feature of Roach encodes the information needed for value estimation, hence mimicking this feature should help to predict the value,
-while value estimation could help to regularize feature matching.
 
+This suggests a potential synergy between feature matching and value estimation. Intuitively, the latent feature of Roach encodes the necessary information for value estimation, so mimicking this feature should assist in predicting the value. In turn, value estimation can help regularize feature matching, improving overall performance.
 
-%\subsubsection{Comparison with the State-of-the-art}
-%
-%\hspace{1pc}In Table~\ref{table:sucess_rate_nc_dense} we compare the baseline $\mathcal{L}_\text{A}(\text{AP})$ and our best performing agent $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ with the state-of-the-art on the NoCrash-dense benchmark.
-%Our $\mathcal{L}_\text{A}(\text{AP})$ performs comparably to DA-RB\textsuperscript{+} except when generalizing to the new weather, where there is an incorrect rendering of after-rain puddles on CARLA 0.9.13.
-%This issue does not affect our best method $\mathcal{L}_\text{K}+\mathcal{L}_\text{F}(\text{c})$ due to the stronger supervision of Roach. 
-%By mimicking the weather-agnostic Roach, the performance of our IL agent drops by less than $10\%$ while generalizing to the new town and weather.
-%Hence if the Autopilot is considered the performance upper-bound, it is fair to claim our approach saturates the NoCrash benchmark.
-%However, as shown in Fig.~\ref{fig:score_eu_lb_tt_tn}, there is still space for improvement on NoCrash compared to Roach and the performance gap on the offline LeaderBoard highlights the importance of this new benchmark.
+Adding value supervision alongside feature matching accelerates the convergence of the DAGGER process, as demonstrated by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
+However, when feature matching is omitted, value supervision alone does not lead to superior performance with $\mathcal{L}_\text{D}$.
+This suggests a potential synergy between feature matching and value estimation. 
+Intuitively, the latent feature of Roach encodes the necessary information for value estimation, so mimicking this feature should assist in predicting the value. 
+In turn, value estimation can help regularize feature matching, improving overall performance.
 
 
 \subsubsection{Performance and Infraction Analysis}
 
-\hspace{1pc}Table~\ref{table:infraction} provides the detailed performance and infraction analysis on the NoCrash benchmark with busy traffic in the new town \& weather setting.
-Most notably, the extremely high ``Agent blocked'' of our baseline $\mathcal{L}_\text{A}(\text{AP})$ is due to reflections from after-rain puddles.
-This problem is largely alleviated by imitating Roach, which drives more naturally, and $\mathcal{L}_\text{D}$ shows an absolute improvement of $23\%$ in terms of driving score.
-In other words this is the gain achieved by using a better expert, but the same imitation learning approach. 
-Further using the improved supervision from soft targets and latent features results in our best model $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, which demonstrates another $22\%$ absolute improvement.
-By handling red lights in a better way, this agent achieves $88\%$, an expert-level driving score, using a single camera image as input.
+
+\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the NoCrash benchmark with busy traffic in the new town and weather setting. 
+Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{AP})$ is primarily caused by reflections from after-rain puddles. 
+This issue is significantly reduced by imitating Roach, which drives more naturally, leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$. 
+This gain reflects the benefit of using a better expert, while keeping the same imitation learning approach. 
+Further improvements are achieved with the addition of soft targets and latent feature supervision in $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, resulting in another 22\% absolute increase in performance. 
+By handling red lights more effectively, this agent achieves a driving score of 88\%, reaching expert-level performance with just a single camera image as input.
+
+
 
 
 
