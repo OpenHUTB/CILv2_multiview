@@ -26,81 +26,75 @@ For the offline LeaderBoard, traffic density is adjusted to match the busy traff
 As with recent top-performing methods \cite{Hu:2022}, for on-board data collection in CARLA, we use the \emph{teacher} expert driver from \cite{Zhang:2021}, referred to as Roach RL.
 This method, based on reinforcement learning and trained with privileged information, exhibits more realistic and diverse behavior compared to the default (handcrafted) expert driver in CARLA. 
 It is important to note that in real-world experiments, we would use human drivers as experts.
-We use the default settings of \cite{Zhang:2021}, so as in the \emph{student} driver of \cite{Zhang:2021} (RIM) as well as in \cite{Hu:2022} (MILE), the ego-vehicle is the Lincoln 2017 available in CARLA. 
-Each of our three forward-facing cameras on-board the ego-vehicle has a resolution of $W\times H=300\times300$ pixels, covering an HFOV of $60^{\circ}$. 
-They are placed without overlapping so that they jointly cover an HFOV=$180^{\circ}$ centered in the main axis of the ego-vehicle. 
+We adopt the default settings from \cite{Zhang:2021}, which means, similar to the student driver in \cite{Zhang:2021} (RIM) and in \cite{Hu:2022} (MILE), the ego-vehicle is the 2017 Lincoln model available in CARLA.
+Each of the three forward-facing cameras on the ego-vehicle has a resolution of $W\times H=300\times300$ pixels, with a horizontal field of view (HFOV) of $60^{\circ}$.
+The cameras are arranged without overlap, collectively covering a total HFOV of $180^{\circ}$, centered along the main axis of the ego-vehicle.
 
 
-With such expert driver, ego-vehicle, and on-board cameras, we collect data for increasingly complex experiments. 
-First, we collect a dataset from Town01 in CARLA, which is a small town only enabling single-lane driving, {\ie}, lane change maneuvers are not possible. 
+Using the expert driver, ego-vehicle, and on-board cameras, we collect data for progressively more complex experiments.
+First, we gather a dataset from CARLA's Town01, a small town that only allows single-lane driving, meaning lane change maneuvers are not possible.  
 % 中午、傍晚、大雨的中午、潮湿的中午
-In particular, we collect 15 hours of data at 10 fps ($\sim$540K frames from each camera view), under 4 training weathers, namely, ClearNoon, ClearSunset, HardRainNoon, and WetNoon. 
+Specifically, we collect 15 hours of data at 10 fps (approximately 540K frames per camera view) under four training weather conditions: ClearNoon, ClearSunset, HardRainNoon, and WetNoon. 
 % 测试：Town02 细雨的傍晚、潮湿的傍晚
-In this case, CARLA's Town02 is used for generalization testing under SoftRainSunset and WetSunset weather conditions. 
-Second, we collect a dataset from multiple CARLA's towns to include more complex scenarios such as multi-lane driving, entering and exiting highways, passing crossroads, {\etc} 
-In order to keep the same setting as \cite{Hu:2022}, we hold Town05 for testing, and collect 25 hours of data at 10 fps from Town01 to Town06 (5 hours per town; $\sim$900K frames from each camera). 
-Training and testing weathers are the same for both Town01 and Town02. 
+For generalization testing, we use CARLA's Town02, evaluating the agent under SoftRainSunset and WetSunset weather conditions. 
+Next, we collect a dataset across multiple CARLA towns to capture more complex driving scenarios, such as multi-lane driving, highway entrances and exits, and passing through crossroads. 
+To maintain consistency with the setup in \cite{Hu:2022}, we reserve Town05 for testing, and gather 25 hours of data at 10 fps from Town01 to Town06 (5 hours per town, totaling approximately 900K frames per camera). 
+Both training and testing weather conditions remain the same for Town01 and Town02.
 
 
 
 \subsection{Implementation Details}
 
-\hspace{1pc}To optimize Eq. (\ref{eq:loss}), we use the Adam \cite{Kingma:2015} with an initial learning rate of $10^{-4}$ and weight decay of $0.01$. 
-We train for 80 epochs on 1 NVIDIA A6000 GPU, with a batch size of 120. 
-The learning rate decays by half at epochs 30, 50, and 65. 
+\hspace{1pc}To optimize Eq. (\ref{eq:loss}), we use the Adam optimizer \cite{Kingma:2015} with an initial learning rate of $10^{-4}$ and weight decay of $0.01$. 
+Training is performed for 80 epochs on a single NVIDIA A6000 GPU, with a batch size of 120.
+The learning rate is reduced by half at epochs 30, 50, and 65.
+
 
 % Cornet详细信息
-In ventral stream, after V2$_\text{COR}$ processed the input once, that result is passed into V2$_\text{COR}$ again and treated as a new input (while the original input is discarded). 
-V2$_\text{COR}$ and IT$_\text{COR}$ are repeated twice, V4$_\text{COR}$ is repeated four times as this results in the most minimal configuration that produced the best model as determined by our scores. 
-As in ResNet, each convolution (except the first 1 $ \times $ 1) is followed by batch normalization and ReLU nonlinearity. 
-Batch normalization was not shared over time. 
-There are no across-area bypass or across-area feedback connections in the current definition of ventral pathway and retinal and LGN processing are not explicitly modeled.
-
-% 其他
-%During the experiment, we randomly selected start and target positions, and computed the route using A* algorithm. 
-%Subsequently, we executed $\pi_{\theta_{k}}$ in the CARLA~\cite{Dosovitskiy17} environment to gather trajectory data and synchronized brain activation record.
-%We employed a specific reward scheme and imposed additional penalties for large steering changes to prevent oscillatory maneuvers. 
-%After training the network, we compared the similarity between the network activations and those observed in the human brain. 
-%As depicted in Fig.~\ref{fig:fig3}, we contrasted the similarity between the test participant and the brain-inspired network in processing the same event.
+In ventral stream, after the input is processed by V2$_\text{COR}$ once, the resulting output is passed back into V2$_\text{COR}$ and treated as a new input, while the original input is discarded.
+V2$_\text{COR}$ and IT$_\text{COR}$ are repeated twice, and V4$_\text{COR}$ is repeated four times, as this configuration yielded the best model performance based on our evaluation scores.
+Similar to ResNet, each convolution (except the first $ \times $ convolution) is followed by batch normalization and a ReLU activation.
+Batch normalization is not shared across time steps.
+The current definition of the ventral pathway does not include across-area bypass or feedback connections, and retinal and LGN processing are not explicitly modeled.
 
 
 % 驾驶评估的3个不同数据集（不包含实验结果）
 \subsection{Driving Evaluation}
 \label{sec:Metrics}
-\hspace{1pc}The performance of the BID agent is constrained by the performance of the expert it is imitating. 
-When the expert performs poorly, the agent that mimics the expert will also exhibit poor performance. 
-The BID model is designed in strict accordance with the human brain's visual information processing process, both structurally and functionally. 
-When optimized, the model's output results are very close to those of the expert in terms of evaluating the similarity.
+\hspace{1pc}The performance of the BID agent is limited by the performance of the expert it is imitating. 
+If the expert performs poorly, the agent that mimics it will also show suboptimal results. 
+The BID model is designed to closely follow the visual information processing system of the human brain, both structurally and functionally. 
+When optimized, the model’s output closely matches the expert’s performance, as evaluated by similarity metrics.
 
 
-We follow the \emph{NoCrash} benchmark~\cite{Codevilla:2019} and the offline CARLA leaderboard benchmark~\cite{Zhang:2021,Hu:2022} for experiments on small single-lane towns (Sec.~\ref{sec:small_town_results}) and multiple towns (Sec.~ \ref{sec:multi_towns_result}), respectively.
+We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_results}) following the NoCrash benchmark~\cite{Zhang:2021,Hu:2022}, and on multiple towns (Sec.~\ref{sec:small_town_results}) based on the offline CARLA leaderboard benchmark~\cite{Zhang:2021,Hu:2022}. 
 
 
 \subsubsection{NoCrash Metrics.}\label{nocrash_metrics}
 
-\hspace{1pc}It consists of 3 tasks with increasing levels of difficulty: \emph{Empty}, \emph{Regular}, and \emph{Dense}, according to the number of dynamic objects in the scene ({\ie}, pedestrians and vehicles). 
-In Town 2, the numbers of dynamic objects are specified as:
+\hspace{1pc}The benchmark consists of three tasks with increasing levels of difficulty: \emph{Empty}, \emph{Regular}, and \emph{Dense}, based on the number of dynamic objects in the scene ({\ie}, pedestrians and vehicles). 
+In Town02, the numbers of dynamic objects are specified as:
 \begin{itemize}
-	\item \emph{Empty}: 0 pedestrian and 0 vehicle;
+	\item \emph{Empty}: 0 pedestrians and 0 vehicles;
 	\item \emph{Regular}: 50 pedestrians and 15 vehicles;
 	\item \emph{Dense}: 150 pedestrians and 70 vehicles
 \end{itemize}
 % 默认的配置会导致拥堵死锁
-In the \emph{Dense} case, the default traffic density set in NoCrash always leads to congestion deadlocks at intersections \cite{Zhang:2021}. 
-Thus, we follow the \emph{Busy} case redefined in \cite{Zhang:2021}, decreasing the number of pedestrians from 150 to 70. 
-Each task corresponds to 25 goal-directed episodes under 2 new kinds of weather.
-The episode will be terminated and counted as a failure once a collision occurs. 
-For the other infractions, the driving score will be deduced according to the penalty rule in NoCrash. 
+In the \emph{Dense} case, the default traffic density in NoCrash often results in congestion and deadlocks at intersections~\cite{Zhang:2021}. 
+To address this, we adopt the \emph{Busy} case redefined in~\cite{Zhang:2021}, reducing the number of pedestrians from 150 to 70. 
+Each task consist of 25 goal-directed episodes under two new weather conditions.
+An episode is terminated and counted as a failure if a collision occurs. 
+For other infractions, the driving score is penalized according to the rule specified in NoCrash. 
 
 
 % 度量标准的说明
-The main metric to compare driving models is the success rate (\emph{SR}), which is the percentage of episodes successfully completed. 
+The primary metric for comparing driving models is the success rate (\emph{SR}), which represents the percentage of episodes that are successfully completed. 
 % 严格的成功率
-For a fine-grained comparison, in addition, we provide the strict success rate (\emph{S.SR}). 
+For a more detailed comparison, we also provide the strict success rate (\emph{S.SR}),
 % traffic infraction：交通违法行为
-It reflects the percentage of successful episodes under zero tolerance for any traffic infraction, such as failing to stop at a red traffic light, route deviation, {\etc}. 
+which measures the percentage of successful episodes under a zero tolerance policy for any traffic infractions, such as failing to stop at a red light or deviating from planned route.
 % T.L：在红灯时不停的次数
-As a complement, we also include additional infraction metrics: \emph{T.L} is the number of times not stopping at a red traffic light; 
+Additionally, we include other infraction metrics: \emph{T.L} is the number of times not stopping at a red traffic light; 
 % 和其他车辆碰撞的次数
 \emph{C.V} is the number of collisions with other vehicles; 
 % R.Dev：当高层命令没有很好地执行，路线偏差的次数
