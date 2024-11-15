@@ -11,22 +11,21 @@
 
 \subsection{Benchmarks} \label{sec:Dataset}
 
-\hspace{1pc}All evaluations are completed on CARLA simulator \cite{Dosovitskiy:2017} 0.9.13. 
-We evaluate our methods on the NoCrash\cite{codevilla2019exploring} and the LeaderBoard benchmark.
-Each benchmark specified its training towns and weather, where agent is allowed to collect data, and evaluates the agent in new towns and weather.
-The NoCrash benchmark considers generalization from Town01, a European town composed of solely one-lane roads and T-junctions, to Town02, a smaller version of Town01 with different textures.
-By contrast, the LeaderBoard considers a more difficult generalization task in six maps that cover diverse traffic situations, including freeways, US-style junctions, roundabouts, stop signs, lane changing and merging.
-Following the NoCrash benchmark, we test generalization from four training weather types to two new weather types.
-But to save computational resources, only two out of the four training weather types are evaluated.
-The NoCrash benchmark comes with three levels of traffic density (empty, regular and dense), which defines the number of pedestrians and vehicles in each map.
-We focus on the NoCrash-dense and introduce a new level between regular and dense traffic, NoCrash-busy, to avoid congestion that often appears in the dense traffic setting.
-For the offline LeaderBoard the traffic density in each map is tuned to be comparable to the busy traffic setting. 
+\hspace{1pc}All evaluations are conducted on the CARLA simulator \cite{Dosovitskiy:2017} version 0.9.13. 
+We assess our methods using the NoCrash \cite{codevilla2019exploring} and LeaderBoard benchmarks. 
+Each benchmark specifies its own training towns and weather conditions for data collection, and evaluates the agent's performance in new towns and weather settings. 
+The NoCrash benchmark focuses on generalization from Town01, a European town with one-lane roads and T-junctions, to Town02, a smaller variant of Town01 with different textures. 
+In contrast, the LeaderBoard presents a more challenging generalization task across six maps with various traffic scenarios, including freeways, US-style junctions, roundabouts, stop signs, and lane changes. 
+Following the NoCrash benchmark\cite{codevilla2019exploring}, we test generalization from four training weather types to two new weather types, though only two training weather types are evaluated to save computational resources. 
+The NoCrash benchmark includes three traffic density levels (empty, regular, and dense), defining the number of pedestrians and vehicles per map. 
+We focus on the NoCrash-dense setting and introduce a new level, NoCrash-busy, which lies between regular and dense traffic to avoid congestion typical in dense traffic settings. 
+For the offline LeaderBoard, traffic density is adjusted to match the busy traffic setting. 
 
 
 % CILv2
-As recent top-performing methods \cite{Hu:2022}, for on-board data collection in CARLA, we use the \emph{teacher} expert driver from \cite{Zhang:2021}, termed as Roach RL since it is based on reinforcement learning and was trained with privileged information. 
-Roach RL shows a more realistic and diverse behavior than the default (handcrafted) expert driver in CARLA. 
-Note that in real-world experiments we would use different human drivers as experts. 
+As with recent top-performing methods \cite{Hu:2022}, for on-board data collection in CARLA, we use the \emph{teacher} expert driver from \cite{Zhang:2021}, referred to as Roach RL.
+This method, based on reinforcement learning and trained with privileged information, exhibits more realistic and diverse behavior compared to the default (handcrafted) expert driver in CARLA. 
+It is important to note that in real-world experiments, we would use human drivers as experts.
 We use the default settings of \cite{Zhang:2021}, so as in the \emph{student} driver of \cite{Zhang:2021} (RIM) as well as in \cite{Hu:2022} (MILE), the ego-vehicle is the Lincoln 2017 available in CARLA. 
 Each of our three forward-facing cameras on-board the ego-vehicle has a resolution of $W\times H=300\times300$ pixels, covering an HFOV of $60^{\circ}$. 
 They are placed without overlapping so that they jointly cover an HFOV=$180^{\circ}$ centered in the main axis of the ego-vehicle. 
@@ -137,7 +136,7 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 	\includegraphics[width=1.0\linewidth]{fig/dataset_examples.pdf}
 	\caption{Top: when the ego-vehicle is entering a new road segment from an intersection, the \emph{go-straight} navigation command is ambiguous. 
 	The ego-vehicle can legally move to any of the highlighted lanes. 
-	Bottom: four aerial views at different times with the pre-planned global trajectory shown in \textbf{\textcolor{orange}{orange}}. 
+	Bottom: four aerial views at different times with the pre-planned global trajectory shown in \textbf{\textcolor{red}{red}}. 
 	They illustrate how the high-level navigation command changes to \emph{move-to-right-lane}, to inform how to get back to the desired trajectory.}
 	\label{fig:command_ambiguous}
 \end{figure}
@@ -145,6 +144,11 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 
 % 三种不同场景的性能
 \begin{table*}
+	\caption{Town02 NoCrash results.
+		RIM stands for Roach IL and the Expert is Roach RL~\cite{Zhang:2021}. 
+		All models are tested on CARLA 0.9.13. 
+		Mean and standard deviations are computed using three runs with different seeds. 
+		For $\uparrow$, the higher the better, while for $\downarrow$ is the opposite.}
 	\centering
 	\resizebox{0.95\linewidth}{!}{
 		\begin{tabular}{@{}lccc|ccc|ccc@{}}
@@ -155,53 +159,23 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 			\hline
 			
 			RIM\cite{Zhang:2021}  & $100\pm0.0$ & $85\pm1.2$ & $66\pm5.0$ & $97\pm2.3$ & $86\pm7.2$ & $66\pm54$ & $81\pm5.0$& $68\pm7.2$ & $63\pm52.7$\\
-			CIL++ & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
-			BID & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
+			CIL++\cite{xiao2023scaling} & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
+			Our BID & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
 			\hline
 			Expert & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$ & $100\pm0.0$ & $97\pm0.0$ & $13\pm4.6$ & $84\pm2.0$ & $82\pm2.0$ & $37\pm14.1$ \\
 			\hline 
 		\end{tabular}
 	}
-	\caption{Town02 NoCrash results.
-		RIM stands for Roach IL and the Expert is Roach RL~\cite{Zhang:2021}. 
-		All models are tested on CARLA 0.9.13. 
-		Mean and standard deviations are computed using three runs with different seeds. 
-		For $\uparrow$, the higher the better, while for $\downarrow$ is the opposite.}
 	\label{tab:T2_NC_results}
 \end{table*}
 
 
-%\begin{table*}
-%	\centering
-%	\resizebox{0.95\linewidth}{!}{
-%		\begin{tabular}{@{}lcccccccccccccccc@{}}
-%			\toprule
-%			&  \textbf{$\uparrow$ SR(\%)} &  \textbf{$\uparrow$ S.SR(\%)} &  \textbf{$\uparrow$ Avg.RC(\%)} &  \textbf{$\uparrow$ Avg.DS}  
-%			& $\downarrow$ C.L & $\downarrow$ T.L & $\downarrow$ O.L & $\downarrow$ R.Dev 
-%			\\
-%			\midrule
-%			HFOV $100^{\circ}$ & $52$ & $40$ & $83$ & $69.1$ 
-%			&$428.6$& $19.6$ & $ 339.6$ & $10.7$ 
-%			\\
-%			HFOV $180^{\circ}$ & $100$ & $98$ & $100$ & $99.2$ 
-%			&$7.3$& $0.0$ & $0.0$ & $0.0$ 
-%			\\
-%			\midrule
-%			Expert & $100$ & $100$ & $100$ & $100.0$ 
-%			& $0.0$ & $0.0$ & $0.0$ & $0.0$ 
-%			\\
-%			\bottomrule 
-%		\end{tabular}
-%	}
-%	% 视场角(Field of View, FOV),包括水平视场角(HFOV)、垂直视场角(VFOV)和对角视场角(DFOV)
-%	\caption{Impact of sensor suite HFOV in the NoCrash Regular case.
-%		For HFOV=$100^{\circ}$ we use a single camera with a resolution of $W\times H=600\times170$ pixels, while for HFOV=$180^{\circ}$ we use the multi-view setting detailed in the main text.}
-%	\label{tab:FOVresults}
-%\end{table*}
-
 \begin{table*}
+	\caption{Town05 results according to CARLA's offline metrics. All models are tested on CARLA 0.9.13. 
+		Mean and standard deviations are computed using three runs with different seeds. 
+		For $\uparrow$, the higher the better; for $\downarrow$, the opposite.}
 	\centering
-	\resizebox{0.95\linewidth}{!}{
+	\resizebox{0.88\linewidth}{!}{
 		\begin{tabular}{@{}lccccccccccccccccccccc@{}}
 			\hline
 			%   & SR(\%) 
@@ -215,10 +189,10 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 			MILE~\cite{Hu:2022}
 			& $98\pm2.2$ & $73\pm2.9$ 
 			& $6.0\pm3.7$ & $0.0\pm0.0$ & $3.6\pm3.8$ & $3.5\pm1.5$ & $0.0\pm0.0$ \\   
-			CIL++ 
+			CIL++\cite{xiao2023scaling} 
 			& $98\pm1.7$ & $68\pm2.7$ 
 			& $6.0\pm0.5$ & $3.8\pm0.7$ & $5.8\pm5.1$ & $6.1\pm2.2$ & $9.4\pm3.6$ \\
-			BID 
+			Our BID 
 			& $98\pm1.7$ & $68\pm2.7$ 
 			& $6.0\pm0.5$ & $3.8\pm0.7$ & $5.8\pm5.1$ & $6.1\pm2.2$ & $9.4\pm3.6$ \\
 			\hline
@@ -228,9 +202,6 @@ Figure~\ref{fig:command_ambiguous} provides an example.
 			\hline
 		\end{tabular}
 	}
-	\caption{Town05 results according to CARLA's offline metrics. All models are tested on CARLA 0.9.13. 
-		Mean and standard deviations are computed using three runs with different seeds. 
-		For $\uparrow$, the higher the better; for $\downarrow$, the opposite.}
 	\label{tab:T5_results}
 \end{table*}
 
@@ -503,7 +474,12 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 % 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
-	\setlength{\tabcolsep}{2.67pt}
+	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
+		Mean and standard deviation over 5 seeds. 
+		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
+		Our models are from DAGGER iteration 5. 
+		For DA-RB, + means triangular perturbations are added to the off-policy dataset, (E) means ensemble of all iterations.}
+	\setlength{\tabcolsep}{6.67pt}
 	\centering
 	\begin{tabular}{lccccc}
 		\hline
@@ -530,17 +506,14 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		\hline
 	\end{tabular}
 	\vspace{-1ex}
-	\caption{\textbf{Success rate of camera-based end-to-end IL agents on NoCrash-dense.}
-		Mean and standard deviation over 5 seeds. 
-		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
-		Our models are from DAGGER iteration 5. 
-		For DA-RB, + means triangular perturbations are added to the off-policy dataset, (E) means ensemble of all iterations.}
 	\label{table:sucess_rate_nc_dense}
 	\vspace{-2ex}
 \end{table}
 
 \begin{table*}
-	\setlength{\tabcolsep}{3.8pt}
+	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
+		Mean and standard deviation over 5 evaluation seeds.}
+	\setlength{\tabcolsep}{7.4pt}
 	\centering
 	\begin{tabular}{lccccccccc} 
 		\hline
@@ -591,8 +564,6 @@ On the contrary, BID lacks the explicit use of this route map since it only rece
 		\hline
 	\end{tabular}
 	\vspace{-1ex}
-	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
-		Mean and standard deviation over 5 evaluation seeds.}
 	\vspace{-2.5ex}
 	\label{table:infraction}
 \end{table*}
