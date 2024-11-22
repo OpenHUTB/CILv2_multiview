@@ -129,8 +129,9 @@ An example of this process is shown in Figure~\ref{fig:command_ambiguous}.
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1.0\linewidth]{fig/dataset_examples.pdf}
-	\caption{Top: When the ego-vehicle enters a new road segment from an intersection, the ``go-straight" navigation command becomes ambiguous, as the ego-vehicle is legally allowed to move into any of the highlighted lanes.
-	Bottom: Four aerial views taken at different times, with the pre-planned global trajectory shown in \textbf{\textcolor{red}{red}}, illustrate how the high-level navigation command shifts to ``move-to-right-lane," guiding the vehicle back to the desired trajectory.}
+	\caption{Top: When the ego-vehicle is driving on the road, even though the triffic light is green, the vehicle in front has stopped, but the ego-vehicle still brakes.
+	Bottom: When the vehicle is moving and encounters a traffic jam in front, it will automaitcally brake and stop.
+	The brake command in the figure is displayed in \textcolor{red}{red}.}
 	\label{fig:command_ambiguous}
 \end{figure}
 
@@ -258,7 +259,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 % 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
-	\caption{\textbf{Success rate of camera-based end-to-end imitation learning(IL) agents on NoCrash-dense.}
+	\caption{\textbf{Success rate of camera-based end-to-end imitation learning agents on NoCrash-dense.}
 		The mean and standard deviation are computed over 5 seeds. 
 		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
 		Our models are from DAGGER iteration 5. 
@@ -325,7 +326,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 		\\
 		\hline
 		%\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
-		$\mathcal{L}_\mathrm{D}(\text{AP})$
+		$\mathcal{L}_\mathrm{b}$
 		& $32 \pm 5$ & $42 \pm 3$ & $61 \pm 5$ & $76 \pm 4$ 
 		& $0.53 \pm 0.55$ & $\mathbf{0}\pm0$ & $0.63 \pm 0.50$ & $3.33 \pm 0.58$ & $19.4\pm 14.4$ \\
 		$\mathcal{L}_\text{D}$
@@ -334,15 +335,15 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 		$\mathcal{L}_\text{N}$
 		& $75\pm2$ & $78\pm0$ & $90\pm2$ & $85\pm1$ 
 		& $0.51\pm0.25$ & $\mathbf{0}\pm0$ & $0.52\pm0.17$ & $0.69\pm0.06$ & $3.36\pm0.21$ \\
-		$\mathcal{L}_\text{D}+\mathcal{L}_\text{N}(\text{c})$
+		$\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$
 		& $\mathbf{88} \pm 5$ & $\mathbf{89} \pm 3$ & $\mathbf{97} \pm 0$ & $\mathbf{90} \pm 3$ 
 		& $\mathbf{0.07} \pm 0.04$ & $0.01 \pm 0.01$ & $\mathbf{0.22} \pm 0.07$ & $\mathbf{0.62} \pm 0.22$ & $\mathbf{0.83} \pm 0.03$ \\
 		\hline
 		%\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
-		BID
+		$\mathcal{L}_\text{BID}$
 		& $96 \pm 2$ & $96 \pm 3$ & $99 \pm 0$ & $97 \pm 2$ 
 		& $0 \pm 0$ & $0.12 \pm 0.08$ & $0.03 \pm 0.06$ & $0.14 \pm 0.18$ & $0 \pm 0$ \\
-		Autopilot
+		Expert
 		& $91 \pm 1$ & $78 \pm 2$ & $97 \pm 1$ & $81 \pm 2$ 
 		& $0 \pm 0$ & $0 \pm 0$ & $0.19 \pm 0.07$ & $1.92 \pm 0.22$ & $0.17 \pm 0.09$\\
 		\hline
@@ -377,9 +378,9 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=\linewidth]{fig/attention_ped_greed.pdf}
-	\caption{Activation maps of BID at an intersection in Town02 show three highly activated image areas from different viewpoints: 
-		the traffic light in the right image, the crossing pedestrians in the center, and the lane shoulder in the left image. 
-		The causality between observation and action is demonstrated by a strong braking response (0.794) due to the presence of pedestrians, despite the green traffic light and the ``turn-left" command. 
+	\caption{Activation maps of BID at an intersection in Town02 show three highly activated image areas from driving viewpoints: 
+		the lane shoulder in the right image, the crossing pedestrians in the center, and the driving area in the left image. 
+		The causality between observation and action is demonstrated by a strong braking response (0.8530) due to the presence of pedestrians, despite the ``go-straight" command. 
 		This highlights BID's ability to prioritize pedestrian safety over other factors in its decision-making process.}
 	\label{fig:attention_ped_greed}
 \end{figure}
@@ -389,41 +390,35 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 % 消融实验：速度（包括背侧通路）、导航
 \subsubsection{Ablation}
 
-\hspace{1pc}The performance of an imitation learning (IL) agent is inherently limited by the quality of the expert it imitates. 
+\hspace{1pc}The performance of an IL agent is inherently limited by the quality of the expert it imitates. 
 If the expert's performance is poor, it is not meaningful to compare IL agents trained on that expert. 
 This issue becomes apparent in the NoCrash new town scenario with dense traffic, where autopilots typically perform poorly. 
-To establish a high-performance upper bound and ensure a fair comparison, we conduct ablation studies (Fig.~\ref{fig:score_eu_lb_tt_tn} and Table~\ref{table:infraction}) under the busy traffic setting, allowing our Autopilot to achieve a driving score of 80\% and a success rate of 90\%. 
+To establish a high-performance upper bound and ensure a fair comparison, we training the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies (Table~\ref{table:infraction}) under the busy traffic setting, allowing our Autopilot to achieve a driving score of 78\% and a success rate of 91\%. 
 For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on NoCrash with dense traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
 
 
 % 说明消融的各个指标？
-The input measurement vector $\mathbf{m}_\text{IL}$ differs between the NoCrash and LeaderBoard benchmarks.
-For NoCrash, $\mathbf{m}_\text{IL}$ consists solely of the speed.
-In contrast, for the LeaderBoard, $\mathbf{m}_\text{IL}$ includes an additional 2D vector that points to the next desired waypoint. 
-This vector is derived from noisy GPS measurements, with the desired route specified by sparse GPS locations. 
-According to the LeaderBoard instructions, this additional vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
-
-
-% 另外的
+% L_N 导航信号
+% L_D 背侧流信号
 Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on NoCrash and offline LeaderBoard with busy traffic.
 The baseline $\mathcal{L}$ represents our implementation of the baseline BID trained by expert. 
+According to the LeaderBoard instructions, this additional navigation vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
 Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
 The significant performance gap between the baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially when generalizing to a new town and new weather, highlights the limitations of the baseline approach.
 
 
 % 一步步添加后的效果
-By incorporating the dorsal stream and speed embedding into the baseline, $\mathcal{L}_\text{D}$ outperforms $\mathcal{L}$ overall.
-Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}$ on the NoCrash benchmark, but not on the offline LeaderBoard.
+By incorporating the dorsal stream and speed embedding into the baseline $\mathcal{L}_\text{b}$, $\mathcal{L}_\text{D}$ outperforms $\mathcal{L}_\text{b}$ overall.
+Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}_\text{b}$ on the NoCrash benchmark, but not on the offline LeaderBoard.
 Feature matching only improves performance when $E_s$ is provided with the necessary information to produce accurate driving action.
 In our case, $E_N$ contains navigational information since the desired route is given throught nagivation command.
 For the LeaderBoard, navigational information is partially encoded in $E_N$, which includes the vector pointing to the next desired waypoint, leading to improved performance with the use of $E_N$.
-To test this hypothesis, we evaluate a single-branch network architecture where the measurement vector $E_N$ is augmented with the navigation command encoded as a one-hot vector.
-With feature matching applied to this architecture, $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieves the best driving score among IL agents in the NoCrash new town and weather generalization test, even outperforming the Autopilot.
+To evaluate this idea, we utilize a integrated network architecture where the measurement vector $E_N$ is augmented with the navigation command encoded as a one-hot vector.
+With feature matching applied to this architecture, $\mathcal{L}_\text{BID}$ achieves the best driving score among IL agents in the NoCrash new town and weather generalization test, even outperforming the Autopilot.
 
 
 
-This suggests a potential synergy between feature matching and value estimation. Intuitively, the latent feature of Roach encodes the necessary information for value estimation, so mimicking this feature should assist in predicting the value. In turn, value estimation can help regularize feature matching, improving overall performance.
-
+%
 Adding value supervision alongside feature matching accelerates the convergence of the DAGGER process, as demonstrated by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
 However, when feature matching is omitted, value supervision alone does not lead to superior performance with $\mathcal{L}_\text{D}$.
 This suggests a potential synergy between feature matching and value estimation. 
@@ -431,15 +426,15 @@ Intuitively, the latent feature of Roach encodes the necessary information for v
 In turn, value estimation can help regularize feature matching, improving overall performance.
 
 
-\subsubsection{Performance and Infraction Analysis}
+\subsubsection{Infraction and Performance Analysis}
 
 
 \hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the NoCrash benchmark with busy traffic in the new town and weather setting. 
-Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{AP})$ is primarily caused by reflections from after-rain puddles. 
+Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{a})$ is primarily caused by reflections from after-rain puddles. 
 This issue is significantly reduced by imitating Roach, which drives more naturally, leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$. 
 This gain reflects the benefit of using a better expert, while keeping the same imitation learning approach. 
-Further improvements are achieved with the addition of soft targets and latent feature supervision in $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, resulting in another 22\% absolute increase in performance. 
-By handling red lights more effectively, this agent achieves a driving score of 88\%, reaching expert-level performance with just a single camera image as input.
+Further improvements are achieved with the addition of soft targets and latent feature supervision in $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, resulting in another 30\% absolute increase in performance. 
+By handling red lights more effectively, this BID agent achieves a driving score of 89\%, reaching expert-level performance with just camera image as input.
 
 
 
