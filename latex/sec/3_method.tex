@@ -97,35 +97,34 @@ It ensure that our actions are optimized according to previous experiences and f
 The input embeddings of MPC are merged with the output of VPC, DPC and OPC.
 Formally, we define the state encoder for the current state $O_t=(f_t, n_t)$, parameterized by $ \pi_{\theta}(f_t, n_t) $, as
 \begin{equation}\label{eq:encoder}
-	(f_t, n_t) \rightarrow 
-	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
+	A_\text{t}^\text{s}, A_\text{t}^\text{s} = \pi_\text{MPC}(E_\text{s}, E_\text{N}, E_\text{V}).
+%	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
 \end{equation}
 
 
-In CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}, $\mathbf{c}_{t}$ is used as a switch to activate different MLP branches for predicting $\mathbf{a}_{t}$. 
-However, in our approach, we treat $\mathbf{c}_{t}$ as an input signal to be processed by a transformer. 
-We found no significant differences between these two methods, and treating $\mathbf{c}_{t}$ as an input signal simplifies the training process.
-
-
+Navigation embedding $E_{t}$ is used as a switch to activate various MLP branches for inferring $A_{t}$ in CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}. 
+However, in our approach, we treat $E_{t}$ as an input signal to be processed by a transformer. 
+We found no significant differences between these two methods, and treating $n_{t}$ as an input signal simplifies the training process.
+%
 % 注意力学习
 % 连接3个图像
-To effectively associate intra-view and inter-view information, we leverage the attention mechanism of transformers\cite{Vaswani:2017}. 
-This approach allows the model to learn the relationships between distant image patches (tokens), enabling it to associate feature map patches across different views ({\ie}, from the left, center, and right perspectives of the ego-vehicle). 
+To effectively associate multi-view information, we leverage the attention mechanism of transformers\cite{Vaswani:2017}. 
+This approach allows the model to learn the relationships between distant image patches (tokens), enabling it to associate feature map patches across different views ({\ie}, from horizontal 3 perspectives of the ego-vehicle). 
 
 
-In the embedded space $\mathbf{Z}_{t}$, we learn a scenario embedding using a transformer encoder composed of $L$ multi-head attention layers. 
-Each layer includes Multi-headed Self-Attention (MHSA) \cite{Vaswani:2017}, layer normalization (LN) \cite{Ba:2016}, and feed-forward MLP blocks.  
-The final output is obtained by linearly projecting the concatenated outputs of each attention head, which are then passed to the action prediction module. 
+% CFC
+In the MPC embedded space, we learn a scenario embedding using a transformer encoder composed of $L$ multi-head attention layers. 
+Each layer includes multi-headed self-attention~\cite{Vaswani:2017}, layer normalization~\cite{Ba:2016}, and feed-forward MLP modules. 
+% 尾侧
+The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets. 
+The final output is obtained by linearly projecting the concatenated outputs of each attention head, which are then passed to the action prediction module.
 We use $L=4$ layers, each with $4$ attention heads. 
 The hidden dimension $D$ of the transformer layer is set to match the output dimension of the ResNet, {\ie}, $D=512$. 
-
-
-% 尾侧
-Meanwhile, the CPC (Caudal Prefrontal Cortex) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets.  
+%
 % 动作预测
 The output from the transformer encoder, with a size of $S\times c$, is average-pooled and passed through an MLP.
 This MLP consists of three fully connected layers (FC), with ReLU nonlinearity applied between each layer.
-The final output action $\mathbf{a}_t\in\mathbb{R}^2$ represents the steering angle and acceleration (brake/throttle), {\ie}, $\mathbf{a}_{t} = (a_{\text{s},t}, a_{\text{acc}, t})$. 
+The final output action $A_t\in\mathbb{R}^2$ represents the steering angle and acceleration (brake/throttle), {\ie}, $\mathbf{a}_{t} = (A_{\text{t}^\text{t}}, A_{\text{t}^\text{a}})$. 
 
 
 % 总结
