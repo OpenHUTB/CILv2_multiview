@@ -117,30 +117,33 @@ In the MPC embedded space, we learn a scenario embedding using a transformer enc
 Each layer includes multi-headed self-attention~\cite{Vaswani:2017}, layer normalization~\cite{Ba:2016}, and feed-forward MLP modules. 
 % 尾侧
 The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets. 
-The final output is obtained by linearly projecting the concatenated outputs of each attention head, which are then passed to the action prediction module.
-We use $L=4$ layers, each with $4$ attention heads. 
-The hidden dimension $D$ of the transformer layer is set to match the output dimension of the ResNet, {\ie}, $D=512$. 
-%
-% 动作预测
-The output from the transformer encoder, with a size of $S\times c$, is average-pooled and passed through an MLP.
-This MLP consists of three fully connected layers (FC), with ReLU nonlinearity applied between each layer.
-The final output action $A_t\in\mathbb{R}^2$ represents the steering angle and acceleration (brake/throttle), {\ie}, $\mathbf{a}_{t} = (A_{\text{t}^\text{t}}, A_{\text{t}^\text{a}})$. 
-
-
 % 总结
 These regions work together in the decision-making process, forming a highly integrated latent feature vector that effectively captures the essential information needed for making decisions. 
 This latent vector is then processed through a carefully constructed hidden layer, which generates accurate and reliable outputs, such as driving actions, value function estimates, and speed control commands.
+The final output is obtained by linearly projecting the concatenated outputs of each attention head, which are then passed to the action prediction module.
+We use 4 layers, each with 4 attention heads. 
+The hidden dimension of the transformer layer is set to match the output dimension of the ResNet. 
+%
+% 动作预测
+The output from the transformer encoder is average-pooled and passed through an MLP.
+This MLP consists of 3 fully connected layers (FC), with ReLU nonlinearity applied between each layer.
+The final output action $A_\text{t}$ represents the steering angle $A_\text{t}^\text{s}$ and acceleration $A_\text{t}^\text{s}$ (brake/throttle). 
+
+
+
 
 
 \subsection{Loss Function}
 
-\hspace{1pc}The BID network is designed to replicate the advanced information processing abilities of the human brain by carefully aligning brain pathways with corresponding network modules. 
+\hspace{1pc}The BID network is designed to replicate the advanced information processing abilities of the human brain by carefully aligning neural pathways with corresponding network modules. 
 Through iterative updates, the network adjusts its parameters to better match human decision-making processes, ultimately improving its performance and accuracy.
 %
 % 损失函数
-At time $t$, given a predicted action $\mathbf{a}_{t}$ and the expert's action(ground truth action) $\hat{\mathbf{a}}_{t}$, we define the training loss as:
+At time $t$, given a inferred action $\mathbf{a}_{t}$ and the expert's (ground truth) action $\hat{\mathbf{a}}_{t}$, we define the training loss as:
 \begin{equation}\label{eq:loss}
-	\mathcal{L}(\mathbf{a}_t, \hat{\mathbf{a}}_t) = \lambda_{\text{acc}}\lVert a_{\text{acc},t}-\hat{a}_{\text{acc,t}}\rVert_{1} + \lambda_{\text{s}} \lVert a_{\text{s},t}-\hat{a}_{\text{s},t} \rVert_{1} \enspace ,
+	\mathcal{L}(A_t, \hat{A}_t) 
+	= \lambda_{\text{s}} \lVert A_{\text{t}}^\text{s}-\hat{A}_{\text{t}^\text{s}} \rVert_{1}
+	+ \lambda_{\text{a}}\lVert A_{\text{t}}^\text{a}-\hat{A}_{\text{t}}^\text{a}\rVert_{1} \enspace ,
 \end{equation}
 where $\lVert\cdot\rVert_{1}$ denotes the $L_1$ distance, $\lambda_{acc}$ and $\lambda_s$ represent the weights assigned to the acceleration and steering angle loss, respectively.
 In our setup, both steering angle and acceleration are constrained within the range of $[-1, 1]$, with negative values indicating braking and positive values corresponding to throttle.
