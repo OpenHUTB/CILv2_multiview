@@ -11,14 +11,14 @@
 
 \subsection{Benchmarks} \label{sec:Dataset}
 
-\hspace{1pc}All evaluations are conducted on the CARLA simulator \cite{Dosovitskiy:2017} version 0.9.13. 
-We assess our methods using the NoCrash \cite{codevilla2019exploring} and LeaderBoard benchmarks. 
-Each benchmark specifies its own training towns and weather conditions for data collection, and evaluates the agent's performance in new towns and weather settings. 
-The NoCrash benchmark focuses on generalization from Town01, a European town with one-lane roads and T-junctions, to Town02, a smaller variant of Town01 with different textures. 
+\hspace{1pc}All evaluations are conducted on the Carla~\cite{Dosovitskiy:2017}. 
+We assess our methods using the nocrash \cite{codevilla2019exploring} and leaderBoard datasets. 
+Each benchmark specifies its own training scenes and weather conditions for data collection, and evaluates the agent's performance in new towns and weather settings. 
+The nocrash dataset focuses on generalization from Town01, a European town with one-lane roads and T-junctions, to Town02, a smaller variant of Town01 with different textures. 
 In contrast, the LeaderBoard presents a more challenging generalization task across six maps with various traffic scenarios, including freeways, US-style junctions, roundabouts, stop signs, and lane changes. 
-Following the NoCrash benchmark\cite{codevilla2019exploring}, we test generalization from four training weather types to two new weather types, though only two training weather types are evaluated to save computational resources. 
-The NoCrash benchmark includes three traffic density levels (empty, regular, and dense), defining the number of pedestrians and vehicles per map. 
-We focus on the NoCrash-dense setting and introduce a new level, NoCrash-busy, which lies between regular and dense traffic to avoid congestion typical in dense traffic settings. 
+Following the nocrash dataset~\cite{codevilla2019exploring}, we test generalization from four training weather types to two new weather types, though only two training weather types are evaluated to save computational resources. 
+The nocrash benchmark includes three traffic density levels (empty, regular, and dense), defining the number of pedestrians and vehicles per map. 
+We focus on the nocrash-dense setting and introduce a new level, nocrash-busy, which lies between regular and dense traffic to avoid congestion typical in dense traffic settings. 
 For the offline LeaderBoard, traffic density is adjusted to match the busy traffic setting. 
 
 
@@ -67,10 +67,10 @@ The BID model is designed to closely follow the visual information processing sy
 When optimized, the model’s output closely matches the expert’s performance, as evaluated by similarity metrics.
 
 
-We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_results}) following the NoCrash benchmark~\cite{Zhang:2021,Hu:2022}, and on multiple towns (Sec.~\ref{sec:small_town_results}) based on the offline CARLA leaderboard benchmark~\cite{Zhang:2021,Hu:2022}. 
+We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_results}) following the nocrash dataset~\cite{Zhang:2021,Hu:2022}, and on multiple towns (Sec.~\ref{sec:small_town_results}) based on the offline CARLA leaderboard benchmark~\cite{Zhang:2021,Hu:2022}. 
 
 
-\subsubsection{NoCrash Metrics.}\label{nocrash_metrics}
+\subsubsection{Nocrash Evaluation}\label{nocrash_metrics}
 
 \hspace{1pc}The benchmark consists of three tasks with increasing levels of difficulty: \emph{Empty}, \emph{Regular}, and \emph{Dense}, based on the number of dynamic objects in the scene ({\ie}, pedestrians and vehicles). 
 In Town02, the numbers of dynamic objects are specified as:
@@ -80,11 +80,11 @@ In Town02, the numbers of dynamic objects are specified as:
 	\item \emph{Dense}: 150 pedestrians and 70 vehicles
 \end{itemize}
 % 默认的配置会导致拥堵死锁
-In the \emph{Dense} case, the default traffic density in NoCrash often results in congestion and deadlocks at intersections~\cite{Zhang:2021}. 
+In the \emph{Dense} case, the default traffic density in nocrash often results in congestion and deadlocks at intersections~\cite{Zhang:2021}. 
 To address this, we adopt the \emph{Busy} case redefined in~\cite{Zhang:2021}, reducing the number of pedestrians from 150 to 70. 
 Each task consist of 25 goal-directed episodes under two new weather conditions.
 An episode is terminated and counted as a failure if a collision occurs. 
-For other infractions, the driving score is penalized according to the rule specified in NoCrash. 
+For other infractions, the driving score is penalized according to the rule specified in nocrash. 
 
 
 % 度量标准的说明
@@ -138,7 +138,7 @@ An example of this process is shown in Figure~\ref{fig:command_ambiguous}.
 
 % 三种不同场景的性能
 \begin{table*}
-	\caption{Town02 NoCrash results.
+	\caption{Town02 nocrash results.
 		RIM refers to Roach IL and the Expert refers to Roach RL~\cite{Zhang:2021}. 
 		All models are tested on CARLA 0.9.13. 
 		Mean values and standard deviations are computed from three runs with different seeds. 
@@ -212,7 +212,7 @@ In contrast, training a RIM model requires supervision from the Roach RL expert,
 
 \subsubsection{Small Single-lane Towns} \label{sec:small_town_results}
 
-\hspace{1pc}We first conduct initial experiments using CARLA's Town01 and Town02, along with the NoCrash metrics (Sec.~\ref{nocrash_metrics}). 
+\hspace{1pc}We first conduct initial experiments using CARLA's Town01 and Town02, along with the nocrash evaluations(Sec.~\ref{nocrash_metrics}). 
 Town01 is used for training, while Town02 is reserved for testing (Sec.~\ref{sec:Dataset}). 
 MILE provides a model trained on multiple CARLA towns, but no model is available that is specifically trained on Town01 alone. 
 On the other hand, RIM has models trained on both Town01 and multiple towns. To ensure a fair comparison, we only use RIM’s model trained on Town01. 
@@ -259,7 +259,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 % 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
-	\caption{\textbf{Success rate of camera-based end-to-end imitation learning agents on NoCrash-dense.}
+	\caption{\textbf{Success rate of camera-based end-to-end imitation learning agents on nocrash-dense.}
 		The mean and standard deviation are computed over 5 seeds. 
 		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
 		Our models are from DAGGER iteration 5. 
@@ -296,7 +296,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 \end{table}
 
 \begin{table*}
-	\caption{\textbf{Driving performance and infraction analysis of BID agents on NoCrash-busy, new town \& new weather.} 
+	\caption{\textbf{Driving performance and infraction analysis of BID agents on nocrash-busy, new town \& new weather.} 
 		The mean and standard deviation are reported over 5 evaluation seeds.}
 	\setlength{\tabcolsep}{7.4pt}
 	\centering
@@ -392,15 +392,15 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 
 \hspace{1pc}The performance of an IL agent is inherently limited by the quality of the expert it imitates. 
 If the expert's performance is poor, it is not meaningful to compare IL agents trained on that expert. 
-This issue becomes apparent in the NoCrash new town scenario with dense traffic, where autopilots typically perform poorly. 
+This issue becomes apparent in the nocrash new town scenario with dense traffic, where autopilots typically perform poorly. 
 To establish a high-performance upper bound and ensure a fair comparison, we training the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies (Table~\ref{table:infraction}) under the busy traffic setting, allowing our Autopilot to achieve a driving score of 78\% and a success rate of 91\%. 
-For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on NoCrash with dense traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
+For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on nocrash with dense traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
 
 
 % 说明消融的各个指标？
 % L_N 导航信号
 % L_D 背侧流信号
-Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on NoCrash and offline LeaderBoard with busy traffic.
+Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on nocrash and offline LeaderBoard with busy traffic.
 The baseline $\mathcal{L}$ represents our implementation of the baseline BID trained by expert. 
 According to the LeaderBoard instructions, this additional navigation vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
 Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
@@ -409,12 +409,12 @@ The significant performance gap between the baseline and $\mathcal{L}_\text{D} +
 
 % 一步步添加后的效果
 By incorporating the dorsal stream and speed embedding into the baseline $\mathcal{L}_\text{b}$, $\mathcal{L}_\text{D}$ outperforms $\mathcal{L}_\text{b}$ overall.
-Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}_\text{b}$ on the NoCrash benchmark, but not on the offline LeaderBoard.
+Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}_\text{b}$ on the nocrash dataset, but not on the offline LeaderBoard.
 Feature matching only improves performance when $E_s$ is provided with the necessary information to produce accurate driving action.
 In our case, $E_N$ contains navigational information since the desired route is given throught nagivation command.
 For the LeaderBoard, navigational information is partially encoded in $E_N$, which includes the vector pointing to the next desired waypoint, leading to improved performance with the use of $E_N$.
 To evaluate this idea, we utilize a integrated network architecture where the measurement vector $E_N$ is augmented with the navigation command encoded as a one-hot vector.
-With feature matching applied to this architecture, $\mathcal{L}_\text{BID}$ achieves the best driving score among IL agents in the NoCrash new town and weather generalization test, even outperforming the Autopilot.
+With feature matching applied to this architecture, $\mathcal{L}_\text{BID}$ achieves the best driving score among IL agents in the nocrash new town and weather generalization test, even outperforming the Autopilot.
 
 
 
@@ -429,7 +429,7 @@ In turn, value estimation can help regularize feature matching, improving overal
 \subsubsection{Infraction and Performance Analysis}
 
 
-\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the NoCrash benchmark with busy traffic in the new town and weather setting. 
+\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the nocrash dataset with busy traffic in the new town and weather setting. 
 Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{a})$ is primarily caused by reflections from after-rain puddles. 
 This issue is significantly reduced by imitating Roach, which drives more naturally, leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$. 
 This gain reflects the benefit of using a better expert, while keeping the same imitation learning approach. 

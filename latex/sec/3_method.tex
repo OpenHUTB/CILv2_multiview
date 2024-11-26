@@ -127,7 +127,7 @@ The hidden dimension of the transformer layer is set to match the output dimensi
 % 动作预测
 The output from the transformer encoder is average-pooled and passed through an MLP.
 This MLP consists of 3 fully connected layers (FC), with ReLU nonlinearity applied between each layer.
-The final output action $A_\text{t}$ represents the steering angle $A_\text{t}^\text{s}$ and acceleration $A_\text{t}^\text{s}$ (brake/throttle). 
+The final output action $A_\text{t}$ represents the steering angle $A_\text{t}^\text{s}$ and acceleration $A_\text{t}^\text{s}$ (brake/throttle) as depicted in Equ.~\ref{eq:encoder}. 
 
 
 
@@ -145,14 +145,14 @@ At time $t$, given a inferred action $\mathbf{a}_{t}$ and the expert's (ground t
 	= \lambda_{\text{s}} \lVert A_{\text{t}}^\text{s}-\hat{A}_{\text{t}^\text{s}} \rVert_{1}
 	+ \lambda_{\text{a}}\lVert A_{\text{t}}^\text{a}-\hat{A}_{\text{t}}^\text{a}\rVert_{1} \enspace ,
 \end{equation}
-where $\lVert\cdot\rVert_{1}$ denotes the $L_1$ distance, $\lambda_{acc}$ and $\lambda_s$ represent the weights assigned to the acceleration and steering angle loss, respectively.
+where $\lVert\cdot\rVert_{1}$ denotes the $L_1$ distance, $\lambda_{s}$ and $\lambda_a$ represent the weights assigned to the steering angle and acceleration loss, respectively.
 In our setup, both steering angle and acceleration are constrained within the range of $[-1, 1]$, with negative values indicating braking and positive values corresponding to throttle.
-The weights are set as $\lambda_{acc} = \lambda_{s} = 0.5$. 
+The weights are set as $\lambda_{s} = \lambda_{a} = 0.5$. 
 
 
-In CILRS \cite{Codevilla:2019}, speed prediction regularization is incorporated into the training loss to address the inertia issue caused by the high likelihood of the ego vehicle remaining stationary in the training data.
-However, we did not encounter this problem in our approach, and therefore, the speed prediction branch is not included in our model.
-Our results demonstrate that a simple $L_1$ loss is sufficient to achieve strong performance, even in unfamiliar environments.
+In behavior cloning~\cite{Codevilla:2019}, they use velocity inference regularization incorporated into the training loss to address the inertia issue caused by the high likelihood of the ego vehicle remaining stationary.
+However, we did not encounter this issue, and therefore, the velocity inference module is not included in the prposed BID model.
+It is sufficient to achieve a excellent driving result with a plain training loss depicted in Equ.~\ref{eq:loss}, even in unfamiliar environments.
 %
 Additionally, the outputs from both the brain-inspired perception network and the brain-inspired decision network are concatenated to form a latent feature that captures critical driving-related information. 
 This latent feature is then passed through a hidden layer to map it to driving actions, which also incorporates a feature loss.
