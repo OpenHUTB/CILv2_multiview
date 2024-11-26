@@ -20,13 +20,13 @@ In the validating phase, we on longer utilize the expert's strategy, but only th
 \begin{figure*}[t]
 	\centering
 	\includegraphics[width=\linewidth]{fig/net.pdf}
-	\caption{The network architecture of the BID agent is primarily composed of two main components: the perception network and the decision network.
-	The perception network includes both the dorsal and ventral pathways, which allow the system to understand and process its surroundings.
+	\caption{The network architecture of the BID agent is primarily composed of the perception network and the decision network.
+	The perception module includes both the dorsal and ventral pathways, which allow the system to understand and process its surroundings.
 	The decision network consists of five modules that represent different regions of the prefrontal cortex: the medial prefrontal cortex (VPC), orbital prefrontal cortex (OPC), caudal prefrontal cortex (CPC), dorsal prefrontal cortex (DPC), and ventral prefrontal cortex (VPC). 
-	Specifically, the input to the system is an RGB image $ \mathbf{F}_{t} $, which represents the current visual scene.
-	The output is the action $\mathbf{a}_{i}$, which directly controls the ego-vehicle's maneuvering.
-	The action $A_\text{t}$ includes the steering angle $ A_t^s $ and acceleration $ A_t^a $ of the vehicle, making BID a pure vision-based, end-to-end autonomous driving model.
-	It is important to note that these action components are automatically associated with the captured images during the data collection process.
+	Specifically, the input to the system is an RGB image $f_{t} $, which represents the current visual scene.
+	The output is the action $A_\text{t}$, which controls the ego-vehicle's maneuvering directly.
+	The action $A_\text{t}$ includes the steering angle $ A_\text{t}^s $ and acceleration $ A_\text{t}^a $ of the vehicle, making BID a brain-inspired and end to end autonomous driving model.
+	Besides, in the construction process of training dataset, the driving actions and input frames are paired.
 	}
 	\label{fig:fig2}
 \end{figure*}
@@ -45,8 +45,9 @@ This approach is designed to significantly improve both the interpretability and
 At time $t$, the input frame $f_t$ is processed through a series of deep convolutional neural networks and recurrent networks, incorporating activation functions commonly used in deep neural networks. 
 This processing mirrors the way external information is handled by the brain's visual cortex. 
 Initially, the primary visual cortex (V1) processes the visual input, extracting key features. 
-To manage the high computational demands, the first area, V1$_\text{BID}$, performs a 7$\times$7 convolution with stride 2, followed by 3$\times$3 max pooling with stride 2, and another 3$\times$3 convolution. 
-These features are then passed along to the dorsal visual pathway, where areas such as middle temporal (MT) and middle superior temporal (MST) specialize in encoding motion and velocity information between current frame $ f_t $ and previous frame $ f_{t-1} $, particularly related to spatial location and movement\cite{wang2022btn}. 
+To manage the high computational demands, the first area, V1$_\text{BID}$, includes a 7$\times$7 convolution operation and another 3$\times$3 convolution. 
+% with stride 2, a 3$\times$3 pooling operation with stride 2,
+These features are then passed along to the dorsal visual pathway, where middle temporal (MT) and middle superior temporal (MST) specialize in encoding velocity information between current frame $ f_t $ and previous frame $ f_{t-1} $, particularly related to spatial location and movement\cite{wang2022btn}. 
 The dorsal pathway is implemented as a dynamic filter network\cite{jia2016dynamic} and utilized to extract the spatial relation between background and foreground, 
 and use appearance repsentation $ \alpha_t $ to dynamically infer convolutional filter.
 
@@ -54,10 +55,10 @@ and use appearance repsentation $ \alpha_t $ to dynamically infer convolutional 
 % 腹侧
 At the same time, the ventral pathway receives these features, with inferior temporal (IT) cortex focusing on encoding object category information, thereby facilitating object recognition.
 % Cornet
-Each visual area in ventral pathway implements a specific neural circuitry, where neurons perform simple, canonical computations, such as convolution, addition, nonlinearity, response normalization, and pooling over a receptive field. 
-The structure of the circuitry is identical across all visual areas, though the total number of neurons in each area may vary.
-The subsequent areas, V2$_\text{BID}$, V4$_\text{BID}$ and IT$_\text{BID}$, each carry out two 1$\times$1 convolutions, a bottleneck-style 3 $ \times $ 3 convolution with stride 2 (which expands the number of features by a factor of four), and another 1$\times$1 convolution. 
-To simulate recurrence, the outputs of each area are fed back into the same area 4 times for further processing.
+Each visual area in ventral pathway is simulated with a specific module, where neurons perform some classical, standard operations, such as convolution, nonlinearity, batch normalization, and max pooling on its input. 
+The structure of the pathway is same across all visual areas, though the number of cells for a submodule may vary.
+The subsequent areas, V2$_\text{BID}$, V4$_\text{BID}$ and IT$_\text{BID}$, each carry out two 1$\times$1 convolutional opeartion, a 3 $ \times $ 3 bottleneck style convolutional operation, and another 1$\times$1 convolution. 
+To simulate recurrent connection, the output for each submodule are fed back into the same submodule 4 times for further processing.
 
 
 %
@@ -76,8 +77,8 @@ This simulates how sensory information is processed by different regions of the 
 % 腹侧
 The ventral prefrontal cortex (VPC) generates goals based on recognition embedding (visual cues), allowing for quick responses and adaptation to changes in the environment.
 %
-In our setup, we flatten the embedding patches and then fed it into the transformer model.
-To provide positional context for each token, we apply a standard learnable 1D positional embedding $\mathbf{p}\in \mathbb{R}^{S\times c}$~\cite{Alexey:2021}, and add this embedding directly to the token.
+In our setup, we flatten the embedding patches and then fed it to transformer models.
+We use the classical one-dimensional position feature~\cite{Alexey:2021} to offer positional context, and add this embedding directly to the token.
 
 
 % 背侧
@@ -95,7 +96,7 @@ The navigation command $n_t$ is mapped into a vector embedding $E_\text{N}$ usin
 The medial prefrontal cortex (MPC) is critical for making decisions based on current states, along with a high-level navigation command.
 It ensure that our actions are optimized according to previous experiences and future goal.
 The input embeddings of MPC are merged with the output of VPC, DPC and OPC.
-Formally, we define the state encoder for the current state $O_t=(f_t, n_t)$, parameterized by $ \pi_{\theta}(f_t, n_t) $, as
+We format the BID with the input data $O_t=(f_t, n_t)$, parameterized by $ \pi_{\theta}(f_t, n_t) $, as
 \begin{equation}\label{eq:encoder}
 	A_\text{t}^\text{s}, A_\text{t}^\text{s} = \pi_\text{MPC}(E_\text{s}, E_\text{N}, E_\text{V}).
 %	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
@@ -103,13 +104,13 @@ Formally, we define the state encoder for the current state $O_t=(f_t, n_t)$, pa
 
 
 Navigation embedding $E_{t}$ is used as a switch to activate various MLP branches for inferring $A_{t}$ in CIL \cite{Codevilla:2018} and CILRS \cite{Codevilla:2019}. 
-However, in our approach, we treat $E_{t}$ as an input signal to be processed by a transformer. 
-We found no significant differences between these two methods, and treating $n_{t}$ as an input signal simplifies the training process.
+However, in our approach, we use a transformer to process the positional embedding $ E_\text{v} $.
+To simplify the learning process, we utilize the navigation command $n_{t}$ as additional inputs.
 %
 % 注意力学习
 % 连接3个图像
-To effectively associate multi-view information, we leverage the attention mechanism of transformers\cite{Vaswani:2017}. 
-This approach allows the model to learn the relationships between distant image patches (tokens), enabling it to associate feature map patches across different views ({\ie}, from horizontal 3 perspectives of the ego-vehicle). 
+We leverage the self-attention method in transformer to effectively extract multi-view feature\cite{Vaswani:2017}.
+This approach allows the model to extract the relationships among remote frame patches, enabling it to link representation for horizontal perspectives of vehicle.
 
 
 % CFC
