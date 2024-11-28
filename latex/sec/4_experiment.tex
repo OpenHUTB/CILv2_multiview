@@ -9,51 +9,56 @@
 %\end{figure}
 %\label{sec:experiment}
 
-\subsection{Benchmarks} \label{sec:Dataset}
+\subsection{Datasets} \label{sec:Dataset}
 
-\hspace{1pc}All evaluations are conducted on the Carla~\cite{Dosovitskiy:2017}. 
-We assess our methods using the nocrash \cite{codevilla2019exploring} and leaderBoard datasets. 
-Each benchmark specifies its own training scenes and weather conditions for data collection, and evaluates the agent's performance in new towns and weather settings. 
-The nocrash dataset focuses on generalization from Town01, a European town with one-lane roads and T-junctions, to Town02, a smaller variant of Town01 with different textures. 
-In contrast, the leaderBoard presents a more challenging generalization task across six maps with various traffic scenarios, including freeways, stop signs, lane changes, US-style junctions and roundabouts. 
-Following the nocrash dataset~\cite{codevilla2019exploring}, we test generalization from four training weather types to two new weather types, though only two training weather types are evaluated to save computational resources. 
-The nocrash benchmark includes three traffic density levels (empty, regular, and dense), defining the various number of pedestrians and vehicles per map. 
-We focus on the nocrash-dense setting and introduce a new level, nocrash-busy, which lies between regular and dense traffic to avoid congestion typical in dense traffic settings. 
-For the offline leaderBoard, traffic density is adjusted to match the busy traffic setting. 
+\hspace{1pc}We conduct training and testing on Carla~\cite{Dosovitskiy:2017},
+and assess the proposed BID model using existing standard datasets\cite{codevilla2019exploring}. 
+Each dataset specifies its own training scenes and weather conditions for data collection, 
+and tests the BID's performance in scenes never seen before. 
+In behavior cloning dataset\cite{codevilla2019exploring}, they focuses on transfer ability from Town01, a small scene with numerous T junctions and a variety of buildings, to Town02, a variant of Town01 with a mixture of residential and commercial buildings.
+The offical test suit presents a challenging transfer problem across 6 scenes with various scenarios, including stop signs, lane changes, US-style junctions and roundabouts.
+Based on the behavior cloning dataset~\cite{codevilla2019exploring}, we test the transfer ability between different weather conditions, though only two training weather types are evaluated to save computational resources. 
+The behavior cloning benchmark includes three actor amount levels for each scene from less to more. 
+A dense configuration in behavior cloning is utilized, which uses a suitable number of actors to prevent typical jam with a large number of actors. 
+In the offical test suit, we adjust actor number to meet the requirement of configuration. 
 
 
 % CILv2
-As with recent top-performing methods \cite{Hu:2022}, for on-board data collection in Carla, we use the \emph{teacher} expert driver from~\cite{Zhang:2021}, referred to as Roach RL.
-This method, based on reinforcement learning and trained with privileged information, exhibits more realistic and diverse behavior compared to the default (handcrafted) expert driver in Carla. 
-It is important to note that in real-world experiments, we would use human drivers as experts.
-We adopt the default settings from~\cite{Zhang:2021}, which means, similar to the student driver in \cite{Zhang:2021} (RIM) and in \cite{Hu:2022} (MILE), the ego-vehicle is the 2017 Lincoln model available in Carla.
-Each of the three forward-facing cameras on the ego-vehicle has a resolution of $W\times H=300\times300$ pixels, with a horizontal field of view (HFOV) of $60^{\circ}$.
-The cameras are arranged without overlap, collectively covering a total HFOV of $180^{\circ}$, centered along the main axis of the ego-vehicle.
+As with the newest state-of-art model~\cite{Hu:2022}, we use the driving expert driver referred to reinforcement learning imitation~\cite{Zhang:2021} using online dataset with simulator.
+This end-to-end method with reinforced feature exhibits very real action compared to a well-designed model in traffic scene. 
+It is important to notice that the huminine driving demonstration will be used as training data in real world tests.
+The standard configuration in~\cite{Zhang:2021} is used, which means that it is similar to the student driver in RL-Coach\cite{Zhang:2021} and MBI~\cite{Hu:2022}, the driving agent is the model found in simulator.
+The frame from all the 3 horizontally concatenated vehicle-based RGB image sensors is 900 wide and 300 high, with a field of view of $180^{\circ}$.
+The cameras are arranged without overlap, collectively covering a total filed of field.
 
 
-Using the expert driver, ego-vehicle, and on-board cameras, we collect data for progressively more complex experiments.
-First, we gather a dataset from Carla's Town01, a small town that only allows single-lane driving, meaning lane change maneuvers are not possible.  
+Using the experienced agent, vehicle-based cameras and hero vehicle, driving data is collected in progressively more crowed scenarios.
+Firstly, data is collected in Carla's Town01, a small scene that allows contains one lane merely, meaning we can't change lanes.
 % 中午、傍晚、大雨的中午、潮湿的中午
-Specifically, we collect 15 hours of data at 10 fps (approximately 540K frames per camera view) under four training weather conditions: ClearNoon, ClearSunset, HardRainNoon, and WetNoon. 
+Specifically, 1620K frames approximately at 10 fps from vehicle-based RGB sensor is utilized on 4 different learning weather types.
+%: ClearNoon, ClearSunset, HardRainNoon, and WetNoon. 
 % 测试：Town02 细雨的傍晚、潮湿的傍晚
 For generalization testing, we use Carla's Town02, evaluating the agent under SoftRainSunset and WetSunset weather conditions. 
-Next, we collect a dataset across multiple Carla towns to capture more complex driving scenarios, such as multi-lane driving, highway entrances and exits, and passing through crossroads. 
-To maintain consistency with the setup in~\cite{Hu:2022}, we reserve Town05 for testing, and gather 25 hours of data at 10 fps from Town01 to Town06 (5 hours per town, totaling approximately 900K frames per camera). 
-Both training and testing weather conditions remain the same for Town01 and Town02.
+Next, the benchmark is collected on several simulator scene to capture crowed driving scenes, such as T junctions, highway entrances, exits, and crossing the intersections. 
+To maintain consistency with setup in MBI~\cite{Hu:2022}, Town05 is reserved for testing, and totaling approximately 2100K image per sensor is gathered at 10 fps in Town01 to Town06. 
+%In Town01 and Town02, both training and testing weather conditions remain the same.
 
 
 
-\subsection{Implementation Details}
+\subsection{Implementation}
 
-\hspace{1pc}To optimize Eq. (\ref{eq:loss}), we use the Adam optimizer \cite{Kingma:2015} with an initial learning rate of $10^{-4}$ and weight decay of $0.01$. 
-Training is performed for 80 epochs on a single NVIDIA A6000 GPU, with a batch size of 120.
-The learning rate is reduced by half at epochs 30, 50, and 65.
+\hspace{1pc}The AdamW optimizer~\cite{loshchilov2017decoupled} with a step size of $2 \times 10^{-4}$ at each iteration and weight decay of $0.02$ is utilized to training the BID model. 
+We reduce the learning rate by half at 25, 45, and 70 epochs.
+The batch size is 100, 
+and model training is performed for 100 epochs on a single NVIDIA RTX A6000 GPU.
 
 
 % Cornet详细信息
-In ventral stream, after the input is processed by V2$_\text{COR}$ once, the resulting output is passed back into V2$_\text{COR}$ and treated as a new input, while the original input is discarded.
-V2$_\text{COR}$ and IT$_\text{COR}$ are repeated twice, and V4$_\text{COR}$ is repeated four times, as this configuration yielded the best model performance based on our evaluation scores.
-Similar to ResNet, each convolution (except the first $ \times $ convolution) is followed by batch normalization and a ReLU activation.
+In ventral stream, after the input is processed by V2$_\text{COR}$ once, the resulting output is inputted back to V2$_\text{COR}$.
+This process forms a recurrent connection.
+We run V2$_\text{COR}$ and IT$_\text{COR}$ two times, and execute V4$_\text{COR}$ four times repeatedly, respectively.
+This configuration yielded a best model performance based on our evaluation scores.
+Similar to ResNet-50, each convolution (except the first $ \times $ convolution) is followed by batch normalization and a ReLU activation.
 Batch normalization is not shared across time steps.
 The current definition of the ventral pathway does not include across-area bypass or feedback connections, and retinal and lateral geniculate nucleus processing are not explicitly modeled.
 
@@ -84,7 +89,7 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 % 三种不同场景的性能
 \begin{table*}
 	\caption{Town02 nocrash results.
-		RIM refers to Roach IL and the Expert refers to Roach RL~\cite{Zhang:2021}. 
+		RL-Coach refers to Roach IL and the Expert refers to Roach RL~\cite{Zhang:2021}. 
 		All models are tested on Carla 0.9.13. 
 		Mean values and standard deviations are computed from three runs with different seeds. 
 		For metrics denoted with $\uparrow$, higher values indicate better performance, while for those marked with $\downarrow$, lower values are preferable.}
@@ -97,7 +102,7 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 			& \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L  & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ C.V \\
 			\hline
 			
-			RIM\cite{Zhang:2021}  & $100\pm0.0$ & $85\pm1.2$ & $66\pm5.0$ & $97\pm2.3$ & $86\pm7.2$ & $66\pm54$ & $81\pm5.0$& $68\pm7.2$ & $63\pm52.7$\\
+			RL-Coach\cite{Zhang:2021}  & $100\pm0.0$ & $85\pm1.2$ & $66\pm5.0$ & $97\pm2.3$ & $86\pm7.2$ & $66\pm54$ & $81\pm5.0$& $68\pm7.2$ & $63\pm52.7$\\
 			CIL++\cite{xiao2023scaling} & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
 			Our BID & $100\pm0.0$ & $100\pm0.0$ & $0\pm0.0$  & $99\pm2.3$ & $97\pm3.1$ & $7\pm7.9$ & $83\pm7.6$ & $77\pm7.6$ & $45\pm21.5$ \\
 			\hline
@@ -124,9 +129,9 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 			& $\downarrow$ C.V & $\downarrow$ C.L & $\downarrow$ T.L & $\downarrow$ O.L & $\downarrow$ R.Dev 
 			\\
 			\hline
-			RIM\cite{Zhang:2021}  & $92\pm3.1$ & $51\pm7.9$ 
+			RL-Coach\cite{Zhang:2021}  & $92\pm3.1$ & $51\pm7.9$ 
 			& $7.5\pm1.3$ & $4.3\pm1.6$ & $26.0\pm8.9$ & $5.4\pm2.7$ & $3.0\pm3.2$ & \\
-			MILE~\cite{Hu:2022}
+			MBI~\cite{Hu:2022}
 			& $98\pm2.2$ & $73\pm2.9$ 
 			& $6.0\pm3.7$ & $0.0\pm0.0$ & $3.6\pm3.8$ & $3.5\pm1.5$ & $0.0\pm0.0$ \\   
 			CIL++\cite{xiao2023scaling} 
@@ -200,39 +205,39 @@ An example of this process is shown in Fig.~\ref{fig:command_ambiguous}.
 \subsection{Experimental Results}
 \label{sec:Results}
 % 基于模型的模仿学习
-\hspace{1pc}We compare BID with three state-of-the-art, vision-based end-to-end autonomous driving models: the Roach IL model (here RIM) \cite{Zhang:2021}, MILE \cite{Hu:2022} and CIL++\cite{xiao2023scaling}. 
+\hspace{1pc}We compare BID with three state-of-the-art, vision-based end-to-end autonomous driving models: the Roach IL model (here RL-Coach) \cite{Zhang:2021}, MBI~\cite{Hu:2022} and CIL++\cite{xiao2023scaling}. 
 It is important to note that although BID uses data generated by the Roach RL model, training a BID model does not require human-labeled sensor data. 
 In this case, the Roach RL model acts as a human driver during data acquisition. 
-In contrast, training a RIM model requires supervision from the Roach RL expert, who is trained with privileged information, while MILE is trained using semantic Bird's Eye View (BeV) data for supervision.
+In contrast, training a RL-Coach model requires supervision from the Roach RL expert, who is trained with privileged information, while MBI is trained using semantic Bird's Eye View (BeV) data for supervision.
 
 
 \subsubsection{Small Single-lane Towns} \label{sec:small_town_results}
 
 \hspace{1pc}We first conduct initial experiments using Carla's Town01 and Town02, along with the nocrash evaluations(Sec.~\ref{nocrash_metrics}). 
 Town01 is used for training, while Town02 is reserved for testing (Sec.~\ref{sec:Dataset}). 
-MILE provides a model trained on multiple Carla towns, but no model is available that is specifically trained on Town01 alone. 
-On the other hand, RIM has models trained on both Town01 and multiple towns. To ensure a fair comparison, we only use RIM's model trained on Town01. 
+MBI provides a model trained on multiple Carla towns, but no model is available that is specifically trained on Town01 alone. 
+On the other hand, RL-Coach has models trained on both Town01 and multiple towns. To ensure a fair comparison, we only use RL-Coach's model trained on Town01. 
 In Table~\ref{tab:T2_NC_results}, we present the success rate (SR) and strict success rate (S.SR) for the different traffic densities (Empty, Regular, Busy). 
 For a more focused evaluation, we report T.L (traffic light violations) for the empty and regular cases, and C.V (collisions with vehicles) only for the busy case in Table~\ref{fig:score_eu_lb_tt_tn}. 
 It is important to note that scenarios with fewer or no dynamic obstacles are more effective for evaluating the ego-vehicle's reaction to red traffic lights, while collisions are more appropriately assessed in scenarios with higher traffic density and more dynamic objects.
 
 
 In general, BID achieves the best results across all tasks. 
-In the empty case, BID significantly outperforms RIM in avoiding traffic light infractions, contributing to a higher S.SR.
+In the empty case, BID significantly outperforms RL-Coach in avoiding traffic light infractions, contributing to a higher S.SR.
 This conclusion holds true in the regular case as well. 
-In the busy case, BID comes close to matching the expert's performance, again outperforming RIM in terms of S.SR and resulting in fewer collisions with vehicles. 
+In the busy case, BID comes close to matching the expert's performance, again outperforming RL-Coach in terms of S.SR and resulting in fewer collisions with vehicles. 
 For the expert, failure cases in busy scenarios are primarily due to traffic deadlocks, which cause a timeout in route completion. 
 Despite this, the expert's performance can still be considered a valid upper bound.
 
 
 \subsubsection{Multi-town Generalization}\label{sec:multi_towns_result}
 \hspace{1pc}In this section, we evaluate the performance of BID in more complex scenarios provided by Carla's multiple towns. 
-As outlined in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with those used in MILE~\cite{Hu:2022}, and use Carla's offline Leaderboard metrics (Sec.~\ref{lb_metrics}). 
+As outlined in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with those used in MBI~\cite{Hu:2022}, and use Carla's offline Leaderboard metrics (Sec.~\ref{lb_metrics}). 
 The results for all models trained on multi-town data are presented in Table~\ref{tab:T5_results}. 
-RIM performs the worst among the three models, incurring more infractions and resulting in a significantly lower Avg.DS. 
-BID achieves an Avg.RC of 98\%, which is comparable to MILE. 
-However, in terms of Avg.DS, MILE scores the highest at 73\%, while BID achieves 68\%. 
-We attribute this difference to the fact that MILE rarely drives outside the pre-planned lane, as it is provided with the route map as input. 
+RL-Coach performs the worst among the three models, incurring more infractions and resulting in a significantly lower Avg.DS. 
+BID achieves an Avg.RC of 98\%, which is comparable to MBI. 
+However, in terms of Avg.DS, MBI scores the highest at 73\%, while BID achieves 68\%. 
+We attribute this difference to the fact that MBI rarely drives outside the pre-planned lane, as it is provided with the route map as input. 
 In contrast, BID does not use an explicit route map and instead relies solely on high-level navigation commands.
 
 % 不同迭代时的消融实验
