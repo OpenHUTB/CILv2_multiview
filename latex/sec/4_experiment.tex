@@ -19,7 +19,7 @@ In behavior cloning dataset\cite{codevilla2019exploring}, they focuses on transf
 The offical test suit presents a challenging transfer problem across 6 scenes with various scenarios, including stop signs, lane changes, US-style junctions and roundabouts.
 Based on the behavior cloning dataset~\cite{codevilla2019exploring}, we test the transfer ability between different weather conditions, though only two training weather types are evaluated to save computational resources. 
 The behavior cloning benchmark includes three actor amount levels for each scene from less to more. 
-A dense configuration in behavior cloning is utilized, which uses a suitable number of actors to prevent typical jam with a large number of actors. 
+A crowded configuration in behavior cloning is utilized, which uses a suitable number of actors to prevent typical jam with a large number of actors. 
 In the offical test suit, we adjust actor number to meet the requirement of configuration. 
 
 
@@ -58,9 +58,9 @@ In ventral stream, after the input is processed by V2$_\text{COR}$ once, the res
 This process forms a recurrent connection.
 We run V2$_\text{COR}$ and IT$_\text{COR}$ two times, and execute V4$_\text{COR}$ four times repeatedly, respectively.
 This configuration yielded a best model performance based on our evaluation scores.
-Similar to ResNet-50, each convolution (except the first $ \times $ convolution) is followed by batch normalization and a ReLU activation.
-Batch normalization is not shared across time steps.
-The current definition of the ventral pathway does not include across-area bypass or feedback connections, and retinal and lateral geniculate nucleus processing are not explicitly modeled.
+Similar to ResNet-50, a convolutional operation is accompanied by layer normalization and a rectified linear unit.
+Layer normalization is unique to each time step.
+The existing description of the ventral pathway does not include the connection that span across different regions, and retinal and lateral geniculate nucleus processing are not explicitly modeled.
 
 
 % 各种环境下的场景说明
@@ -77,7 +77,8 @@ The current definition of the ventral pathway does not include across-area bypas
 % 驾驶评估的3个不同数据集（不包含实验结果）
 \subsection{Driving Evaluation}
 \label{sec:Metrics}
-\hspace{1pc}The performance of the BID agent is limited by the performance of the expert it is imitating. 
+\hspace{1pc}The BID agent's capabilities are constrained by the proficiency of the expert it is emulating. 
+The success of the agent hinges on the expertise and skill level of its human counterpart.
 If the expert performs poorly, the agent that mimics it will also show suboptimal results. 
 The BID model is designed to closely follow the visual information processing system of the human brain, both structurally and functionally. 
 When optimized, the model's output closely matches the expert's performance, as evaluated by similarity metrics.
@@ -88,16 +89,16 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 
 % 三种不同场景的性能
 \begin{table*}
-	\caption{Town02 nocrash results.
-		RL-Coach refers to Roach IL and the Expert refers to Roach RL~\cite{Zhang:2021}. 
-		All models are tested on Carla 0.9.13. 
-		Mean values and standard deviations are computed from three runs with different seeds. 
-		For metrics denoted with $\uparrow$, higher values indicate better performance, while for those marked with $\downarrow$, lower values are preferable.}
+	\caption{Results in Town02.
+		The expert refers to reinforcement learning~\cite{Zhang:2021}, while RL-Coach refers to Roach imitation learning. 
+		Carla is used to evaluate all methods.
+		3 experiment with various random seeds are used to calculate the mean values and standard deviations.
+		Better performance is indicated by higher values for metrics marked with $\uparrow$, while lower are perferred for those marked with $\downarrow$.}
 	\centering
 	\resizebox{0.95\linewidth}{!}{
 		\begin{tabular}{@{}lccc|ccc|ccc@{}}
 			\hline
-			& \multicolumn{3}{c}{Empty} & \multicolumn{3}{c}{Regular} & \multicolumn{3}{c}{Busy}  \\
+			& \multicolumn{3}{c}{None} & \multicolumn{3}{c}{Normal} & \multicolumn{3}{c}{Crowded}  \\
 			
 			& \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L  & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ T.L & \textbf{$\uparrow$ SR(\%)} & \textbf{$\uparrow$ S.SR(\%)} & $\downarrow$ C.V \\
 			\hline
@@ -115,10 +116,10 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 
 
 \begin{table*}
-	\caption{Town05 results based on Carla's offline metrics. 
-		All models are tested on Carla 0.9.13. 
-		Mean values and standard deviations are computed from three runs with different random seeds.
-		For metrics marked with $\uparrow$, higher values indicate better performance, while for those marked with $\downarrow$, lower values are preferred.}
+	\caption{Town05 outcomes based on offline measurements.
+		Carla is used to evaluate all methods.
+		3 experiment with various random seeds are used to calculate the mean values and standard deviations.
+		Better performance is indicated by higher values for metrics marked with $\uparrow$, while lower are perferred for those marked with $\downarrow$.}
 	\centering
 	\resizebox{0.88\linewidth}{!}{
 		\begin{tabular}{@{}lccccccccccccccccccccc@{}}
@@ -150,37 +151,35 @@ We conduct experiments on small single-lane town (Sec.~\ref{sec:small_town_resul
 	\label{tab:T5_results}
 \end{table*}
 
-\subsubsection{Nocrash Evaluation}\label{nocrash_metrics}
+\subsubsection{Nocrash Benchmark Evaluation}\label{nocrash_metrics}
 
-\hspace{1pc}The benchmark consists of three tasks with increasing levels of difficulty: \emph{Empty}, \emph{Regular}, and \emph{Dense}, based on the number of dynamic objects in the scene ({\ie}, pedestrians and vehicles). 
-In Town02, the numbers of dynamic objects are specified as:	0 pedestrians and 0 vehicles (Empty); 50 pedestrians and 15 vehicles (Regular); 150 pedestrians and 70 vehicles (Dense).
+\hspace{1pc}Based on the quantity of variational actors ({\ie}, human, cars) in Carla scene, the benchmark comprises 3 mission with varying degrees of challenge: crowded, normal and none.
+Town02 specifies that there are zero human and zeros cars (none); fifty human and fifteen cars (normal); and one hundred fifty human and seventy cars (crowded).
 %
 % 默认的配置会导致拥堵死锁
-In the \emph{Dense} case, the default traffic density in nocrash often results in congestion and deadlocks at intersections~\cite{Zhang:2021}. 
-To address this, we adopt the \emph{Busy} case redefined in~\cite{Zhang:2021}, reducing the number of pedestrians from 150 to 70. 
-Each task consist of 25 goal-directed episodes under two new weather conditions.
-An episode is terminated and counted as a failure if a collision occurs. 
-For other infractions, the driving score is penalized according to the rule specified in nocrash. 
+The initial actors quantity in nocrash benchmark frequently causes crowded and congestion at intersections in the crowded scenario~\cite{Zhang:2021}.
+To address this, we adopt the \emph{crowded} scenarios described in RL-Coach~\cite{Zhang:2021}, reducing human population from one hundred and fifty to seventy. 
+A task consist of two weather conditions never seen it before and twenty-five goal-oriented scenarios.
+If a crash happends, the simulated case ends and considered as a fail.
+The driving rate is penalized for unexpected violations in accordance with the guidelines outlined in these benchmark.
 
 
 % 度量标准的说明
-The primary metric for comparing driving models is the success rate (\emph{SR}), which represents the percentage of episodes that are successfully completed. 
+The success rate (\emph{SR}), which represents the proportion of runs that are normally finished, is the primary evaluation index for comparing agents.
 % 严格的成功率
-For a more detailed comparison, we also provide the strict success rate (\emph{S.SR}),
-% traffic infraction：交通违法行为
-which measures the percentage of successful episodes under a zero tolerance policy for any traffic infractions, such as failing to stop at a red light or deviating from planned route.
+We also offer the rigorous SR (\emph{S.SR}) for a more detailed measurement, which calculates the proportion of normal runs under a 0 violation policy for any rules, like running at a no passing traffic sign or deviating from planned route.
 % T.L：在红灯时不停的次数
-Additionally, we include other infraction metrics.
-\emph{T.L} is the number of times the vehicle fails to stop at a red traffic light.
+Additionally, we include other violative measurement.
+The quantity of the vehicle fails to stop at a red traffic sign is represented by \emph{T.L}.
 % 和其他车辆碰撞的次数
-\emph{C.V} is the number of collisions with other vehicles.
+The quantity of crashes with other cars is denoted by \emph{C.V}.
 % R.Dev：当高层命令没有很好地执行，路线偏差的次数
-\emph{R.Dev} is the number of route deviations, where the high-level command is not proerly executed.
+The quantity of path inconformity where the high level navigation is not properly ran is denoted by \emph{R.Dev}.
 % O.L：考虑了自主车辆驶出车道的情况（例如，在对面车道或人行道上）
-\emph{O.L} is the number of times the ego-vehicle drives out of its lane ({\eg}, into the opposite lane or onto the sidewalk).
+\emph{O.L} is the quantity of the agent deviate from its lane ({\eg}, to the sidewalk or to the opposite lane).
 % C.L：与城镇布局发生碰撞的次数
-\emph{C.L} is the number of collisions with the town layout. 
-All infraction values are normalized per kilometer driven.
+The quantity of crashes with scene is symbolized by \emph{C.L}.
+Per kilometer driving, we normalize all the number of violations.
 
 
 \subsubsection{Offline Leaderboard Metrics.}\label{lb_metrics}
@@ -217,16 +216,16 @@ In contrast, training a RL-Coach model requires supervision from the Roach RL ex
 Town01 is used for training, while Town02 is reserved for testing (Sec.~\ref{sec:Dataset}). 
 MBI provides a model trained on multiple Carla towns, but no model is available that is specifically trained on Town01 alone. 
 On the other hand, RL-Coach has models trained on both Town01 and multiple towns. To ensure a fair comparison, we only use RL-Coach's model trained on Town01. 
-In Table~\ref{tab:T2_NC_results}, we present the success rate (SR) and strict success rate (S.SR) for the different traffic densities (Empty, Regular, Busy). 
-For a more focused evaluation, we report T.L (traffic light violations) for the empty and regular cases, and C.V (collisions with vehicles) only for the busy case in Table~\ref{fig:score_eu_lb_tt_tn}. 
+In Table~\ref{tab:T2_NC_results}, we present the success rate (SR) and strict success rate (S.SR) for the different traffic densities (none, normal, crowded). 
+For a more focused evaluation, we report T.L (traffic light violations) for the none and normal cases, and C.V (collisions with vehicles) only for the crowded case in Table~\ref{fig:score_eu_lb_tt_tn}. 
 It is important to note that scenarios with fewer or no dynamic obstacles are more effective for evaluating the ego-vehicle's reaction to red traffic lights, while collisions are more appropriately assessed in scenarios with higher traffic density and more dynamic objects.
 
 
 In general, BID achieves the best results across all tasks. 
-In the empty case, BID significantly outperforms RL-Coach in avoiding traffic light infractions, contributing to a higher S.SR.
-This conclusion holds true in the regular case as well. 
-In the busy case, BID comes close to matching the expert's performance, again outperforming RL-Coach in terms of S.SR and resulting in fewer collisions with vehicles. 
-For the expert, failure cases in busy scenarios are primarily due to traffic deadlocks, which cause a timeout in route completion. 
+In the none case, BID significantly outperforms RL-Coach in avoiding traffic light infractions, contributing to a higher S.SR.
+This conclusion holds true in the normal case as well. 
+In the crowded case, BID comes close to matching the expert's performance, again outperforming RL-Coach in terms of S.SR and resulting in fewer collisions with vehicles. 
+For the expert, failure cases in crowded scenarios are primarily due to traffic deadlocks, which cause a timeout in route completion. 
 Despite this, the expert's performance can still be considered a valid upper bound.
 
 
@@ -260,7 +259,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 % 在密集场景中的消融实验
 % table:sucess_rate_nc_dense
 \begin{table}
-	\caption{\textbf{Success rate of camera-based end-to-end imitation learning agents on nocrash-dense.}
+	\caption{\textbf{Success rate of camera-based end-to-end imitation learning agents on nocrash-crowded.}
 		The mean and standard deviation are computed over 5 seeds. 
 		% 数据聚合方法：DAGGER：试图在学习策略诱导的状态分布下收集专家演示
 		Our models are from DAGGER iteration 5. 
@@ -297,7 +296,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 \end{table}
 
 \begin{table*}
-	\caption{\textbf{Driving performance and infraction analysis of BID agents on nocrash-busy, new town \& new weather.} 
+	\caption{\textbf{Driving performance and infraction analysis of BID agents on nocrash-crowded, new town \& new weather.} 
 		The mean and standard deviation are reported over 5 evaluation seeds.}
 	\setlength{\tabcolsep}{7.4pt}
 	\centering
@@ -393,15 +392,15 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 
 \hspace{1pc}The performance of an IL agent is inherently limited by the quality of the expert it imitates. 
 If the expert's performance is poor, it is not meaningful to compare IL agents trained on that expert. 
-This issue becomes apparent in the nocrash new town scenario with dense traffic, where autopilots typically perform poorly. 
-To establish a high-performance upper bound and ensure a fair comparison, we training the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies (Table~\ref{table:infraction}) under the busy traffic setting, allowing our autopilot to achieve a driving score of 78\% and a success rate of 91\%. 
-For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on nocrash with dense traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
+This issue becomes apparent in the nocrash new town scenario with crowded traffic, where autopilots typically perform poorly. 
+To establish a high-performance upper bound and ensure a fair comparison, we training the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies (Table~\ref{table:infraction}) under the crowded traffic setting, allowing our autopilot to achieve a driving score of 78\% and a success rate of 91\%. 
+For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on nocrash with crowded traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
 
 
 % 说明消融的各个指标？
 % L_N 导航信号
 % L_D 背侧流信号
-Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on nocrash and offline leaderBoard with busy traffic.
+Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on nocrash and offline leaderBoard with crowded traffic.
 The baseline $\mathcal{L}$ represents our implementation of the baseline BID trained by expert. 
 According to the leaderBoard instructions, this additional navigation vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
 Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
@@ -430,7 +429,7 @@ In turn, value estimation can help regularize feature matching, improving overal
 \subsubsection{Infraction and Performance Analysis}
 
 
-\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the nocrash dataset with busy traffic in the new town and weather setting. 
+\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the nocrash dataset with crowded traffic in the new town and weather setting. 
 Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{a})$ is primarily caused by reflections from after-rain puddles. 
 This issue is significantly reduced by imitating expert, which drives more naturally, leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$. 
 This gain reflects the benefit of using a better expert, while keeping the same imitation learning approach. 
