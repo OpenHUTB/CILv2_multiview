@@ -233,13 +233,13 @@ Despite this, the expert's performance can still be considered a valid upper bou
 
 \subsubsection{Multi-scene Transferability}\label{sec:multi_towns_result}
 \hspace{1pc}We evaluate the result of BID in increasingly intricate runs that Carla numerous scenes provide in the part. 
-As outlined in Sec.~\ref{sec:Dataset}, for a fair comparison, we align the training and testing settings with those used in MBI~\cite{Hu:2022}, and use Carla's offline Leaderboard metrics (Sec.~\ref{lb_metrics}). 
-The results for all models trained on multi-town data are presented in Table~\ref{tab:T5_results}. 
-RL-Coach performs the worst among the three models, incurring more infractions and resulting in a significantly lower ADG. 
-BID achieves an APA of 98\%, which is comparable to MBI. 
-However, in terms of ADG, MBI scores the highest at 73\%, while BID achieves 68\%. 
-We attribute this difference to the fact that MBI rarely drives outside the pre-planned lane, as it is provided with the route map as input. 
-In contrast, BID does not use an explicit route map and instead relies solely on high-level navigation commands.
+We use Carla official benchmark measurements (Sec.~\ref{lb_metrics}) and align the train and test settings with those used in MBI~\cite{Hu:2022}, as outlined in Sec.~\ref{sec:Dataset}. 
+Table~\ref{tab:T5_results} displays the outcomes for every method that was optimized using multi-scene dataset. 
+Out of the 3 methods, RL-Coach performs the least, incurring more violations and resulting in a noticeably smaller ADG. 
+APA of 98\% attained by BID is comparable to MBI. 
+However, MBI has the highest ADG score (73\%), while BID achieves 68\%. 
+We attribute this difference to the fact that MBI rarely drives outside the pre-designed lane, as it is provided with the route map as input. 
+In contrast, BID does not use an explicit route map and instead relies solely on high level  goal instructions.
 
 % 不同迭代时的消融实验
 % CILv2_multiview\network\models\architectures\CIL_multiview\evaluator.py
@@ -251,8 +251,8 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 		All BID agents are evaluated in LBCRoutes after 30 peoch.
 		Top figure: The ground truth and model prediction for steering angles are shown in green and blue, respectively.
 		Bottom figure: The errors in training progress are displayed every 5 epochs, including the mean absolute error (MAE) for steering and acceleration.
-		Results are reported as the mean over 5 evaluation seeds, while other metrics are evaluated with single seed. 
-		The offline Leaderboard benchmark is used for evaluation.}
+		While other metrics are tested with single random number, we describe the outcome as the averaged value over 5 test random number.
+		For evaluation, the offical benchmark is employed.}
 	\vspace{-1.5ex}
 	\label{fig:score_eu_lb_tt_tn}
 \end{figure*}
@@ -298,8 +298,8 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 \end{table}
 
 \begin{table*}
-	\caption{\textbf{Driving performance and infraction analysis of BID agents on nocrash-crowded, new town \& new weather.} 
-		The mean and standard deviation are reported over 5 evaluation seeds.}
+	\caption{\textbf{Analyzing BID's output effect and infractions in scene never seen it before with a lot of people.} 
+		5 test random number seeds are employed to display the mean value and deviation.}
 	\setlength{\tabcolsep}{7.4pt}
 	\centering
 	\begin{tabular}{lccccccccc} 
@@ -357,22 +357,22 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 
 
 % 可视化注意力
-\subsubsection{Visualizing BID's Attention}
+\subsubsection{BID's Activation Visualization}
 \label{sec:Visualization}
-\hspace{1pc}We are interested in understanding which parts of the image BID focuses on during decision-making. 
-To achieve this, we use Grad-CAM~\cite{Selvaraju:2017}, where gradients flow from the action space to the final convolutional layer of the ResNet backbone. 
-This process generates a heatmap that highlights the image regions most important for action prediction. 
-However, since BID addresses a regression task, its output can take both positive and negative values, while Grad-CAM is originally designed for image classification tasks, where outputs are always positive. 
-To adapt Grad-CAM for our case, we cannot simply focus on the positive gradients of the feature map. 
-Instead, the computation is split into two cases based on the sign of output value. 
-Negative gradients are used to compute the feature map weights when the steering angle or acceleration is negative, and positive gradients are used when the output is positive.
+\hspace{1pc}We want to know which parts of the image BID focuses on during decision-making. 
+To achieve this, we use Grad-CAM~\cite{Selvaraju:2017}, where gradients from driving behavior embedding to last convolution in ResNet-50. 
+The process generates the heatmap that identifies the areas of frame that are most crucial for driving behavior generation. 
+Nevertheless, Grad-CAM was initially created in frame recognition task, where outcomes are often positive, whereas BID handles regressive mission, so the outcome can take both positive and negative values.
+We can't just concentrate on the representation map's positive gradients to modify Grad-CAM for these situation.
+Instead, the calculation is split into 2 scenarios according to the outcome value's symbol. 
+We employ negative gradient to compute a feature map weights when the steering angle or acceleration is negative, and positive gradients are used when the output is positive.
 
 
 % _results\_results\CILv2\CILv2_3cam_single_lane\Eval\Valid_gradCAM_Roach_LBCRoutes_3cam_valid\30\-1\85.jpg
-Fig.~\ref{fig:attention_ped_greed} illustrates the activation map at an intersection. 
-Three regions of the image are highly activated: the lane shoulder on the right, the crossing pedestrians in the center, and the driving area on the left. 
-This suggests that BID demonstrates a proper understanding of the scene and a clear connection between its observations and actions. 
-Specifically, BID decides to brake because of the pedestrians, even though the traffic light is green and the navigation command is to turn left. 
+Fig.~\ref{fig:attention_ped_greed} illustrates the attention image in a crossroad. 
+3 regions of the frame are most noticed: a lane shoulder on the frame right, the human crossing the street in the frame center, and the driving area on the frame left. 
+This suggests that BID demonstrates a thorough comprehension of the scenario and a discernible connection between its observations and actions. 
+Specifically, BID chooses to speed out because of the crossing human, despite the green traffic sign and the goal instruction is to turn left. 
 This indicates that BID appropriately prioritizes the presence of pedestrians over the traffic signal and navigation command.
 
 
@@ -392,50 +392,50 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 % 消融实验：速度（包括背侧通路）、导航
 \subsubsection{Ablation}
 
-\hspace{1pc}The performance of an IL agent is inherently limited by the quality of the expert it imitates. 
-If the expert's performance is poor, it is not meaningful to compare IL agents trained on that expert. 
-This issue becomes apparent in the nocrash new town scenario with crowded traffic, where autopilots typically perform poorly. 
-To establish a high-performance upper bound and ensure a fair comparison, we training the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies (Table~\ref{table:infraction}) under the crowded traffic setting, allowing our autopilot to achieve a driving score of 78\% and a success rate of 91\%. 
-For a more meaningful comparison with state-of-the-art models, the best-performing configuration from the ablation studies is also evaluated on nocrash with crowded traffic, as shown in Table~\ref{table:sucess_rate_nc_dense}.
+\hspace{1pc}An imitation learning ego-vehicle's ability to perform is inherently constrained by the quality of experienced driver it imitates. 
+Comparing imitation learning ego-vehicle trained on an experienced driver is pointless if that driver performs poorly.
+This issue becomes apparent in a scenario never seen it before with crowded actors, where the performance of autopilot typically is poor. 
+We optimize the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies with the crowded actors configuration to establish a high precision effect and ensure a effective evaluation (Table~\ref{table:infraction}), allowing the proposed agent to attain a driving grade of 78\% and a SS of 91\%. 
+As shown in Table~\ref{table:sucess_rate_nc_dense}, the optimal configuration from the ablative experiments is also assessed on benchmark in crowded actors for a more meaningful comparison with latest models.
 
 
 % 说明消融的各个指标？
 % L_N 导航信号
 % L_D 背侧流信号
-Fig.~\ref{fig:score_eu_lb_tt_tn} shows the driving scores of experts and IL agents at each DAGGER iteration on nocrash and offline leaderBoard with crowded traffic.
-The baseline $\mathcal{L}$ represents our implementation of the baseline BID trained by expert. 
-According to the leaderBoard instructions, this additional navigation vector helps disambiguate situations where the semantics of left and right may be unclear due to the complexity of the map.
-Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ achieve higher success rates than those reported in Table~\ref{table:sucess_rate_nc_dense}.
-The significant performance gap between the baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially when generalizing to a new town and new weather, highlights the limitations of the baseline approach.
+Fig.~\ref{fig:score_eu_lb_tt_tn} shows the behavior rates of experienced and imitation learning drivers for an epoch on offical benchmark with crowded actors.
+The basic $\mathcal{L}$ represents the proposed implementation of the baseline BID trained by expert. 
+According to the leaderboard instructions, this additional navigation vector helps separating scenes where the map's complexity may make it difficult to understand the labels of each frame.
+Given the improvements in our best-performing BID, it is expected that $\mathcal{L}_\text{D}$ and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$ gain better SR than results described in Table~\ref{table:sucess_rate_nc_dense}.
+The significant performance gap between the baseline and $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$, especially when transferring to the scene never seen it before, highlights the basic approach limitations.
 
 
 % 一步步添加后的效果
-By incorporating the dorsal stream and speed embedding into the baseline $\mathcal{L}_\text{b}$, $\mathcal{L}_\text{D}$ outperforms $\mathcal{L}_\text{b}$ overall.
-Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize better than $\mathcal{L}_\text{b}$ on the nocrash dataset, but not on the offline leaderBoard.
-Feature matching only improves performance when $E_\text{s}$ is provided with the necessary information to produce accurate driving action.
-In our case, $E_\text{N}$ contains navigational information since the desired route is given throught nagivation command.
-For the leaderBoard, navigational information is partially encoded in $E_N$, which includes the vector pointing to the next desired waypoint, leading to improved performance with the use of $E_\text{N}$.
-To evaluate this idea, we utilize a integrated network architecture where the measurement vector $E_\text{N}$ is augmented with the navigation command encoded as a one-hot vector.
-With feature matching applied to this architecture, $\mathcal{L}_\text{BID}$ achieves the best driving score among IL agents in the nocrash new town and weather generalization test, even outperforming the autopilot.
+$\mathcal{L}_\text{D}$ outperforms $\mathcal{L}_\text{b}$ overall by incorporating the dorsal stream and speed embedding into the baseline $\mathcal{L}_\text{b}$.
+Additionally, learning from the action distribution allows $\mathcal{L}_\text{D}$ to generalize superior than $\mathcal{L}_\text{b}$ on the benchmark dataset, but not on the offical leaderboard.
+When $E_\text{s}$ is given merely, the feature required to generate accurate driving action does representation mapping enhance performance.
+Since the expected path is given throught nagivation command in this instance, $E_\text{N}$ includes goal instructions.
+The use of $E_\text{N}$ improves accuray for the benchmark because it encodes gal instruction, including the feature pointing to the following expected path.
+To evaluate this idea, we utilize a integrated model structure in which the goal instruction described as one hot encoding is added to the evaluation feature $E_\text{N}$.
+In the benchmark scene transferability evaluation, $\mathcal{L}_\text{BID}$ achieves the highest behavior degree in imitation learning ego-vehicles.
 
 
 
 %
-Adding value supervision alongside feature matching accelerates the convergence of the DAGGER process, as demonstrated by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
-However, when feature matching is omitted, value supervision alone does not lead to superior performance with $\mathcal{L}_\text{D}$.
-This suggests a potential synergy between feature matching and value estimation. 
-Intuitively, the latent feature of roach encodes the necessary information for value estimation, so mimicking this feature should assist in predicting the value. 
-In turn, value estimation can help regularize feature matching, improving overall performance.
+Adding supervised representation alongside feature matching accelerates the convergence of the process, as demonstrated by $\mathcal{L}_\text{D} + \mathcal{L}_\text{N}$.
+However, when feature matching is omitted, supervised representation doesn't lead to better result with $\mathcal{L}_\text{D}$.
+These suggests the possibility of value estimation and representation mapping working in tandem.
+Predicting the value should be made easier by imitating the representation of RL-roach, which intuitively contains the feature needed for value prediction. 
+In turn, these estimation can be enhanced by regularizing representation mapping, improving overall performance.
 
 
-\subsubsection{Infraction and Performance Analysis}
+\subsubsection{Infraction and Result Analysis}
 
 
-\hspace{1pc}Table~\ref{table:infraction} presents a detailed performance and infraction analysis on the nocrash dataset with crowded traffic in the new town and weather setting. 
-Notably, the extremely high ``Agent blocked" rate in our baseline $\mathcal{L}_\text{A}(\text{a})$ is primarily caused by reflections from after-rain puddles. 
-This issue is significantly reduced by imitating expert, which drives more naturally, leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$. 
-This gain reflects the benefit of using a better expert, while keeping the same imitation learning approach. 
-Further improvements are achieved with the addition of soft targets and latent feature supervision in $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, resulting in another 30\% absolute increase in performance. 
+\hspace{1pc}Table~\ref{table:infraction} presents a particular result and infraction analyse on the benchmark dataset with crowded actors in the scene never seen it before. 
+Interestingly, the remarkably better ``Agent blocked" degree in the basic $\mathcal{L}_\text{A}(\text{a})$ is primarily caused by results from heavy rains. 
+The issue is significantly reduced by imitating expert leading to a 23\% absolute improvement in the driving score for $\mathcal{L}_\text{D}$.
+While maintaining the same IL strategy, this gain illustrates the advantages of using a more knowledgeable driver. 
+Better improvements are achieved with the addition of soft targets and latent feature supervision in $\mathcal{L}_\text{D}+\mathcal{L}_\text{N}$, resulting in another 30\% absolute increase in performance. 
 By handling red lights more effectively, this BID agent achieves a driving score of 89\%, reaching expert-level performance with just camera image as input.
 
 
