@@ -17,12 +17,12 @@ Therefore, to overcome the limitations of existing methods, there is a need to d
 	\label{fig:fig1}
 \end{figure}
 
-In this work, we propose a novel BID framework inspired by brain perception and decision-making. 
-Unlike previous methods, our reinforcement learning expert does not rely on manually formulated rules and demonstrates strong interpretability and robustness. 
-Our work involves constructing a brain-inspired perception network for extracting environmental features and a brain-inspired decision-making network for generating driving decisions for the target vehicle, in order to train the reinforcement learning expert~\cite{kahn2021land}. 
+In this work, we propose a novel brain-inspired driving (BID) framework inspired by brain perception and decision-making. 
+Unlike previous methods, our proposed BID expert does not rely on manually formulated rules and demonstrates strong interpretability and robustness.
+Our work involves constructing a brain-inspired perception network for extracting environmental features and a brain-inspired decision-making network for generating driving decisions for the target vehicle, in order to train the BID expert~\cite{kahn2021land}. 
 Its structure is as shown in Fig.~\ref{fig:fig1}. 
-Specifically, the brain-inspired perception network consists of a visual perception module~\cite{al2018brain}, a motion perception module, and a multimodal perception module~\cite{yu2023brain}. 
-The brain-inspired decision-making network comprises a decision generation module~\cite{schirner2023learning} and a decision evaluation module. 
+Specifically, the brain-inspired perception network consists of a visual recognition~\cite{al2018brain}, a motion perception, and a multimodal fusion~\cite{yu2023brain}. 
+The brain-inspired decision-making network comprises a decision generation~\cite{schirner2023learning} and a decision evaluation. 
 Driving decisions encompass multiple driving actions of the target vehicle, and the BID agent directly imitates expert behavior. 
 Overall, our main contribution lies in proposing a novel brain-inspired perception model and a brain-inspired decision-making model for autonomous driving, aiming to achieve a more robust and interpretable autonomous driving system.
 
