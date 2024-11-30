@@ -9,20 +9,20 @@ The core idea of IL is to train the proposed BID agent to replicate the expert's
 
 
 Before training the BID using IL, we first collect a series of frame and action pairs $(f_{t}, a_{t})$ produced by expert demonstrations.
-These data is then utilized to train the BID policy $\pi_{\theta}(f_{t})$, which approximated the expert's policy.
+These data are then utilized to train the BID policy $\pi_{\theta}(f_{t})$, which approximates the expert's policy.
 %The overall objective of imitation is 
 %\begin{equation} \label{eq:target}
 %	\argmin_{\theta} \mathbb{E}_{(\mathbf{f}_{i}, \mathbf{a}_{i})\sim \mathcal{D}} \left[ \mathcal{L}(\pi_{\theta}(\mathbf{f}_{i}), \mathbf{a}_{i}) \right] \enspace .
 %\end{equation}
 %
-In the validating phase, we on longer utilize the expert's strategy, but only the trained BID policy.
+In the validating phase, we no longer utilize the expert's strategy, but only the trained BID policy.
 
 \begin{figure*}[t]
 	\centering
 	\includegraphics[width=\linewidth]{fig/net.pdf}
 	\caption{The network architecture of the BID agent is primarily composed of the perception network and the decision network.
 	The perception module includes both the dorsal and ventral pathways, which allow the system to understand and process its surroundings.
-	The decision network consists of five modules that represent different regions of the prefrontal cortex: the medial prefrontal cortex (VPC), orbital prefrontal cortex (OPC), caudal prefrontal cortex (CPC), dorsal prefrontal cortex (DPC), and ventral prefrontal cortex (VPC). 
+	The decision network consists of five modules that represent different regions of the prefrontal cortex: the medial prefrontal cortex (MPC), orbital prefrontal cortex (OPC), caudal prefrontal cortex (CPC), dorsal prefrontal cortex (DPC), and ventral prefrontal cortex (VPC). 
 	Specifically, the input to the system is an RGB image $f_{t} $, which represents the current visual scene.
 	The output is the action $A_\text{t}$, which controls the ego-vehicle's maneuvering directly.
 	The action $A_\text{t}$ includes the steering angle $ A_\text{t}^s $ and acceleration $ A_\text{t}^a $ of the vehicle, making BID a brain-inspired and end to end autonomous driving model.
@@ -33,7 +33,7 @@ In the validating phase, we on longer utilize the expert's strategy, but only th
 
 
 \subsection{Neural Aligned BID}
-\hspace{1pc}Inspired by the brain's remarkable capabilities in perception and decision-making, we have proposed the perception and decision network based on neural pathway anatomical alignment to simulate the information processing mechanisms of brain into an autonomous driving system. 
+\hspace{1pc}Inspired by the brain's remarkable capabilities in perception and decision-making, we have proposed the perception and decision network based on neural pathway anatomical alignment to simulate the information processing mechanisms of brain in an autonomous driving system. 
 This approach is designed to significantly improve both the interpretability and robustness of the system.
 
 \subsubsection{Perception Network}
@@ -49,7 +49,7 @@ To manage the high computational demands, the first area, V1$_\text{BID}$, inclu
 % with stride 2, a 3$\times$3 pooling operation with stride 2,
 These features are then passed along to the dorsal visual pathway, where middle temporal (MT) and middle superior temporal (MST) specialize in encoding velocity information between current frame $ f_t $ and previous frame $ f_{t-1} $, particularly related to spatial location and movement\cite{wang2022btn}. 
 The dorsal pathway is implemented as a dynamic filter network\cite{jia2016dynamic} and utilized to extract the spatial relation between background and foreground, 
-and use appearance repsentation $ \alpha_t $ to dynamically infer convolutional filter.
+and uses appearance repsentation $ \alpha_t $ to dynamically infer convolutional filter.
 
 
 % 腹侧
@@ -63,7 +63,7 @@ To simulate recurrent connection, the output for each submodule are fed back int
 
 %
 After this sequence of processing steps, our network is capable of efficiently extracting and outputting multi-dimensional embeddings of the current environment to next decision network. 
-These features include both the appearance characteristics $ E_\text{S} $ of objects and motion-related information $ E_\text{S} $.
+These features include both the appearance characteristics $ E_\text{V} $ of objects and motion-related information $ E_\text{S} $.
 
 
 
@@ -95,10 +95,10 @@ The navigation command $n_t$ is mapped into a vector embedding $E_\text{N}$ usin
 % 内侧
 The medial prefrontal cortex (MPC) is critical for making decisions based on current states, along with a high-level navigation command.
 It ensure that our actions are optimized according to previous experiences and future goal.
-The input embeddings of MPC are merged with the output of VPC, DPC and OPC.
+The input embeddings of MPC are merged with the output of VPC, DPC and OFC.
 We format the BID with the input data $O_t=(f_t, n_t)$, parameterized by $ \pi_{\theta}(f_t, n_t) $, as
 \begin{equation}\label{eq:encoder}
-	A_\text{t}^\text{s}, A_\text{t}^\text{s} = \pi_\text{MPC}(E_\text{s}, E_\text{N}, E_\text{V}).
+	A_\text{t}^\text{s}, A_\text{t}^\text{s} = \pi_\text{MPC}(E_\text{S}, E_\text{N}, E_\text{V}).
 %	e_{\theta}: \mathbb{R}^{|\mathbf{X}_{t}|\times W\times H\times3}\times\mathbb{R}\times \mathbb{R}^k \rightarrow \mathbb{R}^{S \times c} \enspace .
 \end{equation}
 
@@ -120,7 +120,7 @@ The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and lo
 % 总结
 These regions work together in the decision-making process, forming a highly integrated latent feature vector that effectively captures the essential information needed for making decisions. 
 This latent vector is then processed through a carefully constructed hidden layer, which generates accurate and reliable outputs, such as driving actions, value function estimates, and speed control commands.
-The final output is obtained by linearly projecting the merged features for a self-attention head, which are passed to the CFC module.
+The final output is obtained by linearly projecting the merged features for a self-attention head, which are passed to the CPC module.
 We utilize 4 layers, and a layer with 4 attention modules. 
 The middle size in the transformer module is matched with the output size of the ResNet.
 %
@@ -139,7 +139,7 @@ The driving hehavior $A_\text{t}$ represents the vehicle acceleration $A_\text{t
 Through iterative updates, the network adjusts its parameters to better match human decision-making processes, ultimately improving its performance and accuracy.
 %
 % 损失函数
-Based on the inferred output $A_\text{t}$ and the expert's actual output $\hat{\mathbf{a}}_{t}$, the model loss function is described as:
+Based on the inferred output $A_\text{t}$ and the expert's actual output $\hat{A}_\text{t}$, the model loss function is described as:
 \begin{equation}\label{eq:loss}
 	L(A_t, \hat{A}_t) 
 	= \lambda_{\text{s}} \lVert A_{\text{t}}^\text{s}-\hat{A}_{\text{t}^\text{s}} \rVert_{1}
