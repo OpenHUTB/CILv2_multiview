@@ -84,6 +84,7 @@ We use the classical one-dimensional position feature~\cite{Alexey:2021} to offe
 
 % 背侧
 The dorsal prefrontal cortex (DPC) is responsible for generating goals based on sequences, as well as temporal and spatial environmental cues, offering clear guidance for decision-making and action\cite{passingham2012neurobiology}.
+DPC is implemented with a dynamic filter network~\cite{jia2016dynamic} and is used to address spatial relations between the foreground and background.
 % 眶额
 Within this process, the orbitofrontal cortex (OFC) plays a crucial role in establishing future action goals $n_t$, which is encoded as a one-hot command embedding.
 It helps to clarify and focus on the desired objectives. 
@@ -117,9 +118,9 @@ This approach allows the model to extract the relationships among remote frame p
 % CFC
 In MPC, a traffic representation is learned utilizing the transformer module with multiheaded self-attention layer~\cite{Vaswani:2017}, normalization~\cite{Ba:2016}, and feed forward multilayer perceptron modules. 
 % 尾侧
-The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets. 
+The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets\cite{lawler1987role}. 
 % 总结
-These regions work together in the decision-making process, forming a highly integrated latent feature vector that effectively captures the essential information needed for making decisions. 
+These regions work together in the decision-making process, forming a highly integrated latent feature vector that effectively captures the essential information needed for making decisions\cite{wardak2004deficit}. 
 This latent vector is then processed through a carefully constructed hidden layer, which generates accurate and reliable outputs, such as driving actions, value function estimates, and speed control commands.
 The final output is obtained by linearly projecting the merged features for a self-attention head, which are passed to the CPC module.
 We utilize 4 layers, and a layer with 4 attention modules. 
@@ -158,7 +159,7 @@ However, we did not encounter this issue, and therefore, the velocity inference 
 It is sufficient to achieve a excellent driving result with a plain training loss depicted in Equ.~\ref{eq:loss}, even in unfamiliar environments.
 %
 Additionally, the outputs from both the brain-inspired perception network and the brain-inspired decision network are concatenated to form a latent feature that captures critical driving-related information. 
-This latent feature is then passed through a hidden layer to map it to driving actions, which also incorporates a feature loss.
+This latent feature is then passed through a hidden layer to map it to driving actions.
 
 
 %\subsubsection{Brain-Expert Mimetic Entity}

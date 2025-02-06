@@ -74,6 +74,15 @@ The existing description of the ventral pathway does not include the connection 
 	\label{fig:command_ambiguous}
 \end{figure}
 
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\linewidth]{fig/structure_analysis.pdf}
+	\caption{BID architecture analysis. 
+		We analyse four main factors including the initial step size in ventral pathway, the number of recurrent step in dorsal pathway, the position feature dimension in VPC and the vector embedding dimension in DPC. 
+		Each row presents how \emph{SR} and \emph{TL} score change based on BID when the hyperparameter changes. }
+	\label{fig:structure_analysis}
+\end{figure}
+
 % 驾驶评估的3个不同数据集（不包含实验结果）
 \subsection{Driving Evaluation}
 \label{sec:Metrics}
@@ -347,7 +356,7 @@ In contrast, BID does not use an explicit route map and instead relies solely on
 		& $0.83 \pm 0.03$ & $0.62 \pm 0.22$ & $\mathbf{0.07} \pm 0.04$  &  $0.01 \pm 0.01$ & $0.22 \pm 0.07$    \\
 		%\hline
 		%\cmidrule(lr){1-1}\cmidrule(lr){2-5}\cmidrule(lr){6-10}
-		$\mathcal{L}_BID$
+		$\mathcal{L}_{BID}$
 		& $\mathbf{96} \pm 2$ & $\mathbf{96} \pm 3$ & $96 \pm 0$ & $97 \pm 2$ 
 		&  $\mathbf{0} \pm 0$ & $\mathbf{0.14} \pm 0.18$  & $0.12 \pm 0.08$  & $\mathbf{0} \pm 0$  & $\mathbf{0.03} \pm 0.06$  \\
 		Expert
@@ -400,7 +409,7 @@ This indicates that BID appropriately prioritizes the presence of pedestrians ov
 \hspace{1pc}An imitation learning ego-vehicle's ability to perform is inherently constrained by the quality of experienced driver it imitates. 
 Comparing imitation learning ego-vehicle trained on an experienced driver is pointless if that driver performs poorly.
 This issue becomes apparent in a scenario never seen it before with crowded actors, where the performance of autopilot typically is poor. 
-We optimize the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies with the crowded actors configuration to establish a high precision effect and ensure a effective evaluation (Table~\ref{table:infraction}), allowing the proposed agent to attain a \emph{DS} of 96\%. 
+We optimize the BID (Fig.~\ref{fig:score_eu_lb_tt_tn}) and conduct ablation studies with architecture analysis (Fig.~\ref{fig:structure_analysis} and the crowded actors configuration (Table~\ref{table:infraction}) to establish a high precision effect and ensure a effective evaluation, allowing the proposed agent to attain a \emph{DS} of 96\%. 
 As shown in Table~\ref{table:sucess_rate_nc_dense}, the optimal configuration from the ablative experiments is also assessed on benchmark in crowded actors for a more meaningful comparison with latest models.
 
 
