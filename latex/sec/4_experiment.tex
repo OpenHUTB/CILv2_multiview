@@ -24,7 +24,7 @@ In the offical test suit, we adjust actor number to meet the requirement of conf
 
 
 % CILv2
-As with the newest state-of-art model~\cite{Hu:2022}, we use the driving expert driver referred to reinforcement learning imitation~\cite{Zhang:2021} using online dataset with simulator.
+As with the newest state-of-art model, we use the driving expert driver referred to reinforcement learning imitation~\cite{Zhang:2021} using online dataset with simulator.
 This end-to-end method with reinforced feature exhibits very real action compared to a well-designed model in traffic scene. 
 It is important to notice that the hoiminine driving demonstration will be used as training data in real world tests.
 The standard configuration in~\cite{Zhang:2021} is used, which means that it is similar to the student driver in RL-Coach\cite{Zhang:2021} and MBI~\cite{Hu:2022}, the driving agent is the model found in simulator.
@@ -47,7 +47,7 @@ To maintain consistency with setup in MBI~\cite{Hu:2022}, Town05 is reserved for
 
 \subsection{Implementation}
 
-\hspace{1pc}The AdamW optimizer~\cite{loshchilov2017decoupled} with a step size of $2 \times 10^{-4}$ at each iteration and weight decay of $0.02$ is utilized to training the BID model. 
+\hspace{1pc}The AdamW optimizer with a step size of $2 \times 10^{-4}$ at each iteration and weight decay of $0.02$ is utilized to training the BID model. 
 We reduce the learning rate by half at 25, 45, and 70 epochs.
 The batch size is 100, 
 and model training is performed for 100 epochs on a single NVIDIA RTX A6000 GPU.

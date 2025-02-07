@@ -79,7 +79,7 @@ This simulates how sensory information is processed by different regions of the 
 The ventral prefrontal cortex (VPC) generates goals based on recognition embedding (visual cues), allowing for quick responses and adaptation to changes in the environment\cite{passingham2012neurobiology}.
 %
 In our setup, we flatten the embedding patches and then fed it to transformer models.
-We use the classical one-dimensional position feature~\cite{Alexey:2021} to offer positional context, and add this embedding directly to the token.
+We use the classical one-dimensional position feature to offer positional context, and add this embedding directly to the token.
 
 
 % 背侧
@@ -116,7 +116,7 @@ This approach allows the model to extract the relationships among remote frame p
 
 
 % CFC
-In MPC, a traffic representation is learned utilizing the transformer module with multiheaded self-attention layer~\cite{Vaswani:2017}, normalization~\cite{Ba:2016}, and feed forward multilayer perceptron modules. 
+In MPC, a traffic representation is learned utilizing the transformer module with multiheaded self-attention layer~\cite{Vaswani:2017}, normalization, and feed forward multilayer perceptron modules. 
 % 尾侧
 The caudal prefrontal cortex (CPC) is crucial for searching, identifying, and locating specific targets, ensuring that we can accurately focus on and navigate towards these targets\cite{lawler1987role}. 
 % 总结
@@ -158,8 +158,8 @@ In behavior cloning~\cite{Codevilla:2019}, they use velocity inference regulariz
 However, we did not encounter this issue, and therefore, the velocity inference module is not included in the proposed BID model.
 It is sufficient to achieve a excellent driving result with a plain training loss depicted in Equ.~\ref{eq:loss}, even in unfamiliar environments.
 %
-%Additionally, the outputs from both the brain-inspired perception network and the brain-inspired decision network are concatenated to form a latent feature that captures critical driving-related information. 
-%This latent feature is then passed through a hidden layer to map it to driving actions.
+Additionally, the outputs from both the brain-inspired perception network and the brain-inspired decision network are concatenated to form a latent feature that captures critical driving-related information. 
+This latent feature is then passed through a hidden layer to map it to driving actions.
 
 
 %\subsubsection{Brain-Expert Mimetic Entity}
